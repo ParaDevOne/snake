@@ -114,7 +114,7 @@ class InputOverlay:
         return False
 
     def render(self, surf):
-        overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+        overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)  # pylint: disable=no-member
         overlay.fill(OVERLAY)
         surf.blit(overlay, (0,0))
         box = center_rect(620, 160)
