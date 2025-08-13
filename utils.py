@@ -21,7 +21,7 @@ def load_json(path, default):
         if os.path.exists(path):
             with open(path, 'r', encoding='utf-8') as f:
                 return json.load(f)
-    except Exception:
+    except (OSError, json.JSONDecodeError, UnicodeDecodeError):
         pass
     return default
 
@@ -32,7 +32,7 @@ def save_json(path, obj):
             os.makedirs(folder, exist_ok=True)
         with open(path, 'w', encoding='utf-8') as f:
             json.dump(obj, f)
-    except Exception as e:
+    except (OSError, TypeError, ValueError, UnicodeEncodeError) as e:
         # no queremos que falle el juego por un save fallido
         print("No se pudo salvar:", e)
 
@@ -55,7 +55,7 @@ class Logger:
         self.console_enabled = True
         self.file_enabled = True
         self.min_console_level = LogLevel.INFO  # Solo INFO y superiores en consola
-        self.min_file_level = LogLevel.DEBUG    # Todo en archivo
+        self.min_file_level = LogLevel.DEBUG    # Todos los niveles en archivo
         
         # Crear directorio si no existe
         os.makedirs(os.path.dirname(self.log_file), exist_ok=True)
@@ -108,7 +108,7 @@ class Logger:
             
             with open(self.log_file, "a", encoding="utf-8", errors="replace") as f:
                 f.write(header)
-        except Exception:
+        except (OSError, UnicodeEncodeError):
             pass  # No fallar si no se puede escribir
     
     def _should_log_to_console(self, level):
@@ -175,7 +175,7 @@ class Logger:
                     sanitized_msg = self._sanitize_for_file(formatted_msg)
                     with open(self.log_file, "a", encoding="utf-8", errors="replace") as f:
                         f.write(sanitized_msg + "\n")
-                except Exception:
+                except (OSError, UnicodeEncodeError):
                     pass  # No fallar si no se puede escribir
     
     def debug(self, message, module=None):
@@ -235,18 +235,23 @@ class Logger:
             
             with open(self.log_file, "a", encoding="utf-8", errors="replace") as f:
                 f.write(footer)
-        except Exception:
+        except (OSError, UnicodeEncodeError):
             pass
 
-# Instancia global del logger
-_logger_instance = None
+class _LoggerSingleton:
+    """Singleton para manejar la instancia global del logger"""
+    _instance = None
+    
+    @classmethod
+    def get_instance(cls):
+        """Obtiene la instancia única del logger"""
+        if cls._instance is None:
+            cls._instance = Logger()
+        return cls._instance
 
 def get_logger():
     """Obtiene la instancia global del logger"""
-    global _logger_instance
-    if _logger_instance is None:
-        _logger_instance = Logger()
-    return _logger_instance
+    return _LoggerSingleton.get_instance()
 
 # Funciones de conveniencia para logging
 def log_debug(message, module=None):
@@ -291,5 +296,6 @@ def log_user_action(action):
 
 def close_logging_session():
     """Cierra la sesión de logging"""
-    if _logger_instance:
-        _logger_instance.close_session()
+    instance = _LoggerSingleton.get_instance()
+    if instance:
+        instance.close_session()
