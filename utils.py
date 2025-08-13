@@ -37,7 +37,6 @@ def save_json(path, obj):
         print("No se pudo salvar:", e)
 
 # ===== SISTEMA DE LOGGING =====
-_logger_instance = None  # or your intended value
 
 class LogLevel(Enum):
     """Niveles de logging"""
