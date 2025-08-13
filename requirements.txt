@@ -10,13 +10,3 @@ pyflakes==3.4.0
 pygame==2.6.1
 pylint==3.3.8
 tomlkit==0.13.3
-os
-sys
-math
-random
-time
-json
-datetime
-threading
-enum
-shutil
