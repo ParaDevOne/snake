@@ -1,9 +1,9 @@
 # visual_effects.py
 # Módulo de efectos visuales avanzados para Snake
-import pygame
 import math
 import random
 import time
+import pygame
 import settings
 
 class ParticleSystem:
