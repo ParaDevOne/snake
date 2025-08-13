@@ -1,11 +1,11 @@
 # utils.py
-import random
-import settings
 import json
 import os
 import datetime
 import threading
 from enum import Enum
+import random
+import settings
 
 def random_free_cell(occupied, extra_forbidden=None):
     occupied_set = set(occupied)
