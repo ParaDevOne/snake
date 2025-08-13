@@ -90,6 +90,18 @@ Desarrollado por ParaDevOne.
   - Mejora en la legibilidad del código.
   - Ajustes en la lógica para evitar posibles errores en tiempo de ejecución.
 
+- **v1.4.0: Release de estabilidad y optimización.** 🚀
+  - Consolidación de todas las correcciones de bugs anteriores.
+  - Optimización general del rendimiento.
+  - Mejora en la gestión de memoria.
+  - Corrección de problemas de interpolación y colisiones.
+  - Estabilización del sistema de partículas.
+  - Mejora en el sistema de logging.
+  - Actualización del sistema de perfiles.
+  - Corrección de fugas de memoria menores.
+  - Mejora en la precisión de las colisiones.
+  - Optimización de las animaciones y efectos visuales.
+
 ## Características Gráficas Nuevas 🎨
 
 ### Efectos Visuales Avanzados:
