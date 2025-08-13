@@ -61,7 +61,7 @@ PARTICLE_SPEED = 0.9         # multiplicador
 PARTICLE_LIFE_MS = 700       # ms de duración
 
 # ===== Temas / Colores (centralizados) =====
-# Paleta principal
+# Paleta principal mejorada
 PALETTE = {
     "bg_top": (8, 12, 28),
     "bg_bottom": (18, 24, 48),
@@ -71,7 +71,23 @@ PALETTE = {
     "snake_body_b": (34, 139, 34),
     "food": (255, 100, 90),
     "powerup": (80, 160, 255),
-    "particle": (255, 200, 80)
+    "particle": (255, 200, 80),
+    "shadow": (0, 0, 0, 80),
+    "glow": (255, 255, 255, 40),
+    "trail": (100, 255, 150, 60)
+}
+
+# Configuración de efectos visuales
+VISUAL_EFFECTS = {
+    "enable_particles": True,
+    "enable_screen_shake": True,
+    "enable_flash_effects": True,
+    "enable_smooth_movement": True,
+    "enable_glow_effects": True,
+    "enable_shadows": True,
+    "particle_density": 1.0,  # Multiplicador para cantidad de partículas
+    "animation_speed": 1.0,   # Multiplicador para velocidad de animaciones
+    "glow_intensity": 0.8     # Intensidad de efectos de brillo (0.0 - 1.0)
 }
 
 # Colores específicos para el menú / UI (puedes editarlos aquí)
