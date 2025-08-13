@@ -15,6 +15,7 @@ class GameLogic:
         self.reset()
 
     def reset(self):
+        utils.log_game_event("Reiniciando juego")
         mid = (settings.COLUMNS // 2, settings.ROWS // 2)
         init = [mid, (mid[0]-1, mid[1]), (mid[0]-2, mid[1])]
         self.snake = Snake(init)
@@ -112,11 +113,13 @@ class GameLogic:
             self.snake.grow(1)
             if self.move_delay > settings.MIN_MOVE_DELAY:
                 self.move_delay = max(settings.MIN_MOVE_DELAY, self.move_delay - settings.SPEED_STEP)
+            utils.log_game_event("Comida consumida", f"Puntos: {self.score}, Nueva velocidad: {self.move_delay}ms")
             self.food.respawn(self.snake.body + self.obstacles)
             events["ate_food"] = True
             self.spawn_power_if_needed()
 
         if self.powerup and self.powerup.pos and self.snake.head() == self.powerup.pos:
+            utils.log_game_event("Powerup recogido", f"Tipo: {self.powerup.type}")
             self.apply_powerup(self.powerup.type)
             events["picked_powerup"] = self.powerup.type
             self.powerup = None
@@ -128,11 +131,18 @@ class GameLogic:
         if not hasattr(self, "profile"):
             self.profile = profiles.load_profile(self.profile_name) if profiles.profile_exists(self.profile_name) else {"name": self.profile_name}
         prev_high = self.profile.get("highscore", 0)
-        if self.score > prev_high:
+        
+        is_new_record = self.score > prev_high
+        if is_new_record:
             self.profile["highscore"] = self.score
             self.highscore = self.score
+            utils.log_game_event("¡NUEVO RECORD!", f"Puntuación final: {self.score} (anterior: {prev_high})")
+        else:
+            utils.log_game_event("Fin del juego", f"Puntuación: {self.score}, Record: {prev_high}")
+            
         self.profile["last_score"] = self.score
         self.profile["play_count"] = self.profile.get("play_count", 0) + 1
+        utils.log_info(f"Partidas jugadas: {self.profile['play_count']}")
         profiles.save_profile(self.profile_name, self.profile)
 
     def update(self):
