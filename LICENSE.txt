@@ -1,0 +1,46 @@
+SIMPLIFIED OPEN LICENSE (SOL)
+Version 1.0, June 2025
+
+Copyright (c) 2025 [ParaDevOne]
+
+TERMS AND CONDITIONS
+
+1. DEFINITIONS
+   "The Software" refers to the Snake game and all source code,
+   documentation, files, and resources distributed with this document.
+   "The Author" refers to the copyright holder listed above.
+   "User" refers to any individual or entity that uses, copies,
+   modifies, or distributes the Software.
+
+2. GRANT OF RIGHTS
+   Permission is granted, free of charge, to any User to:
+   - Use the Software without restrictions
+   - Copy and distribute the Software
+   - Modify the Software and distribute modified versions
+   - Use the Software for commercial purposes
+
+3. CONDITIONS
+   a) ATTRIBUTION: Any distribution of the Software, whether in its
+      original or modified form, must retain this license notice clearly
+      visible and give credit to the original Author, either in
+      documentation, the user interface, or promotional materials.
+
+   b) DISCLAIMER: The User acknowledges that the Software is provided
+      "AS IS", without warranties of any kind. The Author shall not be
+      liable for any direct, indirect, incidental, or consequential
+      damages resulting from the use of the Software.
+
+4. COMPATIBILITY
+   This license is compatible with the use of the Software in projects
+   that employ more restrictive licenses in other parts, provided the
+   attribution requirements in Section 3(a) are met.
+
+5. TERMINATION
+   This license will automatically terminate if the User breaches any
+   of its terms and conditions.
+
+---
+
+The spirit of this license is to protect attribution to the original
+Author while allowing maximum freedom to use, modify, and distribute
+the Software without requiring derivative works to be open source.
