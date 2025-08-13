@@ -41,3 +41,17 @@ Puedes modificar `settings.py` para cambiar la configuración del juego.
 ## Créditos
 
 Desarrollado por ParaDevOne.
+
+## Versiones
+
+- v1.0.0: Versión inicial del juego clásico Snake.
+- v1.1.0: Mejoras en la gestión de perfiles y almacenamiento de puntajes.
+- v1.2.0: Corrección de bugs y optimización de rendimiento.
+
+## Futuras mejoras
+
+- Añadir niveles de dificultad.
+- Implementar modo multijugador local.
+- Agregar efectos de sonido y música.
+- Crear una interfaz gráfica mejorada.
+- Guardar y cargar partidas.
