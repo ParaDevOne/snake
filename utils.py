@@ -11,9 +11,9 @@ def random_free_cell(occupied, extra_forbidden=None):
     occupied_set = set(occupied)
     extra = set(extra_forbidden or [])
     free = [ (x, y)
-             for x in range(settings.COLUMNS)
-             for y in range(settings.ROWS)
-             if (x, y) not in occupied_set and (x, y) not in extra ]
+            for x in range(settings.COLUMNS)
+            for y in range(settings.ROWS)
+            if (x, y) not in occupied_set and (x, y) not in extra ]
     return random.choice(free) if free else None
 
 def load_json(path, default):
