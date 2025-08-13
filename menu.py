@@ -1,7 +1,7 @@
 # menu.py -- Menú mejorado con efectos visuales avanzados
 # pylint: disable=no-member  # Desactivar warnings para atributos pygame dinámicos
-import pygame
 import sys
+import pygame
 import settings
 import profiles
 import utils
@@ -122,7 +122,7 @@ class InputOverlay:
 def run():
     utils.log_info("Iniciando sistema de menús")
     utils.log_system_info(f"Resolución: {WIDTH}x{HEIGHT}")
-    
+
     # ensure default profile exists
     if not profiles.list_profiles():
         utils.log_info("Creando perfil por defecto")
