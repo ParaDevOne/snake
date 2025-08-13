@@ -12,7 +12,6 @@ Este proyecto es una implementación del clásico juego de la serpiente en Pytho
 - `settings.py`: Configuración del juego.
 - `profiles.py`: Gestión de perfiles de usuario.
 - `utils.py`: Utilidades generales.
-- `Data/score/highscore.json`: Almacena el puntaje más alto.
 
 ## Requisitos
 
