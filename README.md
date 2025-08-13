@@ -44,14 +44,48 @@ Desarrollado por ParaDevOne.
 
 ## Versiones
 
-- v1.0.0: Versión inicial del juego clásico Snake.
-- v1.1.0: Mejoras en la gestión de perfiles y almacenamiento de puntajes.
-- v1.2.0: Corrección de bugs y optimización de rendimiento.
+- **v1.0.0: Versión inicial del juego clásico Snake.**
+- **v1.1.0: Mejoras en la gestión de perfiles y almacenamiento de puntajes.**
+- **v1.2.0: Corrección de bugs y optimización de rendimiento.**
+- **v1.3.0: MEJORAS GRÁFICAS AVANZADAS** ✨
+  - Sistema completo de efectos visuales con partículas
+  - Animaciones suaves e interpolación de movimientos
+  - Efectos de screen shake y flash para mayor impacto
+  - Serpiente con gradientes, sombras y ojos animados
+  - Comida y powerups con efectos de brillo y animaciones
+  - Fondo mejorado con gradientes y grid sutil
+  - Interfaz de usuario moderna con sombras y efectos
+- **v1.3.1: CORRECCIÓN DE BUGS** 🐛
+  - Arreglado: Rectángulos negros en segmentos de la serpiente
+  - Arreglado: Problemas de interpolación con wrap-around
+  - Arreglado: Problemas menores con colores alpha en efectos
+
+## Características Gráficas Nuevas 🎨
+
+### Efectos Visuales Avanzados:
+- **Sistema de partículas** para explosiones y efectos de rastro
+- **Screen shake** en colisiones para mayor impacto
+- **Efectos de flash** sincronizados con eventos del juego
+- **Animaciones suaves** con interpolación cúbica
+- **Gradientes dinámicos** en todos los elementos del juego
+
+### Elementos Mejorados:
+- 🐍 **Serpiente**: Gradientes, sombras, ojos animados, escala pulsante
+- 🍎 **Comida**: Animación pulsante continua con efectos de brillo
+- ⚡ **Powerups**: Formas únicas que rotan (triángulos, hexágonos, estrellas)
+- 🎨 **Fondo**: Gradiente vertical con grid sutil y obstáculos volumétricos
+- 💫 **Partículas**: Explosiones reactivas al comer y recoger items
+
+### Demo de Efectos:
+Ejecuta `python demo_visual_effects.py` para una demostración interactiva de todos los efectos.
 
 ## Futuras mejoras
 
 - Añadir niveles de dificultad.
 - Implementar modo multijugador local.
 - Agregar efectos de sonido y música.
-- Crear una interfaz gráfica mejorada.
+- ~~Crear una interfaz gráfica mejorada.~~ ✅ **COMPLETADO en v1.3.0**
 - Guardar y cargar partidas.
+- Temas visuales adicionales y personalización avanzada.
+- Poner más logs en consola y en la carpeta Data en un logs.txt
+- Bugs
