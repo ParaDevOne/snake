@@ -1,7 +1,12 @@
 # main.py
 # Punto de entrada único: intenta usar menu.py (pygame). Si no está, cae al modo directo.
+# pylint: disable=no-member  # Desactivar warnings para atributos pygame dinámicos
 import sys
 import utils
+try:
+    import pygame
+except ImportError:
+    pygame = None  # pygame no disponible
 
 def run():
     # Inicializar logging
@@ -19,13 +24,15 @@ def run():
         else:
             utils.log_warning("menu.py encontrado pero no tiene 'run()'. Arrancando game directo...")
             raise ImportError("menu.run missing")
-    except Exception:
+    except (ImportError, ModuleNotFoundError, AttributeError):
         # fallback: intentar iniciar game directamente (por compatibilidad)
+        if pygame is None:
+            print("No se pudo arrancar el menú ni el juego directamente. Error: pygame no disponible")
+            sys.exit(1)
         try:
-            import pygame
             from game import Game, MOVE_EVENT
             import settings
-        except Exception as e2:
+        except (ImportError, ModuleNotFoundError) as e2:
             print("No se pudo arrancar el menú ni el juego directamente. Error:", e2)
             sys.exit(1)
 
@@ -82,7 +89,16 @@ if __name__ == "__main__":
         utils.log_info("Juego interrumpido por el usuario (Ctrl+C)")
         utils.close_logging_session()
         sys.exit(0)
-    except Exception as e:
-        utils.log_critical(f"Error crítico no manejado: {e}")
+    except (ImportError, ModuleNotFoundError, OSError, RuntimeError) as e:
+        # Manejar errores críticos específicos
+        error_type = type(e).__name__
+        if isinstance(e, (ImportError, ModuleNotFoundError)):
+            utils.log_critical(f"Error de módulo: {e}")
+        elif isinstance(e, OSError):
+            utils.log_critical(f"Error de sistema/archivo: {e}")
+        elif isinstance(e, RuntimeError):
+            utils.log_critical(f"Error de ejecución: {e}")
+        else:
+            utils.log_critical(f"Error crítico ({error_type}): {e}")
         utils.close_logging_session()
         sys.exit(1)
