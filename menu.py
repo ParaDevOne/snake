@@ -1,9 +1,13 @@
-# menu.py -- Menú en pygame corregido (título/subtítulo centrados, botones no se solapan, Opciones presente)
+# menu.py -- Menú mejorado con efectos visuales avanzados
 import pygame
 import sys
+import math
+import time
 import settings
 import profiles
+import utils
 from game import Game, MOVE_EVENT
+from visual_effects import VisualEffects
 
 pygame.init()
 pygame.font.init()
@@ -123,8 +127,12 @@ class InputOverlay:
 
 # ----- run() -----
 def run():
+    utils.log_info("Iniciando sistema de menús")
+    utils.log_system_info(f"Resolución: {WIDTH}x{HEIGHT}")
+    
     # ensure default profile exists
     if not profiles.list_profiles():
+        utils.log_info("Creando perfil por defecto")
         profiles.create_profile(settings.DEFAULT_PROFILE)
 
     state = STATE_MAIN
@@ -212,14 +220,17 @@ def run():
                         selected_main = (selected_main + 1) % len(main_items)
                     elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
                         if selected_main == 0:
+                            utils.log_user_action("Navegó a sección JUGAR")
                             state = STATE_PLAY
                             profile_list = profiles.list_profiles()
                             play_profile_idx = min(play_profile_idx, max(0, len(profile_list)-1))
                         elif selected_main == 1:
+                            utils.log_user_action("Navegó a sección PERFILES")
                             state = STATE_PROFILES
                             profile_list = profiles.list_profiles()
                             prof_selected = min(prof_selected, max(0, len(profile_list)-1))
                         elif selected_main == 2:
+                            utils.log_user_action("Navegó a sección OPCIONES")
                             state = STATE_OPTIONS
                     elif event.key == pygame.K_q:
                         pygame.quit()
@@ -259,6 +270,8 @@ def run():
                             profiles.create_profile(settings.DEFAULT_PROFILE)
                             profile_list = profiles.list_profiles()
                         profile_name = profile_list[play_profile_idx]
+                        utils.log_game_event("Iniciando nueva partida", f"Perfil: {profile_name}")
+                        utils.log_info(f"Configuraciones - Wrap: {opt_wrap}, Obstáculos: {opt_obs}, Velocidad: {opt_speed}ms")
                         game = Game(SCREEN)
                         try:
                             game.logic.set_profile(profile_name)
