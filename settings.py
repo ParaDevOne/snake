@@ -45,18 +45,6 @@ POWERUP_COLORS = {
 
 FONT_NAME = None  # usa fuente por defecto
 
-# ===== Paleta y animaciones =====
-PALETTE = {
-    "bg_top": (8, 12, 28),
-    "bg_bottom": (18, 24, 48),
-    "grid": (24, 28, 40),
-    "snake_head": (144, 238, 144),
-    "snake_body_a": (46, 139, 87),
-    "snake_body_b": (34, 139, 34),
-    "food": (255, 100, 90),
-    "powerup": (80, 160, 255),
-    "particle": (255, 200, 80)
-}
 
 # Animaciones
 FOOD_PULSE_FREQ = 6.0        # Hz (veces por segundo de pulso)
@@ -71,3 +59,39 @@ BODY_SHIMMER_PHASE = 0.45    # desfase entre segmentos (en radianes)
 PARTICLE_COUNT = 14
 PARTICLE_SPEED = 0.9         # multiplicador
 PARTICLE_LIFE_MS = 700       # ms de duración
+
+# ===== Temas / Colores (centralizados) =====
+# Paleta principal
+PALETTE = {
+    "bg_top": (8, 12, 28),
+    "bg_bottom": (18, 24, 48),
+    "grid": (24, 28, 40),
+    "snake_head": (144, 238, 144),
+    "snake_body_a": (46, 139, 87),
+    "snake_body_b": (34, 139, 34),
+    "food": (255, 100, 90),
+    "powerup": (80, 160, 255),
+    "particle": (255, 200, 80)
+}
+
+# Colores específicos para el menú / UI (puedes editarlos aquí)
+MENU_COLORS = {
+    "bg": (18, 22, 30),         # fondo del menú
+    "panel": (30, 30, 40),      # fondo de botones/rectángulos
+    "panel_border": (70, 70, 80), # borde de paneles
+    "text": (245, 245, 245),    # texto principal
+    "muted": (160, 160, 160),   # texto secundario
+    "accent": (80, 160, 255),   # color acción / resaltado
+    "bad": (220, 80, 80),       # color de error / alerta
+    "ok": (120, 200, 120),      # color positivo
+    "overlay": (10, 10, 10, 160), # overlay con alpha para modales (r,g,b,a)
+}
+
+# Opcional: alias antiguos para compatibilidad (si algo del código usa WHITE/GRAY/DARK...)
+WHITE = MENU_COLORS["text"]
+GRAY = MENU_COLORS["muted"]
+DARK = MENU_COLORS["bg"]
+ACCENT = MENU_COLORS["accent"]
+BAD = MENU_COLORS["bad"]
+OK = MENU_COLORS["ok"]
+OVERLAY = MENU_COLORS["overlay"]
