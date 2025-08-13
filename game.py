@@ -1,8 +1,8 @@
 # game.py (renderer mejorado para pygame con efectos visuales avanzados)
-import pygame
 import math
 import time
 import random
+import pygame
 import settings
 from logic import GameLogic
 from visual_effects import VisualEffects
