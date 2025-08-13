@@ -64,9 +64,12 @@ profiler-results/
 
 # VS Code
 .vscode/
+.idea/
 
 # Data and scores
 Data/score/highscore.json
+Data/profiles/*
+Data/profiles/
 
 # System files
 Thumbs.db
