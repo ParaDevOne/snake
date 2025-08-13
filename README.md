@@ -45,13 +45,17 @@ Desarrollado por ParaDevOne.
 ## Versiones
 
 - **v1.0.0: Versión inicial del juego clásico Snake.**
+
   - Implementación básica del juego.
   - Movimiento de la serpiente y detección de colisiones.
   - Generación de comida y aumento de tamaño de la serpiente.
+
 - **v1.1.0: Mejoras en la gestión de perfiles y almacenamiento de puntajes.**
+
   - Sistema de perfiles de usuario.
   - Almacenamiento persistente del puntaje más alto.
   - Correcciones menores de bugs.
+
 - **v1.2.0: Corrección de bugs y optimización de rendimiento.**
   - Optimización del motor de colisiones.
   - Reducción del uso de memoria.
@@ -67,15 +71,24 @@ Desarrollado por ParaDevOne.
   - Interfaz de usuario moderna con sombras y efectos.
 
 - **v1.3.1: Corrección de bugs.** 🐛
+
   - Arreglado: Rectángulos negros en segmentos de la serpiente.
   - Arreglado: Problemas de interpolación con wrap-around.
   - Arreglado: Problemas menores con colores alpha en efectos.
+
 - **v1.3.2: Sistema de logging completo.** 📝
+
   - Sistema completo de logging en consola y archivo (`Data/logs.txt`).
   - Logs automáticos de eventos del juego con timestamps.
   - Diferentes niveles de logging (DEBUG, INFO, WARNING, ERROR, CRITICAL).
   - Logs con colores en consola para mejor legibilidad.
   - Registro de estadísticas de juego y acciones del usuario.
+
+- **v1.3.3: Corrección de bugs detectados por pylint.** 🛠️
+  - Eliminación de variables no utilizadas.
+  - Corrección de errores de estilo y convenciones de nombres.
+  - Mejora en la legibilidad del código.
+  - Ajustes en la lógica para evitar posibles errores en tiempo de ejecución.
 
 ## Características Gráficas Nuevas 🎨
 
@@ -104,3 +117,7 @@ Desarrollado por ParaDevOne.
 - Más opciones en opciones.
 - Mejorar el sistema de logging con métricas avanzadas.
 - Soporte para más idiomas.
+
+## Licencia
+
+Este proyecto está licenciado bajo la **Simplified Open License (SOL)**, versión 1.0. Para más detalles, consulta el archivo `LICENSE.txt` incluido en este repositorio.
