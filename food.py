@@ -1,6 +1,6 @@
 # food.py
-import utils
 import random
+import utils
 
 class Food:
     def __init__(self, occupied, obstacles=None):
