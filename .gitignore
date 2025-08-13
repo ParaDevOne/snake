@@ -67,10 +67,10 @@ profiler-results/
 .idea/
 
 # Data and scores
-Data/score/highscore.json
+Data/score/*
 Data/profiles/*
-*Data/profiles/
-*Data/logs.txt
+Data/profiles/
+Data/logs.txt
 
 # System files
 Thumbs.db
