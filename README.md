@@ -59,6 +59,12 @@ Desarrollado por ParaDevOne.
   - Arreglado: Rectángulos negros en segmentos de la serpiente
   - Arreglado: Problemas de interpolación con wrap-around
   - Arreglado: Problemas menores con colores alpha en efectos
+- **v1.3.2: SISTEMA DE LOGGING COMPLETO** 📝
+  - Sistema completo de logging en consola y archivo (`Data/logs.txt`)
+  - Logs automáticos de eventos del juego con timestamps
+  - Diferentes niveles de logging (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+  - Logs con colores en consola para mejor legibilidad
+  - Registro de estadísticas de juego y acciones del usuario
 
 ## Características Gráficas Nuevas 🎨
 
