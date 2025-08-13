@@ -12,6 +12,23 @@ class GameLogic:
         # profile_name: si None -> settings.DEFAULT_PROFILE
         self.profile_name = profile_name or settings.DEFAULT_PROFILE
         self.load_highscore_flag = load_highscore
+        
+        # Inicializar todos los atributos de instancia
+        self.snake = None
+        self.obstacles = []
+        self.food = None
+        self.powerup = None
+        self.score = 0
+        self.move_delay = settings.INIT_MOVE_DELAY
+        self.game_over = False
+        self.paused = False
+        self.active_power = None
+        self.power_end_time_ms = 0
+        self.prev_snake = []
+        self.last_move_start_ms = 0
+        self.profile = {}
+        self.highscore = 0
+        
         self.reset()
 
     def reset(self):
