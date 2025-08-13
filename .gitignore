@@ -68,6 +68,7 @@ profiler-results/
 
 # Data and scores
 Data/score/*
+Data/score/
 Data/profiles/*
 Data/profiles/
 Data/logs.txt
