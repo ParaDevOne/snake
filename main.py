@@ -1,16 +1,23 @@
 # main.py
 # Punto de entrada único: intenta usar menu.py (pygame). Si no está, cae al modo directo.
 import sys
+import utils
 
 def run():
+    # Inicializar logging
+    utils.log_system_info("Iniciando Snake Game")
+    utils.log_system_info(f"Python version: {sys.version}")
+    
     try:
         # preferimos el menú en pygame
+        utils.log_debug("Intentando cargar menu.py", "MAIN")
         import menu
         if hasattr(menu, "run"):
+            utils.log_info("Iniciando juego con menú principal")
             menu.run()
             return
         else:
-            print("menu.py encontrado pero no tiene 'run()'. Arrancando game directo...")
+            utils.log_warning("menu.py encontrado pero no tiene 'run()'. Arrancando game directo...")
             raise ImportError("menu.run missing")
     except Exception:
         # fallback: intentar iniciar game directamente (por compatibilidad)
@@ -64,7 +71,18 @@ def run():
             clock.tick(60)
 
         pygame.quit()
+        utils.log_info("Juego terminado por el usuario")
+        utils.close_logging_session()
         sys.exit(0)
 
 if __name__ == "__main__":
-    run()
+    try:
+        run()
+    except KeyboardInterrupt:
+        utils.log_info("Juego interrumpido por el usuario (Ctrl+C)")
+        utils.close_logging_session()
+        sys.exit(0)
+    except Exception as e:
+        utils.log_critical(f"Error crítico no manejado: {e}")
+        utils.close_logging_session()
+        sys.exit(1)
