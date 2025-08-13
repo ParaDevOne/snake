@@ -1,13 +1,11 @@
 # menu.py -- Menú mejorado con efectos visuales avanzados
+# pylint: disable=no-member  # Desactivar warnings para atributos pygame dinámicos
 import pygame
 import sys
-import math
-import time
 import settings
 import profiles
 import utils
 from game import Game, MOVE_EVENT
-from visual_effects import VisualEffects
 
 pygame.init()
 pygame.font.init()
@@ -53,11 +51,6 @@ def draw_text(surface, text, font, color, pos):
     surf = font.render(text, True, color)
     surface.blit(surf, pos)
     return surf.get_rect(topleft=pos)
-
-def center_blit(surface, surf_to_blit, center):
-    r = surf_to_blit.get_rect(center=center)
-    surface.blit(surf_to_blit, r.topleft)
-    return r
 
 def center_rect(w, h, x_off=0, y_off=0):
     return pygame.Rect((WIDTH - w) // 2 + x_off, (HEIGHT - h) // 2 + y_off, w, h)
@@ -114,7 +107,7 @@ class InputOverlay:
         return False
 
     def render(self, surf):
-        overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)  # pylint: disable=no-member
+        overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         overlay.fill(OVERLAY)
         surf.blit(overlay, (0,0))
         box = center_rect(620, 160)
@@ -188,7 +181,7 @@ def run():
 
             # overlay input captures events first
             if input_overlay and input_overlay.active:
-                consumed = input_overlay.handle_event(event)
+                input_overlay.handle_event(event)
                 # when overlay finishes we will handle result below in context
                 if not input_overlay.active:
                     res = input_overlay.result
@@ -275,10 +268,10 @@ def run():
                         game = Game(SCREEN)
                         try:
                             game.logic.set_profile(profile_name)
-                        except Exception:
+                        except (AttributeError, OSError):
                             try:
                                 game.logic.profile_name = profile_name
-                            except Exception:
+                            except AttributeError:
                                 pass
                         pygame.time.set_timer(MOVE_EVENT, game.logic.move_delay)
                         state = STATE_GAME
@@ -419,10 +412,10 @@ def run():
                     game = Game(SCREEN)
                     try:
                         game.logic.set_profile(profile_name)
-                    except Exception:
+                    except (AttributeError, OSError):
                         try:
                             game.logic.profile_name = profile_name
-                        except Exception:
+                        except AttributeError:
                             pass
                     pygame.time.set_timer(MOVE_EVENT, game.logic.move_delay)
                     state = STATE_GAME
