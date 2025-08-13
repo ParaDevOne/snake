@@ -63,14 +63,50 @@ class Logger:
         # Inicializar archivo de log con header de sesión
         self._write_session_header()
     
+    def _sanitize_for_file(self, text):
+        """Remueve o reemplaza caracteres problemáticos para archivo"""
+        # Mapeo de emojis a texto
+        emoji_map = {
+            '🎮': '[GAME]',
+            '⚡': '[PERF]',
+            '✨': '[VFX]',
+            '🖥️': '[SYS]',
+            '👤': '[USER]',
+            '🐍': '[SNAKE]',
+            '📅': '[DATE]'
+        }
+        
+        result = text
+        for emoji, replacement in emoji_map.items():
+            result = result.replace(emoji, replacement)
+        
+        # Mapeo de caracteres especiales españoles
+        special_chars = {
+            'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u',
+            'Á': 'A', 'É': 'E', 'Í': 'I', 'Ó': 'O', 'Ú': 'U',
+            'ñ': 'n', 'Ñ': 'N', 'ü': 'u', 'Ü': 'U'
+        }
+        
+        for char, replacement in special_chars.items():
+            result = result.replace(char, replacement)
+        
+        # Solo remover caracteres realmente problemáticos (no ASCII)
+        try:
+            # Intentar codificar como latin-1 (más permisivo que ASCII)
+            result.encode('latin-1')
+            return result
+        except UnicodeEncodeError:
+            # Solo si falla, usar ASCII con reemplazos
+            return result.encode('ascii', errors='replace').decode('ascii')
+    
     def _write_session_header(self):
         """Escribe header de nueva sesión en el archivo de log"""
         try:
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             separator = "=" * 60
-            header = f"\n{separator}\n🐍 SNAKE GAME - NUEVA SESIÓN INICIADA\n📅 {timestamp}\n{separator}\n"
+            header = f"\n{separator}\nSNAKE GAME - NUEVA SESION INICIADA\nFecha: {timestamp}\n{separator}\n"
             
-            with open(self.log_file, "a", encoding="utf-8") as f:
+            with open(self.log_file, "a", encoding="utf-8", errors="replace") as f:
                 f.write(header)
         except Exception:
             pass  # No fallar si no se puede escribir
@@ -133,11 +169,12 @@ class Logger:
                 reset = "\033[0m"
                 print(f"{color}{formatted_msg}{reset}")
             
-            # Log a archivo
+            # Log a archivo (con sanitización)
             if self._should_log_to_file(level):
                 try:
-                    with open(self.log_file, "a", encoding="utf-8") as f:
-                        f.write(formatted_msg + "\n")
+                    sanitized_msg = self._sanitize_for_file(formatted_msg)
+                    with open(self.log_file, "a", encoding="utf-8", errors="replace") as f:
+                        f.write(sanitized_msg + "\n")
                 except Exception:
                     pass  # No fallar si no se puede escribir
     
@@ -194,9 +231,9 @@ class Logger:
         """Cierra la sesión de logging"""
         try:
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            footer = f"\n📅 SESIÓN TERMINADA: {timestamp}\n{'='*60}\n"
+            footer = f"\nSESION TERMINADA: {timestamp}\n{'='*60}\n"
             
-            with open(self.log_file, "a", encoding="utf-8") as f:
+            with open(self.log_file, "a", encoding="utf-8", errors="replace") as f:
                 f.write(footer)
         except Exception:
             pass
