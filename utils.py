@@ -291,6 +291,5 @@ def log_user_action(action):
 
 def close_logging_session():
     """Cierra la sesión de logging"""
-    global _logger_instance
     if _logger_instance:
         _logger_instance.close_session()
