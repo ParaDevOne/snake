@@ -16,7 +16,7 @@ def random_free_cell(occupied, extra_forbidden=None):
 def load_json(path, default):
     try:
         if os.path.exists(path):
-            with open(path, 'r') as f:
+            with open(path, 'r', encoding='utf-8') as f:
                 return json.load(f)
     except Exception:
         pass
@@ -24,11 +24,11 @@ def load_json(path, default):
 
 def save_json(path, obj):
     try:
-        # asegurar que la carpeta existe
         folder = os.path.dirname(path)
         if folder:
             os.makedirs(folder, exist_ok=True)
         with open(path, 'w', encoding='utf-8') as f:
             json.dump(obj, f)
     except Exception as e:
+        # no queremos que falle el juego por un save fallido
         print("No se pudo salvar:", e)
