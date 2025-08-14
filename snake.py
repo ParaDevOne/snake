@@ -44,9 +44,3 @@ class Snake:
 
     def grow(self, n=1):
         self.grow_pending += n
-
-    def shrink(self, n=1):
-        # elimina n elementos del final (sin contar la cabeza)
-        for _ in range(n):
-            if len(self.body) > 1:
-                self.body.pop()

@@ -14,7 +14,6 @@ SPEED_STEP = 6  # cuánto reduce el delay al comer
 
 # Directorio de datos
 DATA_DIR = os.path.join("Data", "score")
-HIGH_SCORE_FILE = os.path.join(DATA_DIR, "highscore.json")
 
 # Directorio para perfiles
 PROFILES_DIR = os.path.join("Data", "profiles")   # guarda perfiles en Data/profiles/<profile_name>/
@@ -31,34 +30,7 @@ POWERUP_ENABLED = True
 POWERUP_CHANCE = 0.12  # probabilidad de que aparezca un powerup cuando aparece comida
 POWERUP_DURATION_MS = 7000
 
-# colores
-BG_COLOR = (10, 10, 10)
-SNAKE_HEAD = (140, 255, 140)
-SNAKE_BODY = (46, 139, 87)
-FOOD_COLOR = (255, 80, 80)
-POWERUP_COLORS = {
-    "slow": (80, 160, 255),
-    "speed": (255, 160, 80),
-    "grow": (200, 120, 255),
-    "score": (255, 230, 80)
-}
-
 FONT_NAME = None  # usa fuente por defecto
-
-
-# Animaciones
-FOOD_PULSE_FREQ = 6.0        # Hz (veces por segundo de pulso)
-FOOD_PULSE_AMPLITUDE = 0.18  # cuánto escala la comida (porcentaje)
-
-HEAD_BOB_FREQ = 4.0          # Hz
-HEAD_BOB_AMPL = 0.12         # escala de la cabeza por el 'bob'
-
-BODY_SHIMMER_FREQ = 2.5      # Hz
-BODY_SHIMMER_PHASE = 0.45    # desfase entre segmentos (en radianes)
-
-PARTICLE_COUNT = 14
-PARTICLE_SPEED = 0.9         # multiplicador
-PARTICLE_LIFE_MS = 700       # ms de duración
 
 # ===== Temas / Colores (centralizados) =====
 # Paleta principal mejorada
@@ -75,19 +47,6 @@ PALETTE = {
     "shadow": (0, 0, 0, 80),
     "glow": (255, 255, 255, 40),
     "trail": (100, 255, 150, 60)
-}
-
-# Configuración de efectos visuales
-VISUAL_EFFECTS = {
-    "enable_particles": True,
-    "enable_screen_shake": True,
-    "enable_flash_effects": True,
-    "enable_smooth_movement": True,
-    "enable_glow_effects": True,
-    "enable_shadows": True,
-    "particle_density": 1.0,  # Multiplicador para cantidad de partículas
-    "animation_speed": 1.0,   # Multiplicador para velocidad de animaciones
-    "glow_intensity": 0.8     # Intensidad de efectos de brillo (0.0 - 1.0)
 }
 
 # Colores específicos para el menú / UI (puedes editarlos aquí)
