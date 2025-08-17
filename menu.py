@@ -1,7 +1,10 @@
 # menu.py -- Menú mejorado con efectos visuales avanzados
 # pylint: disable=no-member  # Desactivar warnings para atributos pygame dinámicos
+import random
 import sys
+
 import pygame
+
 import profiles
 import settings
 import utils
@@ -23,13 +26,13 @@ UI_FONT = pygame.font.SysFont(None, 20)
 # colores desde settings (fallback si no están)
 _menu_colors = getattr(settings, "MENU_COLORS", None)
 if _menu_colors:
-    WHITE = _menu_colors.get("text", (245,245,245))
-    GRAY  = _menu_colors.get("muted", (160,160,160))
-    DARK  = _menu_colors.get("bg", (18,22,30))
-    ACCENT = _menu_colors.get("accent", (80,160,255))
-    BAD   = _menu_colors.get("bad", (220,80,80))
-    OK    = _menu_colors.get("ok", (120,200,120))
-    OVERLAY = _menu_colors.get("overlay", (10,10,10,160))
+    WHITE = _menu_colors.get("text", (245, 245, 245))
+    GRAY = _menu_colors.get("muted", (160, 160, 160))
+    DARK = _menu_colors.get("bg", (18, 22, 30))
+    ACCENT = _menu_colors.get("accent", (80, 160, 255))
+    BAD = _menu_colors.get("bad", (220, 80, 80))
+    OK = _menu_colors.get("ok", (120, 200, 120))
+    OVERLAY = _menu_colors.get("overlay", (10, 10, 10, 160))
 else:
     WHITE = (245, 245, 245)
     GRAY = (150, 150, 150)
@@ -73,7 +76,7 @@ class Button:
     def draw(self, surf, hover=False, selected=False):
         # Panel bg
         panel_col = (30, 30, 40)
-        border_col = (70,70,80)
+        border_col = (70, 70, 80)
         highlight_col = ACCENT if hover or selected else WHITE
         # Slightly darker when not hovered
         bg = panel_col
@@ -121,13 +124,13 @@ class InputOverlay:
     def render(self, surf):
         overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         overlay.fill(OVERLAY)
-        surf.blit(overlay, (0,0))
+        surf.blit(overlay, (0, 0))
         box = center_rect(620, 160)
-        pygame.draw.rect(surf, (24,24,32), box)
-        pygame.draw.rect(surf, (100,100,110), box, 2)
-        draw_text(surf, self.prompt, MENU_FONT, WHITE, (box.x+20, box.y+16))
-        draw_text(surf, self.text + "|", MENU_FONT, ACCENT, (box.x+20, box.y+70))
-        draw_text(surf, "Enter = confirmar   Esc = cancelar", UI_FONT, GRAY, (box.x+20, box.y+118))
+        pygame.draw.rect(surf, (24, 24, 32), box)
+        pygame.draw.rect(surf, (100, 100, 110), box, 2)
+        draw_text(surf, self.prompt, MENU_FONT, WHITE, (box.x + 20, box.y + 16))
+        draw_text(surf, self.text + "|", MENU_FONT, ACCENT, (box.x + 20, box.y + 70))
+        draw_text(surf, "Enter = confirmar   Esc = cancelar", UI_FONT, GRAY, (box.x + 20, box.y + 118))
 
 
 def apply_all_settings(
