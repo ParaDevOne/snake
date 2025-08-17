@@ -10,6 +10,9 @@ from visual_effects import VisualEffects
 MOVE_EVENT = pygame.USEREVENT + 1  # pylint: disable=no-member
 
 class Game:
+
+    """Main game class that handles the game loop and rendering."""
+
     def __init__(self, screen):
         self.screen = screen
         self.font = pygame.font.Font(settings.FONT_NAME, 20)
