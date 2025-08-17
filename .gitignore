@@ -28,6 +28,7 @@ var/
 # PyInstaller
 *.manifest
 *.spec
+SnakeGame.exe.spec
 
 # Installer logs
 pip-log.txt
@@ -78,3 +79,6 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 .DS_Store
+
+# Poetry
+poetry.lock
