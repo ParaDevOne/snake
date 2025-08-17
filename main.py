@@ -1,8 +1,13 @@
 # main.py
 # Punto de entrada único: intenta usar menu.py (pygame). Si no está, cae al modo directo.
 # pylint: disable=no-member  # Desactivar warnings para atributos pygame dinámicos
+
+# Configurar video antes de cualquier importación o inicialización de pygame
 import sys
 import utils
+import video_config
+video_config.configure_video_driver()
+
 try:
     import pygame
 except ImportError:
@@ -12,7 +17,7 @@ def run():
     # Inicializar logging
     utils.log_system_info("Iniciando Snake Game")
     utils.log_system_info(f"Python version: {sys.version}")
-    
+
     try:
         # preferimos el menú en pygame
         utils.log_debug("Intentando cargar menu.py", "MAIN")
@@ -22,12 +27,14 @@ def run():
             menu.run()
             return
         else:
-            utils.log_warning("menu.py encontrado pero no tiene 'run()'. Arrancando game directo...")
+            utils.log_warning("menu.py encontrado pero no tiene 'run()'." \
+            "Arrancando game directo...")
             raise ImportError("menu.run missing")
     except (ImportError, ModuleNotFoundError, AttributeError):
         # fallback: intentar iniciar game directamente (por compatibilidad)
         if pygame is None:
-            print("No se pudo arrancar el menú ni el juego directamente. Error: pygame no disponible")
+            print("No se pudo arrancar el menú ni el juego directamente." \
+            "Error: pygame no disponible")
             sys.exit(1)
         try:
             from game import Game, MOVE_EVENT
