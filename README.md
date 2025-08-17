@@ -4,8 +4,9 @@
 
 ![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
 ![Pygame](https://img.shields.io/badge/pygame-2.6.1-green)
-![License](https://img.shields.io/badge/license-SOL%201.0-orange)
+![License](https://img.shields.io/badge/license-SOL%202.0-orange)
 ![Status](https://img.shields.io/badge/status-stable-success)
+![Version](https://img.shields.io/badge/version-1.5.0-brightgreen)
 
 *Una implementación moderna del clásico juego Snake con efectos visuales profesionales, sistema de logging completo y soporte multiplataforma.*
 
@@ -47,11 +48,12 @@ snake/
 │   ├── test_video_config.py    # Pruebas de configuración de video
 │   ├── test_multiplatform.py   # Pruebas multiplataforma
 │   ├── setup.py                # Script de compilación PyInstaller
+│   ├── pyproject.toml          # Configuración del proyecto (Poetry/Build)
 │   └── requirements.txt        # Dependencias del proyecto
 │
 ├── 📚 Documentación
 │   ├── README.md              # Este archivo
-│   ├── LICENSE.txt            # Licencia SOL 1.0
+│   ├── LICENSE.txt            # Licencia SOL 2.0
 │   └── docs/                  # Documentación técnica
 │       ├── RESUMEN_FINAL.md   # Resumen de mejoras gráficas
 │       ├── MEJORAS_GRAFICAS.md # Detalles técnicos de efectos
@@ -137,17 +139,48 @@ python test_video_config.py
 python -m main
 ```
 
+### Instalación con Poetry (Recomendado)
+
+Si prefieres usar Poetry para un mejor manejo de dependencias:
+
+```bash
+# 1. Instalar Poetry (si no lo tienes)
+curl -sSL https://install.python-poetry.org | python3 -
+
+# 2. Clonar el repositorio
+git clone https://github.com/ParaDevOne/snake.git
+cd snake
+
+# 3. Instalar dependencias con Poetry
+poetry install
+
+# 4. Ejecutar el juego
+poetry run python -m main
+```
+
 ### Compilación a Ejecutable (Opcional)
 
 Para crear un ejecutable independiente:
 
+#### Con pip:
 ```bash
 # Instalar PyInstaller
 pip install pyinstaller
 
 # Ejecutar script de compilación
 python setup.py
+```
 
+#### Con Poetry:
+```bash
+# Añadir PyInstaller como dependencia de desarrollo
+poetry add --group dev pyinstaller
+
+# Ejecutar script de compilación
+poetry run python setup.py
+```
+
+```bash
 # El ejecutable estará en dist/main.exe (Windows) o dist/main (Linux/macOS)
 ```
 
@@ -301,6 +334,17 @@ Desarrollado por ParaDevOne.
   - Corrección de fugas de memoria menores.
   - Mejora en la precisión de las colisiones.
   - Optimización de las animaciones y efectos visuales.
+
+- **v1.5.0: Modernización del sistema de construcción y gestión de dependencias.** 🔧
+  - Licencia actualizada de SOL 1.0 a SOL 2.0 (más detallada y completa).
+  - Nuevo archivo `pyproject.toml` con soporte completo para Poetry.
+  - Mejoras en la gestión de dependencias del proyecto.
+  - Scripts de construcción optimizados y modernizados.
+  - Documentación de pruebas multiplataforma completadas y verificadas.
+  - Sistema de builds y distribución mejorado.
+  - Gestión diferenciada de dependencias de desarrollo y producción.
+  - Configuración de herramientas de desarrollo integrada (linting, formatting).
+  - Soporte para gestores de paquetes modernos (Poetry + pip).
 
 ## Características Gráficas Nuevas 🎨
 
@@ -751,15 +795,24 @@ Sí, usa el script `setup.py` con PyInstaller para crear ejecutables.
 ## 📋 Licencia
 
 ```
-Simplified Open License (SOL) v1.0
+Simplified Open License (SOL) v2.0
 Copyright (c) 2025 ParaDevOne
 
-• Uso libre para cualquier propósito
-• Modificación y distribución permitidas
-• Uso comercial permitido
-• Solo requiere atribución al autor original
+• Uso libre para cualquier propósito (personal, educativo, comercial)
+• Modificación y distribución permitidas con atribución
+• Uso comercial completamente permitido
+• Protección de marcas registradas del autor
+• Licencias de patentes otorgadas automáticamente
 • Sin garantía, uso bajo tu propia responsabilidad
+• Indemnización requerida por parte del usuario
 ```
+
+La nueva licencia SOL 2.0 incluye protecciones adicionales y clarificaciones sobre:
+- Atribución requerida en distribuciones
+- Protección de marcas comerciales
+- Licencias de patentes automáticas
+- Cláusulas de indemnización
+- Compatibilidad con proyectos de licencias más restrictivas
 
 Para más detalles, consulta el archivo [`LICENSE.txt`](LICENSE.txt) incluido en este repositorio.
 
