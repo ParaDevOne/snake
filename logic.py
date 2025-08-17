@@ -12,7 +12,7 @@ class GameLogic:
         # profile_name: si None -> settings.DEFAULT_PROFILE
         self.profile_name = profile_name or settings.DEFAULT_PROFILE
         self.load_highscore_flag = load_highscore
-        
+
         # Inicializar todos los atributos de instancia
         self.snake = None
         self.obstacles = []
@@ -28,7 +28,7 @@ class GameLogic:
         self.last_move_start_ms = 0
         self.profile = {}
         self.highscore = 0
-        
+
         self.reset()
 
     def reset(self):
@@ -148,7 +148,7 @@ class GameLogic:
         if not hasattr(self, "profile"):
             self.profile = profiles.load_profile(self.profile_name) if profiles.profile_exists(self.profile_name) else {"name": self.profile_name}
         prev_high = self.profile.get("highscore", 0)
-        
+
         is_new_record = self.score > prev_high
         if is_new_record:
             self.profile["highscore"] = self.score
@@ -156,7 +156,7 @@ class GameLogic:
             utils.log_game_event("¡NUEVO RECORD!", f"Puntuación final: {self.score} (anterior: {prev_high})")
         else:
             utils.log_game_event("Fin del juego", f"Puntuación: {self.score}, Record: {prev_high}")
-            
+
         self.profile["last_score"] = self.score
         self.profile["play_count"] = self.profile.get("play_count", 0) + 1
         utils.log_info(f"Partidas jugadas: {self.profile['play_count']}")
