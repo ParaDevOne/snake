@@ -41,6 +41,6 @@ TERMS AND CONDITIONS
 
 ---
 
-The spirit of this license is to protect attribution to the original
+The spirit of this license is to protect attribution to the original.
 Author while allowing maximum freedom to use, modify, and distribute
 the Software without requiring derivative works to be open source.
