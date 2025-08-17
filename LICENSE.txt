@@ -1,134 +1,170 @@
 SIMPLIFIED OPEN LICENSE (SOL)
-Version 2.0, August 2025
+Version 3.0, August 2025
 
 Copyright (c) 2025 [ParaDevOne]
 
-TERMS AND CONDITIONS
+================================================================================
 
-1. DEFINITIONS
-   "The Software" refers to the Snake game and all source code,
-   documentation, files, and resources distributed with this document.
+PREAMBLE
 
-   "The Author" refers to the copyright holder listed above.
+The Simplified Open License ensures that software remains accessible to all
+users while protecting the rights of original creators. This license grants
+comprehensive freedoms to use, study, modify, and distribute software while
+maintaining clear attribution requirements. The terms below establish a
+balanced framework that promotes innovation while respecting intellectual
+property rights.
 
-   "User" refers to any individual or entity that uses, copies,
-   modifies, or distributes the Software.
+================================================================================
 
-   "Modified Version" refers to any derivative work, adaptation,
-   or modification of the original Software.
+SECTION 1: FUNDAMENTAL DEFINITIONS
 
-   "Distribution" includes any method of making the Software available
-   to third parties, including but not limited to physical media,
-   electronic transmission, cloud hosting, or inclusion in other
-   software packages.
+1.1 License Scope
+    This License refers to version 3.0 of the Simplified Open License and
+    governs all use of the accompanying software.
 
-2. GRANT OF RIGHTS
-   Permission is granted, free of charge, to any User to:
-   - Use the Software without restrictions for any purpose
-   - Copy and distribute the Software in its original form
-   - Modify the Software and create derivative works
-   - Distribute Modified Versions under the terms of this license
-   - Use the Software for commercial purposes without royalty obligations
-   - Sublicense the Software to third parties under terms consistent
-     with this license
+1.2 Software Definition
+    "The Program" means any copyrightable work distributed under this License,
+    including source code, documentation, and associated materials.
 
-3. CONDITIONS
+1.3 User Categories
+    "Licensee" refers to any individual or organization exercising rights
+    under this License. "Contributor" means any party who modifies or
+    enhances the Program.
 
-   a) ATTRIBUTION REQUIREMENTS
-      Any distribution of the Software, whether in original or
-      Modified Version, must:
-      - Retain this complete license notice in a clearly visible location
-      - Include clear attribution to the original Author in one of
-        the following ways:
-        * Within the software's user interface or "About" section
-        * In accompanying documentation or README files
-        * In promotional materials or product descriptions
-      - Maintain any existing copyright notices and author credits
-      - Clearly indicate what changes were made if distributing
-        a Modified Version
+1.4 Distribution Activities
+    "Distribution" encompasses any method of making the Program available to
+    third parties, including electronic transmission, physical media, or
+    online hosting services.
 
-   b) PATENT CONSIDERATIONS
-      Users who distribute the Software grant back to all other users
-      a non-exclusive, royalty-free patent license to use any patent
-      claims that would be infringed by the Software as distributed
-      by that User.
+1.5 Modification Standards
+    "Modified Version" means any derivative work containing the original
+    Program or portions thereof, whether altered, enhanced, or translated.
 
-   c) TRADEMARK PROTECTION
-      This license does not grant permission to use the Author's name,
-      trademarks, service marks, or product names for endorsement or
-      promotional purposes without explicit written consent.
+================================================================================
 
-4. WARRANTIES AND LIABILITY
+SECTION 2: GRANTED PERMISSIONS
 
-   a) DISCLAIMER OF WARRANTIES
-      The Software is provided "AS IS" without warranties of any kind,
-      express or implied, including but not limited to warranties of
-      merchantability, fitness for a particular purpose, title, or
-      non-infringement. The Author makes no representation that the
-      Software will be error-free or suitable for any specific use case.
+2.1 Usage Rights
+    You may execute the Program for any purpose without restriction,
+    including commercial applications, research activities, and personal use.
 
-   b) LIMITATION OF LIABILITY
-      In no event shall the Author be liable for any direct, indirect,
-      incidental, special, exemplary, or consequential damages
-      (including but not limited to procurement of substitute goods
-      or services, loss of use, data, or profits, or business
-      interruption) however caused and on any theory of liability,
-      whether in contract, strict liability, or tort arising from
-      the use of the Software, even if advised of the possibility
-      of such damages.
+2.2 Distribution Rights
+    You may copy and distribute unmodified versions of the Program through
+    any medium, subject to the attribution requirements specified herein.
 
-   c) INDEMNIFICATION
-      Users agree to indemnify and hold harmless the Author from any
-      claims, damages, or expenses arising from their use, modification,
-      or distribution of the Software.
+2.3 Modification Rights
+    You may create derivative works based on the Program and distribute
+    these modifications under the terms of this License.
 
-5. COMPLIANCE AND COMPATIBILITY
-   This license is designed to be compatible with incorporation into
-   projects using more restrictive licenses, provided all attribution
-   requirements in Section 3(a) are fulfilled. Users must ensure
-   compliance with all applicable laws and regulations in their
-   jurisdiction when using or distributing the Software.
+2.4 Sublicensing Authority
+    You may grant sublicenses to third parties consistent with the terms
+    and conditions of this License.
 
-6. SUPPORT AND MAINTENANCE
-   The Author is under no obligation to provide support, maintenance,
-   updates, enhancements, or modifications to the Software. Any such
-   services, if provided, are at the Author's sole discretion.
+================================================================================
 
-7. TERMINATION AND ENFORCEMENT
+SECTION 3: MANDATORY REQUIREMENTS
 
-   a) AUTOMATIC TERMINATION
-      This license terminates automatically if the User breaches any
-      terms or conditions. Upon termination, the User must cease all
-      use and distribution of the Software and destroy all copies
-      in their possession.
+3.1 Attribution Standards
+    All distributions must include prominent attribution to the original
+    author in at least one of the following locations: user interface
+    displays, documentation materials, or promotional content.
 
-   b) SURVIVAL OF TERMS
-      Sections 4 (Warranties and Liability), 7(b) (Survival of Terms),
-      and any accrued obligations shall survive termination of this
-      license.
+3.2 License Preservation
+    Every copy or Modified Version must include this complete License text
+    and all existing copyright notices.
 
-   c) GOVERNING LAW
-      This license shall be governed by the laws of [Your Jurisdiction],
-      excluding conflict of law provisions.
+3.3 Modification Disclosure
+    When distributing Modified Versions, you must clearly identify all
+    changes made and provide appropriate version information.
 
-8. MISCELLANEOUS
+3.4 Interactive Notice Requirements
+    Programs that interact with users must display copyright and license
+    information when launched in standard interactive mode.
 
-   a) SEVERABILITY
-      If any provision of this license is held invalid or unenforceable,
-      the remaining provisions shall remain in full force and effect.
+================================================================================
 
-   b) ENTIRE AGREEMENT
-      This license constitutes the entire agreement between the parties
-      regarding the Software and supersedes all prior agreements
-      and understandings.
+SECTION 4: PATENT AND LEGAL PROTECTIONS
 
-   c) AMENDMENT
-      This license may only be modified by written agreement signed
-      by the Author.
+4.1 Patent Grant
+    Contributors automatically grant recipients a worldwide, royalty-free
+    patent license covering any patent claims necessarily infringed by
+    their contributions.
 
----
+4.2 Anti-Circumvention Protection
+    This License does not authorize the use of the Program as part of
+    technological protection measures that restrict user access or
+    modification rights.
 
-LICENSE PHILOSOPHY: This license protects the Author's attribution
-rights while maximizing user freedom. It encourages innovation and
-commercial use while ensuring proper credit and limiting liability
-risks for the original creator.
+4.3 Defensive Termination
+    Patent litigation against any party regarding the Program automatically
+    terminates the aggressor's rights under this License.
+
+================================================================================
+
+SECTION 5: SOURCE CODE OBLIGATIONS
+
+5.1 Source Availability
+    When distributing object code versions, you must provide access to
+    complete corresponding source code through reasonable means.
+
+5.2 Compilation Information
+    Source distributions must include installation instructions and any
+    compilation scripts necessary for building executable versions.
+
+5.3 Third-Party Dependencies
+    Source packages must identify all external libraries and dependencies
+    required for proper functionality.
+
+================================================================================
+
+SECTION 6: LICENSE COMPLIANCE AND ENFORCEMENT
+
+6.1 Automatic Termination
+    Violation of any License term immediately terminates all granted rights.
+    Continued use after violation constitutes copyright infringement.
+
+6.2 Cure Period
+    Rights may be restored if violations are corrected within sixty days
+    of notice, provided no previous violations have occurred.
+
+6.3 Downstream Protection
+    Recipients automatically receive direct licenses from original copyright
+    holders, ensuring protection against license revocation by intermediaries.
+
+================================================================================
+
+SECTION 7: WARRANTY DISCLAIMERS AND LIABILITY LIMITATIONS
+
+7.1 Warranty Disclaimer
+    THE PROGRAM IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND, EXPRESS
+    OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR PURPOSE, AND
+    NON-INFRINGEMENT WARRANTIES.
+
+7.2 Liability Limitation
+    IN NO EVENT SHALL COPYRIGHT HOLDERS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING FROM PROGRAM USE, REGARDLESS
+    OF THE LEGAL THEORY INVOLVED.
+
+7.3 Risk Assumption
+    Users assume all risks associated with Program operation, including
+    data loss, system damage, or business interruption.
+
+================================================================================
+
+SECTION 8: GENERAL PROVISIONS
+
+8.1 License Evolution
+    The copyright holder may publish revised versions of this License.
+    Programs may specify version requirements or accept any later version.
+
+8.2 Severability
+    Invalid provisions do not affect the enforceability of remaining
+    License terms.
+
+8.3 Governing Law
+    This License shall be interpreted according to applicable copyright
+    law and the jurisdiction specified by the copyright holder.
+
+================================================================================
+
+END OF LICENSE TERMS
