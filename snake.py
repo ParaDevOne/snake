@@ -2,6 +2,9 @@
 import settings
 
 class Snake:
+
+    """Snake class representing the player snake in the game."""
+
     def __init__(self, initial=None):
         if initial is None:
             mid = (settings.COLUMNS // 2, settings.ROWS // 2)
