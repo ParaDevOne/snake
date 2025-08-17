@@ -1,12 +1,20 @@
+altgraph==0.17.4
 astroid==3.3.11
 colorama==0.4.6
 dill==0.4.0
 flake8==7.3.0
 isort==6.0.1
 mccabe==0.7.0
+packaging==25.0
+pefile==2023.2.7
 platformdirs==4.3.8
 pycodestyle==2.14.0
 pyflakes==3.4.0
 pygame==2.6.1
+pyinstaller==6.15.0
+pyinstaller-hooks-contrib==2025.8
 pylint==3.3.8
+pywin32-ctypes==0.2.3
+setuptools==80.9.0
+-e git+https://github.com/ParaDevOne/snake.git@d39f0c15aca2d556a5e74a1032ff83aa1a6f727e#egg=snake
 tomlkit==0.13.3
