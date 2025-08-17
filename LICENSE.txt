@@ -1,5 +1,5 @@
 SIMPLIFIED OPEN LICENSE (SOL)
-Version 1.0, June 2025
+Version 2.0, August 2025
 
 Copyright (c) 2025 [ParaDevOne]
 
@@ -8,39 +8,127 @@ TERMS AND CONDITIONS
 1. DEFINITIONS
    "The Software" refers to the Snake game and all source code,
    documentation, files, and resources distributed with this document.
+
    "The Author" refers to the copyright holder listed above.
+
    "User" refers to any individual or entity that uses, copies,
    modifies, or distributes the Software.
 
+   "Modified Version" refers to any derivative work, adaptation,
+   or modification of the original Software.
+
+   "Distribution" includes any method of making the Software available
+   to third parties, including but not limited to physical media,
+   electronic transmission, cloud hosting, or inclusion in other
+   software packages.
+
 2. GRANT OF RIGHTS
    Permission is granted, free of charge, to any User to:
-   - Use the Software without restrictions
-   - Copy and distribute the Software
-   - Modify the Software and distribute modified versions
-   - Use the Software for commercial purposes
+   - Use the Software without restrictions for any purpose
+   - Copy and distribute the Software in its original form
+   - Modify the Software and create derivative works
+   - Distribute Modified Versions under the terms of this license
+   - Use the Software for commercial purposes without royalty obligations
+   - Sublicense the Software to third parties under terms consistent
+     with this license
 
 3. CONDITIONS
-   a) ATTRIBUTION: Any distribution of the Software, whether in its
-      original or modified form, must retain this license notice clearly
-      visible and give credit to the original Author, either in
-      documentation, the user interface, or promotional materials.
 
-   b) DISCLAIMER: The User acknowledges that the Software is provided
-      "AS IS", without warranties of any kind. The Author shall not be
-      liable for any direct, indirect, incidental, or consequential
-      damages resulting from the use of the Software.
+   a) ATTRIBUTION REQUIREMENTS
+      Any distribution of the Software, whether in original or
+      Modified Version, must:
+      - Retain this complete license notice in a clearly visible location
+      - Include clear attribution to the original Author in one of
+        the following ways:
+        * Within the software's user interface or "About" section
+        * In accompanying documentation or README files
+        * In promotional materials or product descriptions
+      - Maintain any existing copyright notices and author credits
+      - Clearly indicate what changes were made if distributing
+        a Modified Version
 
-4. COMPATIBILITY
-   This license is compatible with the use of the Software in projects
-   that employ more restrictive licenses in other parts, provided the
-   attribution requirements in Section 3(a) are met.
+   b) PATENT CONSIDERATIONS
+      Users who distribute the Software grant back to all other users
+      a non-exclusive, royalty-free patent license to use any patent
+      claims that would be infringed by the Software as distributed
+      by that User.
 
-5. TERMINATION
-   This license will automatically terminate if the User breaches any
-   of its terms and conditions.
+   c) TRADEMARK PROTECTION
+      This license does not grant permission to use the Author's name,
+      trademarks, service marks, or product names for endorsement or
+      promotional purposes without explicit written consent.
+
+4. WARRANTIES AND LIABILITY
+
+   a) DISCLAIMER OF WARRANTIES
+      The Software is provided "AS IS" without warranties of any kind,
+      express or implied, including but not limited to warranties of
+      merchantability, fitness for a particular purpose, title, or
+      non-infringement. The Author makes no representation that the
+      Software will be error-free or suitable for any specific use case.
+
+   b) LIMITATION OF LIABILITY
+      In no event shall the Author be liable for any direct, indirect,
+      incidental, special, exemplary, or consequential damages
+      (including but not limited to procurement of substitute goods
+      or services, loss of use, data, or profits, or business
+      interruption) however caused and on any theory of liability,
+      whether in contract, strict liability, or tort arising from
+      the use of the Software, even if advised of the possibility
+      of such damages.
+
+   c) INDEMNIFICATION
+      Users agree to indemnify and hold harmless the Author from any
+      claims, damages, or expenses arising from their use, modification,
+      or distribution of the Software.
+
+5. COMPLIANCE AND COMPATIBILITY
+   This license is designed to be compatible with incorporation into
+   projects using more restrictive licenses, provided all attribution
+   requirements in Section 3(a) are fulfilled. Users must ensure
+   compliance with all applicable laws and regulations in their
+   jurisdiction when using or distributing the Software.
+
+6. SUPPORT AND MAINTENANCE
+   The Author is under no obligation to provide support, maintenance,
+   updates, enhancements, or modifications to the Software. Any such
+   services, if provided, are at the Author's sole discretion.
+
+7. TERMINATION AND ENFORCEMENT
+
+   a) AUTOMATIC TERMINATION
+      This license terminates automatically if the User breaches any
+      terms or conditions. Upon termination, the User must cease all
+      use and distribution of the Software and destroy all copies
+      in their possession.
+
+   b) SURVIVAL OF TERMS
+      Sections 4 (Warranties and Liability), 7(b) (Survival of Terms),
+      and any accrued obligations shall survive termination of this
+      license.
+
+   c) GOVERNING LAW
+      This license shall be governed by the laws of [Your Jurisdiction],
+      excluding conflict of law provisions.
+
+8. MISCELLANEOUS
+
+   a) SEVERABILITY
+      If any provision of this license is held invalid or unenforceable,
+      the remaining provisions shall remain in full force and effect.
+
+   b) ENTIRE AGREEMENT
+      This license constitutes the entire agreement between the parties
+      regarding the Software and supersedes all prior agreements
+      and understandings.
+
+   c) AMENDMENT
+      This license may only be modified by written agreement signed
+      by the Author.
 
 ---
 
-The spirit of this license is to protect attribution to the original.
-Author while allowing maximum freedom to use, modify, and distribute
-the Software without requiring derivative works to be open source.
+LICENSE PHILOSOPHY: This license protects the Author's attribution
+rights while maximizing user freedom. It encourages innovation and
+commercial use while ensuring proper credit and limiting liability
+risks for the original creator.
