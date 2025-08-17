@@ -1,3 +1,4 @@
+"""A module for advanced visual effects in the Snake game."""
 # visual_effects.py
 # Módulo de efectos visuales avanzados para Snake
 import math
@@ -91,6 +92,7 @@ class AnimationManager:
         self.start_time = time.time()
 
     def get_time(self):
+        """Retorna el tiempo transcurrido desde el inicio"""
         return time.time() - self.start_time
 
     def pulse_scale(self, frequency=2.0, amplitude=0.2, base_scale=1.0):
