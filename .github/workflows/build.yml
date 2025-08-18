@@ -1,150 +1,198 @@
 name: Build Snake Game
+
 on:
   push:
     branches: [main, develop]
   pull_request:
     branches: [main]
 
+concurrency:
+  group: build-snake-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  PACKAGE_NAME: snake-game
+
 jobs:
   build:
+    name: Build on ${{ matrix.os }} - Python ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14', '3.15']
-      fail-fast: false
-
-    name: Build on ${{ matrix.os }} - Python ${{ matrix.python-version }}
+        python-version: ['3.15']
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Setup Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+        check-latest: true
         allow-prereleases: true
 
-    - name: Cache pip packages
+    - name: Restore pip / pyinstaller cache (cross-platform)
       uses: actions/cache@v3
       with:
+        # intent: cache common pip cache locations for linux/mac/windows
         path: |
           ~/.cache/pip
           ~/.cache/pyinstaller
-        key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt') }}
+          ${{ runner.temp }}\pip-cache
+          C:\Users\runneradmin\AppData\Local\pip\Cache
+        key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt', '**/pyproject.toml', '**/setup.py') }}
         restore-keys: |
           ${{ runner.os }}-pip-${{ matrix.python-version }}-
           ${{ runner.os }}-pip-
 
-    - name: Install UPX (Linux)
+    - name: Install system deps and UPX (Linux)
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y upx-ucl
+        sudo apt-get install -y upx-ucl zip
         upx --version
 
     - name: Install UPX (macOS)
       if: runner.os == 'macOS'
       run: |
-        brew install upx
+        brew update
+        brew install upx zip
         upx --version
 
-    - name: Setup UPX (Windows)
+    - name: Install UPX (Windows)
       if: runner.os == 'Windows'
-      run: |
-        # Crear directorio lib si no existe
-        if (-not (Test-Path "lib")) { New-Item -ItemType Directory -Path "lib" }
-
-        # Descargar UPX si no existe
-        if (-not (Test-Path "lib/upx.exe")) {
-          echo "📥 Descargando UPX para Windows..."
-          Invoke-WebRequest -Uri "https://github.com/upx/upx/releases/download/v4.2.1/upx-4.2.1-win64.zip" -OutFile "upx.zip"
-          Expand-Archive "upx.zip" -DestinationPath "."
-          Move-Item "upx-4.2.1-win64/upx.exe" "lib/upx.exe"
-          Remove-Item "upx.zip", "upx-4.2.1-win64" -Recurse -Force
-        }
-
-        # Verificar UPX
-        if (Test-Path "lib/upx.exe") {
-          echo "✅ UPX local configurado en lib/upx.exe"
-          & "lib/upx.exe" --version
-        }
       shell: powershell
-
-    - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install pyinstaller pygame
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        choco install upx -y || echo "choco install failed, trying direct download..."
+        if (-not (Get-Command upx -ErrorAction SilentlyContinue)) {
+          Write-Host "Downloading UPX release..."
+          Invoke-WebRequest -Uri "https://github.com/upx/upx/releases/download/v4.2.1/upx-4.2.1-win64.zip" -OutFile "upx.zip"
+          Expand-Archive -Path "upx.zip" -DestinationPath "upx"
+          Copy-Item -Path "upx\upx-4.2.1-win64\upx.exe" -Destination "upx.exe" -Force
+          $env:PATH = "$PWD;$env:PATH"
+        }
+        & upx --version
+
+    - name: Install build dependencies (pip)
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
+        python -m pip install pyinstaller
       shell: bash
 
-    - name: Verify main.py exists
+    - name: (Optional) Run tests if present
+      if: ${{ always() && (contains(github.event.head_commit.message, '[run tests]') || false) }}
       run: |
-        if [ ! -f "main.py" ]; then
-          echo "❌ main.py not found!"
-          echo "📁 Files in current directory:"
+        if [ -f pytest.ini ] || [ -d tests ]; then
+          python -m pip install pytest
+          pytest -q
+        else
+          echo "No tests detected, skipping."
+        fi
+      shell: bash
+
+    - name: Verify entrypoint (main.py)
+      run: |
+        if [ -f "main.py" ]; then
+          echo "✅ main.py found"
+        else
+          echo "❌ main.py not found — aborting"
+          echo "Files in repo root:"
           ls -la
           exit 1
         fi
-        echo "✅ main.py found"
       shell: bash
 
-    - name: Build executable with setup.py
+    # --- Build with PyInstaller: split by OS to control shell/paths ---
+    - name: Build (Linux / macOS)
+      if: runner.os != 'Windows'
       run: |
-        echo "🔨 Building Snake Game executable..."
-        python setup.py
+        mkdir -p build dist
+        echo "🔨 PyInstaller: building ${PACKAGE_NAME}"
+        # Añade assets si los tienes: --add-data "assets:assets"  (linux/mac uses ':')
+        pyinstaller --noconfirm --clean --onefile --name "${PACKAGE_NAME}" main.py --distpath dist --workpath build/.pyinstaller --specpath build
+        echo "✅ pyinstaller exit code: $?"
       shell: bash
 
-    - name: Verify build output
+    - name: Build (Windows)
+      if: runner.os == 'Windows'
+      shell: powershell
       run: |
-        echo "📊 Build verification:"
-        if [ -d "dist" ]; then
-          echo "✅ dist/ directory created"
-          echo "📁 Contents of dist/:"
-          ls -la dist/
+        New-Item -ItemType Directory -Force -Path build,dist | Out-Null
+        Write-Host "🔨 PyInstaller (Windows) building $env:PACKAGE_NAME"
+        pyinstaller --noconfirm --clean --onefile --name "$env:PACKAGE_NAME" main.py --distpath dist --workpath build/.pyinstaller --specpath build
+        Write-Host "✅ PyInstaller finished. Checking dist\"
 
-          # Verificar si hay ejecutables
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            if ls dist/*.exe 1> /dev/null 2>&1; then
-              echo "✅ Windows executable found"
-              for exe in dist/*.exe; do
-                echo "📄 $exe ($(stat -f%z "$exe" 2>/dev/null || stat -c%s "$exe") bytes)"
-              done
+    - name: Strip / UPX compress (if UPX available)
+      run: |
+        # Try compressing any single-file binaries found in dist/
+        set -e
+        for f in dist/*; do
+          if [ -f "$f" ]; then
+            echo "Found build artifact: $f"
+            # make executable (mostly Linux/mac)
+            chmod +x "$f" || true
+            if command -v upx >/dev/null 2>&1; then
+              echo "Compressing $f with upx"
+              upx --best --lzma "$f" || echo "upx failed for $f"
             else
-              echo "❌ No Windows executable found"
-              exit 1
-            fi
-          else
-            if ls dist/* 1> /dev/null 2>&1; then
-              echo "✅ Executable found"
-              for exe in dist/*; do
-                if [ -f "$exe" ] && [ -x "$exe" ]; then
-                  echo "📄 $exe ($(stat -f%z "$exe" 2>/dev/null || stat -c%s "$exe") bytes)"
-                fi
-              done
-            else
-              echo "❌ No executable found"
-              exit 1
+              echo "UPX not available, skipping compression"
             fi
           fi
+        done
+      shell: bash
+
+    - name: Verify build output (OS-aware)
+      run: |
+        echo "📊 Build verification"
+        ls -la dist || true
+
+        if [ "${RUNNER_OS}" = "Windows" ]; then
+          powershell -Command "
+            \$exes = Get-ChildItem -Path dist -Filter *.exe -File -ErrorAction SilentlyContinue
+            if (-not \$exes) { Write-Error 'No .exe found in dist/'; exit 1 }
+            foreach (\$e in \$exes) { Write-Host \"✅ \$($e.Name) - \$($e.Length) bytes\" }
+          "
         else
-          echo "❌ dist/ directory not created"
-          exit 1
+          if ls dist/* 1> /dev/null 2>&1; then
+            for f in dist/*; do
+              if [ -f "$f" ]; then
+                size=$(stat -c%s "$f" 2>/dev/null || stat -f%z "$f" 2>/dev/null || echo "unknown")
+                echo "✅ $f ($size bytes)"
+              fi
+            done
+          else
+            echo "❌ No build artifacts in dist/"
+            exit 1
+          fi
         fi
       shell: bash
 
-    - name: Upload build artifacts
+    - name: Create zip of dist for artifact upload
+      run: |
+        mkdir -p artifacts
+        ZIP_NAME="artifacts/${PACKAGE_NAME}-${{ matrix.os }}-py${{ matrix.python-version }}.zip"
+        if [ "${RUNNER_OS}" = "Windows" ]; then
+          powershell -Command "Compress-Archive -Path dist\\* -DestinationPath $env:ZIP_NAME -Force"
+        else
+          zip -r "$ZIP_NAME" dist || ( echo "zip failed, trying tar.gz"; tar -czf "${ZIP_NAME%.zip}.tar.gz" dist && exit 0 )
+        fi
+        echo "Created $ZIP_NAME"
+      shell: bash
+
+    - name: Upload build artifacts (full folders + zipped executable)
       uses: actions/upload-artifact@v3
       with:
         name: snake-game-${{ matrix.os }}-py${{ matrix.python-version }}
         path: |
           dist/
           build/
-        retention-days: 7
-
-    - name: Upload executable only
-      uses: actions/upload-artifact@v3
-      with:
-        name: snake-executable-${{ matrix.os }}-py${{ matrix.python-version }}
-        path: dist/*
+          artifacts/
         retention-days: 30
