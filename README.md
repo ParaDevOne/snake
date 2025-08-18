@@ -373,7 +373,7 @@ El juego incluye un sistema automático de configuración de drivers de video SD
 El sistema detecta automáticamente tu plataforma y configura los drivers apropiados:
 
 - **Windows**: Configura drivers `windows` y `windib` como opciones primarias
-- **Linux**: Intenta drivers `x11`, `wayland`, y `fbcon` en orden de preferencia  
+- **Linux**: Intenta drivers `x11`, `wayland`, y `fbcon` en orden de preferencia
 - **macOS**: Utiliza el driver nativo `cocoa`
 - **Otros SO**: Usa configuración por defecto de SDL como fallback
 
