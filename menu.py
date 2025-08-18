@@ -192,7 +192,6 @@ def apply_all_settings(
 
         # Generar obstáculos automáticamente según la dificultad
         if bool(opt_obs) and diff_config["obstacle_count"] > 0:
-            import random
 
             obstacles = []
             for _ in range(diff_config["obstacle_count"]):
@@ -214,7 +213,8 @@ def apply_all_settings(
 
 # ----- run() -----
 def run():
-    global SCREEN  # [global-statement]
+    """Iniciar el sistema de menús"""
+
     utils.log_info("Iniciando sistema de menús")
 
     # ensure default profile exists
@@ -630,12 +630,12 @@ def run():
                         elif visual_selected == 7:  # Pantalla completa
                             opt_fullscreen = not opt_fullscreen
                             # Aplicar cambio de pantalla completa inmediatamente
-                            if opt_fullscreen:
-                                SCREEN = pygame.display.set_mode(
-                                    (WIDTH, HEIGHT), pygame.FULLSCREEN
-                                )
-                            else:
-                                SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+                            #if opt_fullscreen:
+                            #    SCREEN = pygame.display.set_mode(
+                            #        (WIDTH, HEIGHT), pygame.FULLSCREEN
+                            #    )
+                            #else:
+                            #    SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
                         elif visual_selected == 8:  # Mostrar FPS
                             opt_show_fps = not opt_show_fps
                         elif visual_selected == 9:  # Volver
