@@ -1,11 +1,23 @@
 name: Python Package using pip
 on: [push]
 jobs:
+  get-versions:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+    - id: set-matrix
+      run: |
+        # Simular lógica de ">=3.10"
+        echo 'matrix={"python-version":["3.10","3.11","3.12","3.13-dev"]}' >> $GITHUB_OUTPUT
+
   build-linux:
+    needs: get-versions
     runs-on: ubuntu-latest
     strategy:
-      matrix:
-        python-version: [<='3.10']
+      matrix: ${{ fromJson(needs.get-versions.outputs.matrix) }}
+      fail-fast: false
+    name: Python ${{ matrix.python-version }} test
     steps:
     - uses: actions/checkout@v4
 
@@ -13,6 +25,18 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+        allow-prereleases: true
+
+    - name: Verify Python version is >=3.10
+      run: |
+        python -c "
+        import sys
+        version = sys.version_info
+        if version < (3, 10):
+            print(f'❌ Python {version.major}.{version.minor} is not supported. Minimum is 3.10')
+            sys.exit(1)
+        print(f'✅ Python {version.major}.{version.minor}.{version.micro} is supported (>=3.10)')
+        "
 
     - name: Cache pip packages
       uses: actions/cache@v3
@@ -30,18 +54,14 @@ jobs:
 
     - name: Lint with flake8
       run: |
-        # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
     - name: Test with pytest
       run: |
-        # Verificar si existen tests
         if find . -name "test_*.py" -o -name "*_test.py" -o -path "*/tests/*.py" | grep -q .; then
           pytest -v
         else
-          echo "No tests found in the project"
-          echo "Skipping pytest execution"
+          echo "No tests found - skipping pytest"
           exit 0
         fi
