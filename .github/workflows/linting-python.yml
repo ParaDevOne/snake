@@ -37,4 +37,11 @@ jobs:
 
     - name: Test with pytest
       run: |
-        pytest
+        # Verificar si existen tests
+        if find . -name "test_*.py" -o -name "*_test.py" -o -path "*/tests/*.py" | grep -q .; then
+          pytest -v
+        else
+          echo "No tests found in the project"
+          echo "Skipping pytest execution"
+          exit 0
+        fi
