@@ -2,8 +2,8 @@ name: Release Snake Game
 on:
   push:
     tags:
-      - 'v*.*.*'  # v1.0.0, v1.5.0, etc.
-  workflow_dispatch:  # Permitir ejecución manual
+      - 'v*.*.*'
+  workflow_dispatch:
     inputs:
       tag_name:
         description: 'Tag name for release'
@@ -63,74 +63,65 @@ jobs:
       if: runner.os == 'Windows'
       run: |
         if (-not (Test-Path "lib")) { New-Item -ItemType Directory -Path "lib" }
-
         if (-not (Test-Path "lib/upx.exe")) {
-          echo "📥 Downloading UPX for Windows release..."
+          Write-Host "📥 Downloading UPX for Windows release..."
           Invoke-WebRequest -Uri "https://github.com/upx/upx/releases/download/v4.2.1/upx-4.2.1-win64.zip" -OutFile "upx.zip"
           Expand-Archive "upx.zip" -DestinationPath "."
           Move-Item "upx-4.2.1-win64/upx.exe" "lib/upx.exe"
-          Remove-Item "upx.zip", "upx-4.2.1-win64" -Recurse -Force
-          echo "✅ UPX local setup complete"
+          Remove-Item "upx.zip","upx-4.2.1-win64" -Recurse -Force
+          Write-Host "✅ UPX local setup complete"
         }
-
+        echo "${{ github.workspace }}/lib" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         & "lib/upx.exe" --version
       shell: powershell
 
-    - name: Install dependencies
+    - name: Install dependencies (Linux/macOS)
+      if: runner.os != 'Windows'
       run: |
         python -m pip install --upgrade pip
         pip install pyinstaller pygame
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       shell: bash
 
-    - name: Build release executable
+    - name: Install dependencies (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller pygame
+        if (Test-Path requirements.txt) { pip install -r requirements.txt }
+      shell: powershell
+
+    - name: Build release executable (Linux/macOS)
+      if: runner.os != 'Windows'
       run: |
         echo "🚀 Building Snake Game v${{ github.ref_name }} for ${{ matrix.platform }}..."
-        python setup.py
+        pyinstaller --onefile --noconsole main.py -n "SnakeGame"
       shell: bash
 
-    - name: Prepare release files
+    - name: Build release executable (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        Write-Host "🚀 Building Snake Game v${{ github.ref_name }} for ${{ matrix.platform }}..."
+        pyinstaller --onefile --noconsole main.py -n "SnakeGame"
+      shell: powershell
+
+    - name: Prepare release files (Linux/macOS)
+      if: runner.os != 'Windows'
       run: |
         echo "📦 Preparing release files..."
-
-        # Crear directorio de release
         mkdir -p release
-
-        # Determinar nombre del archivo según el OS
-        if [ "$RUNNER_OS" == "Windows" ]; then
-          EXECUTABLE_EXT=".exe"
-          ARCHIVE_EXT=".zip"
-          EXECUTABLE_NAME="Snake Game.exe"
-        else
-          EXECUTABLE_EXT=""
-          ARCHIVE_EXT=".tar.gz"
-          EXECUTABLE_NAME="Snake Game"
-        fi
-
-        # Copiar ejecutable
+        EXECUTABLE_NAME="SnakeGame"
         if [ -f "dist/$EXECUTABLE_NAME" ]; then
           cp "dist/$EXECUTABLE_NAME" "release/"
           echo "✅ Executable copied: $EXECUTABLE_NAME"
         else
           echo "❌ Executable not found: dist/$EXECUTABLE_NAME"
-          echo "📁 Contents of dist/:"
           ls -la dist/ || echo "dist/ directory not found"
           exit 1
         fi
 
-        # Crear archivo con información de versión
-        cat > release/VERSION.txt << EOF
-Snake Game - ParaDevOne
-Version: ${{ github.ref_name }}
-Platform: ${{ matrix.platform }} (${{ matrix.arch }})
-Built: $(date -u "+%Y-%m-%d %H:%M:%S UTC")
-Python Version: $(python --version)
-Build System: GitHub Actions
+        printf "Snake Game - ParaDevOne\nVersion: ${{ github.ref_name }}\nPlatform: ${{ matrix.platform }} (${{ matrix.arch }})\nBuilt: $(date -u \"+%Y-%m-%d %H:%M:%S UTC\")\nPython Version: $(python --version)\nBuild System: GitHub Actions\n\nExecutable: $EXECUTABLE_NAME\n" > release/VERSION.txt
 
-Executable: $EXECUTABLE_NAME
-EOF
-
-        # Copiar archivos adicionales si existen
         for file in README.md LICENSE CHANGELOG.md; do
           if [ -f "$file" ]; then
             cp "$file" "release/"
@@ -138,7 +129,6 @@ EOF
           fi
         done
 
-        # Copiar carpetas de assets si existen
         for folder in assets sounds images fonts config Data; do
           if [ -d "$folder" ]; then
             cp -r "$folder" "release/"
@@ -150,15 +140,47 @@ EOF
         ls -la release/
       shell: bash
 
+    - name: Prepare release files (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        Write-Host "📦 Preparing release files..."
+        New-Item -ItemType Directory -Path release -Force | Out-Null
+        $exe = "dist\SnakeGame.exe"
+        if (Test-Path $exe) {
+          Copy-Item $exe -Destination release\
+          Write-Host "✅ Executable copied: SnakeGame.exe"
+        } else {
+          Write-Host "❌ Executable not found: $exe"
+          Get-ChildItem dist -Force | Write-Host
+          exit 1
+        }
+
+        # Escribimos VERSION.txt línea por línea para evitar here-strings que rompen YAML
+        Set-Content -Path release\VERSION.txt -Value "Snake Game - ParaDevOne"
+        Add-Content -Path release\VERSION.txt -Value ("Version: " + $env:GITHUB_REF_NAME)
+        Add-Content -Path release\VERSION.txt -Value ("Platform: ${{ matrix.platform }} (${{ matrix.arch }})")
+        Add-Content -Path release\VERSION.txt -Value ("Built: " + (Get-Date -Format "yyyy-MM-dd HH:mm:ss") + " UTC")
+        $pyver = & python --version 2>&1
+        Add-Content -Path release\VERSION.txt -Value ("Python Version: " + $pyver)
+        Add-Content -Path release\VERSION.txt -Value "Build System: GitHub Actions"
+        Add-Content -Path release\VERSION.txt -Value ""
+        Add-Content -Path release\VERSION.txt -Value "Executable: SnakeGame.exe"
+
+        foreach ($file in @("README.md","LICENSE","CHANGELOG.md")) {
+          if (Test-Path $file) { Copy-Item $file -Destination release\; Write-Host "📄 Added: $file" }
+        }
+        foreach ($folder in @("assets","sounds","images","fonts","config","Data")) {
+          if (Test-Path $folder) { Copy-Item $folder -Recurse -Destination release\; Write-Host "📁 Added folder: $folder" }
+        }
+        Write-Host "📁 Release files prepared:"
+        Get-ChildItem release -Force | Write-Host
+      shell: powershell
+
     - name: Get file sizes
       id: sizes
+      if: runner.os != 'Windows'
       run: |
-        if [ "$RUNNER_OS" == "Windows" ]; then
-          EXECUTABLE="release/Snake Game.exe"
-        else
-          EXECUTABLE="release/Snake Game"
-        fi
-
+        EXECUTABLE="release/SnakeGame"
         if [ -f "$EXECUTABLE" ]; then
           SIZE_BYTES=$(stat -c%s "$EXECUTABLE" 2>/dev/null || stat -f%z "$EXECUTABLE")
           SIZE_MB=$(echo "scale=2; $SIZE_BYTES / 1024 / 1024" | bc -l)
@@ -169,31 +191,46 @@ EOF
         fi
       shell: bash
 
-    - name: Create platform archive
+    - name: Get file sizes (Windows)
+      id: sizes_windows
+      if: runner.os == 'Windows'
+      run: |
+        $exe = "release\SnakeGame.exe"
+        if (Test-Path $exe) {
+          $size = (Get-Item $exe).Length
+          $mb = [math]::Round($size / 1MB, 2)
+          echo "size_bytes=$size" >> $env:GITHUB_OUTPUT
+          echo "size_mb=$mb" >> $env:GITHUB_OUTPUT
+          echo "executable=$exe" >> $env:GITHUB_OUTPUT
+          Write-Host "📏 Executable size: $mb MB ($size bytes)"
+        }
+      shell: powershell
+
+    - name: Create platform archive (Linux/macOS)
+      if: runner.os != 'Windows'
       run: |
         cd release
-
-        if [ "$RUNNER_OS" == "Windows" ]; then
-          # Crear ZIP en Windows
-          ARCHIVE_NAME="SnakeGame-${{ github.ref_name }}-Windows-x64.zip"
-          powershell -Command "Compress-Archive -Path * -DestinationPath ../$ARCHIVE_NAME"
+        if [ "$RUNNER_OS" == "Darwin" ]; then
+          ARCHIVE_NAME="SnakeGame-${{ github.ref_name }}-macOS-universal.tar.gz"
         else
-          # Crear tar.gz en Unix
-          if [ "$RUNNER_OS" == "Darwin" ]; then
-            ARCHIVE_NAME="SnakeGame-${{ github.ref_name }}-macOS-universal.tar.gz"
-          else
-            ARCHIVE_NAME="SnakeGame-${{ github.ref_name }}-Linux-x64.tar.gz"
-          fi
-          tar -czf "../$ARCHIVE_NAME" *
+          ARCHIVE_NAME="SnakeGame-${{ github.ref_name }}-Linux-x64.tar.gz"
         fi
-
+        tar -czf "../$ARCHIVE_NAME" *
         cd ..
         echo "📦 Created archive: $ARCHIVE_NAME"
         echo "archive_name=$ARCHIVE_NAME" >> $GITHUB_ENV
-
-        # Mostrar información del archivo
         ls -lh "$ARCHIVE_NAME"
       shell: bash
+
+    - name: Create platform archive (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        $archive = "SnakeGame-${{ github.ref_name }}-Windows-x64.zip"
+        powershell -Command "Compress-Archive -Path 'release/*' -DestinationPath '../$archive' -Force"
+        echo "archive_name=$archive" >> $env:GITHUB_ENV
+        Write-Host "📦 Created archive: $archive"
+        Get-ChildItem ..\$archive | Format-List
+      shell: powershell
 
     - name: Upload release artifacts
       uses: actions/upload-artifact@v3
@@ -204,7 +241,6 @@ EOF
           release/
         retention-days: 90
 
-  # Job para crear el release en GitHub
   create-release:
     needs: release
     runs-on: ubuntu-latest
@@ -222,41 +258,39 @@ EOF
       run: |
         echo "📦 Preparing release assets..."
         mkdir -p release-assets
-
-        # Mover todos los archivos de release a una carpeta
         find artifacts -name "*.zip" -o -name "*.tar.gz" | while read file; do
           cp "$file" release-assets/
           echo "📄 Added: $(basename "$file")"
         done
-
         echo "🎯 Release assets ready:"
         ls -la release-assets/
+      shell: bash
 
     - name: Generate release notes
       id: release_notes
       run: |
-        cat > release_notes.md << EOF
+        cat > release_notes.md << 'EOF'
 # 🐍 Snake Game ${{ github.ref_name }}
 
 **Desarrollado por ParaDevOne**
 
 ## 📦 Descargas por Plataforma
 
-- **Windows**: \`SnakeGame-${{ github.ref_name }}-Windows-x64.zip\`
-- **macOS**: \`SnakeGame-${{ github.ref_name }}-macOS-universal.tar.gz\`
-- **Linux**: \`SnakeGame-${{ github.ref_name }}-Linux-x64.tar.gz\`
+- Windows: "SnakeGame-${{ github.ref_name }}-Windows-x64.zip"
+- macOS: "SnakeGame-${{ github.ref_name }}-macOS-universal.tar.gz"
+- Linux: "SnakeGame-${{ github.ref_name }}-Linux-x64.tar.gz"
 
 ## 🚀 Instalación
 
 ### Windows
 1. Descarga el archivo .zip
 2. Extrae en la carpeta deseada
-3. Ejecuta \`Snake Game.exe\`
+3. Ejecuta "SnakeGame.exe"
 
 ### macOS / Linux
 1. Descarga el archivo .tar.gz correspondiente
-2. Extrae: \`tar -xzf SnakeGame-*.tar.gz\`
-3. Ejecuta: \`./Snake\ Game\`
+2. Extrae: tar -xzf SnakeGame-*.tar.gz
+3. Ejecuta: ./SnakeGame
 
 ## 🔧 Características
 
@@ -267,10 +301,10 @@ EOF
 
 ## 🏗️ Información de Build
 
-- **Python**: 3.11
-- **Herramientas**: PyInstaller + UPX
-- **CI/CD**: GitHub Actions
-- **Fecha**: $(date -u "+%Y-%m-%d %H:%M:%S UTC")
+- Python: 3.11
+- Herramientas: PyInstaller + UPX
+- CI/CD: GitHub Actions
+- Fecha: $(date -u "+%Y-%m-%d %H:%M:%S UTC")
 
 ---
 *Construido automáticamente con GitHub Actions* 🤖
@@ -279,6 +313,7 @@ EOF
         echo "release_notes<<EOF" >> $GITHUB_OUTPUT
         cat release_notes.md >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
+      shell: bash
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
