@@ -24,7 +24,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.12']   # uso 3.12 porque ubuntu-24.04 no tiene 3.15 en el manifest
+        python-version: ['3.12']   # ubuntu-24.04 no contiene 3.15 en el manifest
 
     steps:
     - name: Checkout
@@ -52,82 +52,7 @@ jobs:
           ${{ runner.os }}-pip-${{ matrix.python-version }}-
           ${{ runner.os }}-pip-
 
-    # ------------------------
-    # UPX install: Linux
-    # ------------------------
-    - name: Install system deps and UPX (Linux)
-      if: runner.os == 'Linux'
-      shell: bash
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y upx-ucl zip
-        upx --version || true
-
-    # ------------------------
-    # UPX install: macOS
-    # ------------------------
-    - name: Install UPX (macOS)
-      if: runner.os == 'macOS'
-      shell: bash
-      run: |
-        brew update
-        brew install upx zip || true
-        upx --version || true
-
-    # ------------------------
-    # UPX install: Windows (robusto, con fallback)
-    # ------------------------
-    - name: Install UPX (Windows)
-      if: runner.os == 'Windows'
-      shell: pwsh
-      run: |
-        Write-Host "► Instalando UPX en Windows..."
-
-        $chocoOk = $false
-        if (Get-Command choco -ErrorAction SilentlyContinue) {
-          Write-Host "Chocolatey detectado. Intentando instalar upx..."
-          & choco install upx -y
-          $chocoOk = ($LASTEXITCODE -eq 0)
-          if (-not $chocoOk) {
-            Write-Warning "choco install devolvió código $LASTEXITCODE. Haremos descarga directa."
-          }
-        } else {
-          Write-Warning "Chocolatey no encontrado; se intentará descarga directa."
-        }
-
-        if (-not $chocoOk) {
-          Write-Host "Descargando UPX v4.2.1..."
-          $zip = "upx.zip"
-          $url = "https://github.com/upx/upx/releases/download/v4.2.1/upx-4.2.1-win64.zip"
-
-          try {
-            Invoke-WebRequest -Uri $url -OutFile $zip -UseBasicParsing -TimeoutSec 60
-            Expand-Archive -Path $zip -DestinationPath "upx" -Force
-            Copy-Item -Path "upx\upx-4.2.1-win64\upx.exe" -Destination "upx.exe" -Force
-            Remove-Item $zip -Force
-            Write-Host "UPX descargado y copiado a .\upx.exe"
-          } catch {
-            Write-Error "Fallo descargando UPX: $_"
-            exit 1
-          }
-        }
-
-        if (Get-Command upx -ErrorAction SilentlyContinue) {
-          Write-Host "UPX disponible en PATH:"
-          & upx --version
-        } elseif (Test-Path ".\upx.exe") {
-          Write-Host "Usando .\upx.exe local"
-          & .\upx.exe --version
-          $env:PATH = "$PWD;$env:PATH"
-        } else {
-          Write-Error "UPX no está disponible tras ambos intentos."
-          exit 1
-        }
-
-    # ------------------------
-    # Install Python deps: non-Windows
-    # ------------------------
-    - name: Install build dependencies (pip) — Unix
+    - name: Install build dependencies (Unix)
       if: runner.os != 'Windows'
       shell: bash
       run: |
@@ -135,10 +60,7 @@ jobs:
         if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
         python -m pip install pyinstaller
 
-    # ------------------------
-    # Install Python deps: Windows
-    # ------------------------
-    - name: Install build dependencies (pip) — Windows
+    - name: Install build dependencies (Windows)
       if: runner.os == 'Windows'
       shell: pwsh
       run: |
@@ -148,7 +70,8 @@ jobs:
         }
         python -m pip install pyinstaller
 
-    - name: Verify entrypoint (main.py)
+    - name: Verify entrypoint (main.py) — Unix
+      if: runner.os != 'Windows'
       shell: bash
       run: |
         if [ -f "main.py" ]; then
@@ -160,9 +83,18 @@ jobs:
           exit 1
         fi
 
-    # ------------------------
-    # Build (Unix)
-    # ------------------------
+    - name: Verify entrypoint (main.py) — Windows
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        if (Test-Path "main.py") {
+          Write-Host "✅ main.py found"
+        } else {
+          Write-Error "❌ main.py not found — aborting"
+          Get-ChildItem -Force -Recurse -Depth 1 | Format-Table
+          exit 1
+        }
+
     - name: Build (Linux / macOS)
       if: runner.os != 'Windows'
       shell: bash
@@ -170,58 +102,12 @@ jobs:
         mkdir -p build dist
         pyinstaller --noconfirm --clean --onefile --name "${PACKAGE_NAME}" main.py --distpath dist --workpath build/.pyinstaller --specpath build
 
-    # ------------------------
-    # Build (Windows)
-    # ------------------------
     - name: Build (Windows)
       if: runner.os == 'Windows'
       shell: pwsh
       run: |
         New-Item -ItemType Directory -Force -Path build,dist | Out-Null
         pyinstaller --noconfirm --clean --onefile --name "$env:PACKAGE_NAME" main.py --distpath dist --workpath build/.pyinstaller --specpath build
-
-    # ------------------------
-    # UPX compress (Unix)
-    # ------------------------
-    - name: Strip / UPX compress (if UPX available) — Unix
-      if: runner.os != 'Windows'
-      shell: bash
-      run: |
-        set -e
-        for f in dist/*; do
-          if [ -f "$f" ]; then
-            chmod +x "$f" || true
-            if command -v upx >/dev/null 2>&1; then
-              echo "Compressing $f with upx"
-              upx --best --lzma "$f" || echo "upx failed for $f"
-            else
-              echo "UPX not available, skipping compression"
-            fi
-          fi
-        done
-
-    # ------------------------
-    # UPX compress (Windows)
-    # ------------------------
-    - name: Strip / UPX compress (if UPX available) — Windows
-      if: runner.os == 'Windows'
-      shell: pwsh
-      run: |
-        $files = Get-ChildItem -Path dist -File -ErrorAction SilentlyContinue
-        if (-not $files) { Write-Host "No files in dist/ to compress"; exit 0 }
-        foreach ($f in $files) {
-          $path = $f.FullName
-          Write-Host "Found build artifact: $path"
-          if (Get-Command upx -ErrorAction SilentlyContinue) {
-            Write-Host "Compressing $path with upx (from PATH)"
-            & upx --best --lzma $path || Write-Warning "upx failed for $path"
-          } elseif (Test-Path ".\upx.exe") {
-            Write-Host "Compressing $path with local .\upx.exe"
-            & .\upx.exe --best --lzma $path || Write-Warning "upx failed for $path"
-          } else {
-            Write-Host "UPX not available, skipping compression"
-          }
-        }
 
     - name: Verify build output (OS-aware)
       shell: bash
@@ -249,10 +135,7 @@ jobs:
           fi
         fi
 
-    # ------------------------
-    # Create zip/tar for artifacts (Unix)
-    # ------------------------
-    - name: Create zip of dist for artifact upload — Unix
+    - name: Create archive of dist (Unix)
       if: runner.os != 'Windows'
       shell: bash
       run: |
@@ -261,10 +144,7 @@ jobs:
         zip -r "$ZIP_NAME" dist || ( echo "zip failed, trying tar.gz"; tar -czf "${ZIP_NAME%.zip}.tar.gz" dist && exit 0 )
         echo "Created $ZIP_NAME"
 
-    # ------------------------
-    # Create zip for artifacts (Windows)
-    # ------------------------
-    - name: Create zip of dist for artifact upload — Windows
+    - name: Create archive of dist (Windows)
       if: runner.os == 'Windows'
       shell: pwsh
       run: |
@@ -273,9 +153,6 @@ jobs:
         Compress-Archive -Path dist\* -DestinationPath $zip -Force
         Write-Host "Created $zip"
 
-    # ------------------------
-    # Upload artifacts (full)
-    # ------------------------
     - name: Upload build artifacts (full folders + zipped executable)
       uses: actions/upload-artifact@v4
       with:
@@ -287,9 +164,6 @@ jobs:
         retention-days: 30
         if-no-files-found: error
 
-    # ------------------------
-    # Upload executable only
-    # ------------------------
     - name: Upload executable only
       uses: actions/upload-artifact@v4
       with:
