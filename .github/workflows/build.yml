@@ -15,7 +15,6 @@ permissions:
 
 env:
   PACKAGE_NAME: snake-game
-  PYINSTALLER_OPTS: --noconfirm --clean --onefile --add-data "assets:assets"
 
 jobs:
   build:
@@ -31,7 +30,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0  # Para mantener historial completo
+        fetch-depth: 0
 
     - name: Setup Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
@@ -42,53 +41,56 @@ jobs:
         check-latest: true
 
     - name: Install build tools
+      shell: bash
       run: |
         python -m pip install --upgrade pip setuptools wheel
         pip install pyinstaller
 
-        # Instalación segura de dependencias
-        if [ -f "requirements.txt" ]; then
-          # Ignorar líneas vacías o comentarios
-          grep -E -v '^#|^$' requirements.txt | pip install -r /dev/stdin
+        # Instalación segura de dependencias (compatible con Windows)
+        if [[ -f "requirements.txt" ]]; then
+          # Método compatible con Windows
+          pip install -r requirements.txt
         fi
-      shell: bash
 
-    - name: Verify project structure
+    - name: Verify entrypoint
+      shell: bash
       run: |
-        # Verificar archivos esenciales
-        essential_files=("main.py" "assets")
-        missing_files=()
-
-        for file in "${essential_files[@]}"; do
-          if [ ! -e "$file" ]; then
-            missing_files+=("$file")
-          fi
-        done
-
-        if [ ${#missing_files[@]} -ne 0 ]; then
-          echo "::error::❌ Missing essential files/directories: ${missing_files[*]}"
-          echo "Directory structure:"
-          ls -laR
+        # Verificar solo el archivo principal
+        if [[ ! -f "main.py" ]]; then
+          echo "::error::❌ main.py not found in repository root"
+          echo "Directory contents:"
+          ls -la
           exit 1
-        else
-          echo "✅ All essential files/directories present"
         fi
+        echo "✅ main.py found"
+
+    - name: Check for assets directory
       shell: bash
+      run: |
+        # Verificar assets y configurar opciones
+        if [[ -d "assets" ]]; then
+          echo "Assets directory found"
+          echo "PYINSTALLER_OPTS=--noconfirm --clean --onefile --add-data 'assets:assets'" >> $GITHUB_ENV
+        else
+          echo "Assets directory not found - building without assets"
+          echo "PYINSTALLER_OPTS=--noconfirm --clean --onefile" >> $GITHUB_ENV
+        fi
 
     - name: Build executable
+      shell: bash
       run: |
         # Crear directorios necesarios
         mkdir -p dist build artifacts
 
         # Determinar nombre del ejecutable
-        if [ "$RUNNER_OS" = "Windows" ]; then
+        if [[ "$RUNNER_OS" == "Windows" ]]; then
           OUTPUT_NAME="${PACKAGE_NAME}.exe"
         else
           OUTPUT_NAME="${PACKAGE_NAME}"
         fi
 
         # Construir con PyInstaller
-        echo "🚀 Building with PyInstaller..."
+        echo "🚀 Building with PyInstaller using options: $PYINSTALLER_OPTS"
         pyinstaller $PYINSTALLER_OPTS --name "$OUTPUT_NAME" \
           --distpath dist \
           --workpath build/pyinstaller \
@@ -96,7 +98,7 @@ jobs:
           main.py
 
         # Verificar resultado
-        if [ ! -f "dist/$OUTPUT_NAME" ]; then
+        if [[ ! -f "dist/$OUTPUT_NAME" ]]; then
           echo "::error::❌ Build failed - executable not found"
           echo "PyInstaller logs:"
           cat build/pyinstaller/*.log 2>/dev/null || true
@@ -106,24 +108,23 @@ jobs:
           SIZE=$(python -c "import os; print(os.path.getsize('dist/$OUTPUT_NAME'))")
           echo "✅ Build successful: dist/$OUTPUT_NAME ($SIZE bytes)"
         fi
-      shell: bash
 
     - name: Package artifacts
+      shell: bash
       run: |
         # Nombre del archivo comprimido
         ARCHIVE_NAME="${PACKAGE_NAME}-${RUNNER_OS}-py${{ matrix.python-version }}"
 
         # Crear archivo comprimido según SO
-        if [ "$RUNNER_OS" = "Windows" ]; then
+        if [[ "$RUNNER_OS" == "Windows" ]]; then
           echo "📦 Creating ZIP archive for Windows..."
           7z a -tzip "artifacts/${ARCHIVE_NAME}.zip" "dist/${PACKAGE_NAME}.exe"
-        elif [ "$RUNNER_OS" = "Linux" ] || [ "$RUNNER_OS" = "macOS" ]; then
+        elif [[ "$RUNNER_OS" == "Linux" || "$RUNNER_OS" == "macOS" ]]; then
           echo "📦 Creating TAR.GZ archive for $RUNNER_OS..."
           tar -czf "artifacts/${ARCHIVE_NAME}.tar.gz" -C dist .
         fi
 
         echo "📦 Created archive: artifacts/${ARCHIVE_NAME}.*"
-      shell: bash
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
@@ -134,11 +135,3 @@ jobs:
           artifacts/
         retention-days: 7
         if-no-files-found: error
-
-    - name: Post-build cleanup
-      if: always()
-      run: |
-        # Limpiar archivos temporales para ahorrar espacio
-        rm -rf build/
-        echo "🧹 Cleaned up build directories"
-      shell: bash
