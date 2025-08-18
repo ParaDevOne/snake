@@ -15,7 +15,7 @@ permissions:
 
 env:
   PACKAGE_NAME: snake-game
-  PYINSTALLER_OPTS: --noconfirm --clean --onefile
+  PYINSTALLER_OPTS: --noconfirm --clean --onefile --add-data "assets:assets"
 
 jobs:
   build:
@@ -30,6 +30,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Para mantener historial completo
 
     - name: Setup Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
@@ -44,51 +46,63 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         pip install pyinstaller
 
-        # OS-agnostic requirements installation
-        if [[ -f "requirements.txt" ]]; then
-          pip install -r requirements.txt
+        # Instalación segura de dependencias
+        if [ -f "requirements.txt" ]; then
+          # Ignorar líneas vacías o comentarios
+          grep -E -v '^#|^$' requirements.txt | pip install -r /dev/stdin
         fi
       shell: bash
 
-    - name: Verify entrypoint
+    - name: Verify project structure
       run: |
-        # Cross-platform file check
-        if [ ! -f "main.py" ]; then
-          echo "::error::❌ main.py not found in repository root"
-          echo "Directory contents:"
-          ls -la
+        # Verificar archivos esenciales
+        essential_files=("main.py" "assets")
+        missing_files=()
+
+        for file in "${essential_files[@]}"; do
+          if [ ! -e "$file" ]; then
+            missing_files+=("$file")
+          fi
+        done
+
+        if [ ${#missing_files[@]} -ne 0 ]; then
+          echo "::error::❌ Missing essential files/directories: ${missing_files[*]}"
+          echo "Directory structure:"
+          ls -laR
           exit 1
+        else
+          echo "✅ All essential files/directories present"
         fi
-        echo "✅ main.py found"
       shell: bash
 
     - name: Build executable
       run: |
-        # Create output directories
+        # Crear directorios necesarios
         mkdir -p dist build artifacts
 
-        # OS-specific executable naming
+        # Determinar nombre del ejecutable
         if [ "$RUNNER_OS" = "Windows" ]; then
           OUTPUT_NAME="${PACKAGE_NAME}.exe"
         else
           OUTPUT_NAME="${PACKAGE_NAME}"
         fi
 
-        # Build with PyInstaller
+        # Construir con PyInstaller
+        echo "🚀 Building with PyInstaller..."
         pyinstaller $PYINSTALLER_OPTS --name "$OUTPUT_NAME" \
           --distpath dist \
           --workpath build/pyinstaller \
           --specpath build \
           main.py
 
-        # Verify output using cross-platform method
+        # Verificar resultado
         if [ ! -f "dist/$OUTPUT_NAME" ]; then
           echo "::error::❌ Build failed - executable not found"
-          echo "PyInstaller output:"
+          echo "PyInstaller logs:"
           cat build/pyinstaller/*.log 2>/dev/null || true
           exit 1
         else
-          # Cross-platform file size check using Python
+          # Obtener tamaño del ejecutable
           SIZE=$(python -c "import os; print(os.path.getsize('dist/$OUTPUT_NAME'))")
           echo "✅ Build successful: dist/$OUTPUT_NAME ($SIZE bytes)"
         fi
@@ -96,14 +110,15 @@ jobs:
 
     - name: Package artifacts
       run: |
-        # Cross-platform archive naming
+        # Nombre del archivo comprimido
         ARCHIVE_NAME="${PACKAGE_NAME}-${RUNNER_OS}-py${{ matrix.python-version }}"
 
-        # Create archive based on OS
+        # Crear archivo comprimido según SO
         if [ "$RUNNER_OS" = "Windows" ]; then
-          # Use 7-zip for better compression on Windows
+          echo "📦 Creating ZIP archive for Windows..."
           7z a -tzip "artifacts/${ARCHIVE_NAME}.zip" "dist/${PACKAGE_NAME}.exe"
         elif [ "$RUNNER_OS" = "Linux" ] || [ "$RUNNER_OS" = "macOS" ]; then
+          echo "📦 Creating TAR.GZ archive for $RUNNER_OS..."
           tar -czf "artifacts/${ARCHIVE_NAME}.tar.gz" -C dist .
         fi
 
@@ -119,3 +134,11 @@ jobs:
           artifacts/
         retention-days: 7
         if-no-files-found: error
+
+    - name: Post-build cleanup
+      if: always()
+      run: |
+        # Limpiar archivos temporales para ahorrar espacio
+        rm -rf build/
+        echo "🧹 Cleaned up build directories"
+      shell: bash
