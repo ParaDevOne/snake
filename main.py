@@ -1,3 +1,4 @@
+"""Punto de entrada principal del juego Snake."""
 # main.py
 # Punto de entrada único: intenta usar menu.py (pygame). Si no está, cae al modo directo.
 # pylint: disable=no-member  # Desactivar warnings para atributos pygame dinámicos
@@ -5,6 +6,9 @@
 # Configurar video antes de cualquier importación o inicialización de pygame
 import sys
 import utils
+from game import Game, MOVE_EVENT
+import settings
+import menu
 import video_config
 video_config.configure_video_driver()
 
@@ -14,14 +18,13 @@ except ImportError:
     pygame = None  # pygame no disponible
 
 def run():
-    # Inicializar logging
+    """Inicializar logging"""
     utils.log_system_info("Iniciando Snake Game")
     utils.log_system_info(f"Python version: {sys.version}")
 
     try:
         # preferimos el menú en pygame
         utils.log_debug("Intentando cargar menu.py", "MAIN")
-        import menu
         if hasattr(menu, "run"):
             utils.log_info("Iniciando juego con menú principal")
             menu.run()
@@ -37,8 +40,7 @@ def run():
             "Error: pygame no disponible")
             sys.exit(1)
         try:
-            from game import Game, MOVE_EVENT
-            import settings
+            pass
         except (ImportError, ModuleNotFoundError) as e2:
             print("No se pudo arrancar el menú ni el juego directamente. Error:", e2)
             sys.exit(1)
@@ -95,6 +97,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         utils.log_info("Juego interrumpido por el usuario (Ctrl+C)")
         utils.close_logging_session()
+        pygame.quit()
         sys.exit(0)
     except (ImportError, ModuleNotFoundError, OSError, RuntimeError) as e:
         # Manejar errores críticos específicos
@@ -108,4 +111,5 @@ if __name__ == "__main__":
         else:
             utils.log_critical(f"Error crítico ({error_type}): {e}")
         utils.close_logging_session()
+        pygame.quit()
         sys.exit(1)
