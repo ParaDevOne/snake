@@ -1,21 +1,12 @@
-name: Python Package using pip
+name: Python Linting
 on: [push]
 jobs:
-  get-versions:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-    - id: set-matrix
-      run: |
-        # Simular lógica de ">=3.10"
-        echo 'matrix={"python-version":["3.10","3.11","3.12","3.13-dev"]}' >> $GITHUB_OUTPUT
-
   build-linux:
-    needs: get-versions
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{ fromJson(needs.get-versions.outputs.matrix) }}
+      matrix:
+        # Todas las versiones desde Python 3.8 incluyendo futuras
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13', '3.14', '3.15']
       fail-fast: false
     name: Python ${{ matrix.python-version }} test
     steps:
@@ -25,17 +16,17 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-        allow-prereleases: true
+        allow-prereleases: true  # Para versiones dev
 
-    - name: Verify Python version is >=3.10
+    - name: Verify Python version is 3.8+
       run: |
         python -c "
         import sys
         version = sys.version_info
-        if version < (3, 10):
-            print(f'❌ Python {version.major}.{version.minor} is not supported. Minimum is 3.10')
+        if version < (3, 8):
+            print(f'Python {version.major}.{version.minor} is not supported. Minimum is 3.8')
             sys.exit(1)
-        print(f'✅ Python {version.major}.{version.minor}.{version.micro} is supported (>=3.10)')
+        print(f'✓ Python {version.major}.{version.minor}.{version.micro} is supported')
         "
 
     - name: Cache pip packages
@@ -54,14 +45,43 @@ jobs:
 
     - name: Lint with flake8
       run: |
+        # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    - name: Additional Code Quality Checks
+      run: |
+        # Install additional quality tools
+        pip install black isort mypy bandit safety
+
+        # Format check (Black)
+        echo "🔍 Checking code formatting with Black..."
+        black --check . || echo "⚠️ Code formatting issues found"
+
+        # Import sorting (isort)
+        echo "🔍 Checking import sorting with isort..."
+        isort --check-only . || echo "⚠️ Import sorting issues found"
+
+        # Type checking (MyPy) - non-blocking
+        echo "🔍 Running type checking with MyPy..."
+        mypy . || echo "⚠️ Type checking issues found"
+
+        # Security check (Bandit) - non-blocking
+        echo "🔍 Running security analysis with Bandit..."
+        bandit -r . || echo "⚠️ Security issues found"
+
+        # Dependencies security (Safety) - non-blocking
+        echo "🔍 Checking dependencies security with Safety..."
+        safety check || echo "⚠️ Dependency security issues found"
 
     - name: Test with pytest
       run: |
+        # Verificar si existen tests
         if find . -name "test_*.py" -o -name "*_test.py" -o -path "*/tests/*.py" | grep -q .; then
           pytest -v
         else
-          echo "No tests found - skipping pytest"
+          echo "No tests found in the project"
+          echo "Skipping pytest execution"
           exit 0
         fi

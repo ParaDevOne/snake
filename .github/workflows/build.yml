@@ -1,0 +1,150 @@
+name: Build Snake Game
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14', '3.15']
+      fail-fast: false
+
+    name: Build on ${{ matrix.os }} - Python ${{ matrix.python-version }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        allow-prereleases: true
+
+    - name: Cache pip packages
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/pip
+          ~/.cache/pyinstaller
+        key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-${{ matrix.python-version }}-
+          ${{ runner.os }}-pip-
+
+    - name: Install UPX (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y upx-ucl
+        upx --version
+
+    - name: Install UPX (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        brew install upx
+        upx --version
+
+    - name: Setup UPX (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        # Crear directorio lib si no existe
+        if (-not (Test-Path "lib")) { New-Item -ItemType Directory -Path "lib" }
+
+        # Descargar UPX si no existe
+        if (-not (Test-Path "lib/upx.exe")) {
+          echo "📥 Descargando UPX para Windows..."
+          Invoke-WebRequest -Uri "https://github.com/upx/upx/releases/download/v4.2.1/upx-4.2.1-win64.zip" -OutFile "upx.zip"
+          Expand-Archive "upx.zip" -DestinationPath "."
+          Move-Item "upx-4.2.1-win64/upx.exe" "lib/upx.exe"
+          Remove-Item "upx.zip", "upx-4.2.1-win64" -Recurse -Force
+        }
+
+        # Verificar UPX
+        if (Test-Path "lib/upx.exe") {
+          echo "✅ UPX local configurado en lib/upx.exe"
+          & "lib/upx.exe" --version
+        }
+      shell: powershell
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller pygame
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      shell: bash
+
+    - name: Verify main.py exists
+      run: |
+        if [ ! -f "main.py" ]; then
+          echo "❌ main.py not found!"
+          echo "📁 Files in current directory:"
+          ls -la
+          exit 1
+        fi
+        echo "✅ main.py found"
+      shell: bash
+
+    - name: Build executable with setup.py
+      run: |
+        echo "🔨 Building Snake Game executable..."
+        python setup.py
+      shell: bash
+
+    - name: Verify build output
+      run: |
+        echo "📊 Build verification:"
+        if [ -d "dist" ]; then
+          echo "✅ dist/ directory created"
+          echo "📁 Contents of dist/:"
+          ls -la dist/
+
+          # Verificar si hay ejecutables
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            if ls dist/*.exe 1> /dev/null 2>&1; then
+              echo "✅ Windows executable found"
+              for exe in dist/*.exe; do
+                echo "📄 $exe ($(stat -f%z "$exe" 2>/dev/null || stat -c%s "$exe") bytes)"
+              done
+            else
+              echo "❌ No Windows executable found"
+              exit 1
+            fi
+          else
+            if ls dist/* 1> /dev/null 2>&1; then
+              echo "✅ Executable found"
+              for exe in dist/*; do
+                if [ -f "$exe" ] && [ -x "$exe" ]; then
+                  echo "📄 $exe ($(stat -f%z "$exe" 2>/dev/null || stat -c%s "$exe") bytes)"
+                fi
+              done
+            else
+              echo "❌ No executable found"
+              exit 1
+            fi
+          fi
+        else
+          echo "❌ dist/ directory not created"
+          exit 1
+        fi
+      shell: bash
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: snake-game-${{ matrix.os }}-py${{ matrix.python-version }}
+        path: |
+          dist/
+          build/
+        retention-days: 7
+
+    - name: Upload executable only
+      uses: actions/upload-artifact@v3
+      with:
+        name: snake-executable-${{ matrix.os }}-py${{ matrix.python-version }}
+        path: dist/*
+        retention-days: 30
