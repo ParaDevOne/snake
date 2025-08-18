@@ -20,6 +20,10 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Upgrade pip and setuptools
+      run: |
+        python -m pip install --upgrade "pip>=23.0" setuptools wheel
+
     - name: Cache dependencies
       uses: actions/cache@v4
       with:
@@ -28,11 +32,17 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-${{ matrix.python-version }}-
 
-    - name: Install dependencies
+    - name: Install core dependencies
       run: |
-        python -m pip install --upgrade pip
         pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        # Instalar poetry-core explícitamente para resolver el conflicto
+        pip install "poetry-core>=2.0.0,<3.0.0"
+
+    - name: Install project dependencies
+      run: |
+        if [ -f requirements.txt ]; then
+          pip install -r requirements.txt
+        fi
 
     - name: Run flake8
       run: |
@@ -70,17 +80,17 @@ jobs:
       run: |
         set +e
 
-        echo "=== Black ==="
+        echo "=== Black Format Check ==="
         black --check . || true
 
-        echo "\n=== isort ==="
+        echo "\n=== isort Import Sorting ==="
         isort --check-only . || true
 
-        echo "\n=== Mypy ==="
+        echo "\n=== Mypy Type Checking ==="
         mypy . || true
 
-        echo "\n=== Bandit ==="
+        echo "\n=== Bandit Security Scan ==="
         bandit -r . || true
 
-        echo "\n=== Safety ==="
+        echo "\n=== Safety Dependency Check ==="
         safety check || true
