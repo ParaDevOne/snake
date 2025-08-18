@@ -15,6 +15,7 @@ permissions:
 
 env:
   PACKAGE_NAME: snake-game
+  PYINSTALLER_OPTS: --noconfirm --clean --onefile
 
 jobs:
   build:
@@ -24,10 +25,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.12']   # ubuntu-24.04 no contiene 3.15 en el manifest
+        python-version: ['3.12']
 
     steps:
-    - name: Checkout
+    - name: Checkout repository
       uses: actions/checkout@v4
 
     - name: Setup Python ${{ matrix.python-version }}
@@ -35,140 +36,84 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
+        cache-dependency-path: '**/requirements.txt'
         check-latest: true
-        allow-prereleases: true
-        update-environment: true
 
-    - name: Restore pip / pyinstaller cache (cross-platform)
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cache/pip
-          ~/.cache/pyinstaller
-          ${{ runner.temp }}\pip-cache
-          C:\Users\runneradmin\AppData\Local\pip\Cache
-        key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt', '**/pyproject.toml', '**/setup.py') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-${{ matrix.python-version }}-
-          ${{ runner.os }}-pip-
-
-    - name: Install build dependencies (Unix)
-      if: runner.os != 'Windows'
-      shell: bash
+    - name: Install build tools
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
-        python -m pip install pyinstaller
+        pip install pyinstaller
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    - name: Install build dependencies (Windows)
-      if: runner.os == 'Windows'
-      shell: pwsh
+    - name: Verify entrypoint
       run: |
-        python -m pip install --upgrade pip setuptools wheel
-        if (Test-Path requirements.txt) {
-          python -m pip install -r requirements.txt
-        }
-        python -m pip install pyinstaller
-
-    - name: Verify entrypoint (main.py) — Unix
-      if: runner.os != 'Windows'
-      shell: bash
-      run: |
-        if [ -f "main.py" ]; then
-          echo "✅ main.py found"
-        else
-          echo "❌ main.py not found — aborting"
-          echo "Files in repo root:"
+        if [ ! -f "main.py" ]; then
+          echo "::error::❌ main.py not found in repository root"
+          echo "Directory contents:"
           ls -la
           exit 1
-        fi
-
-    - name: Verify entrypoint (main.py) — Windows
-      if: runner.os == 'Windows'
-      shell: pwsh
-      run: |
-        if (Test-Path "main.py") {
-          Write-Host "✅ main.py found"
-        } else {
-          Write-Error "❌ main.py not found — aborting"
-          Get-ChildItem -Force -Recurse -Depth 1 | Format-Table
-          exit 1
-        }
-
-    - name: Build (Linux / macOS)
-      if: runner.os != 'Windows'
-      shell: bash
-      run: |
-        mkdir -p build dist
-        pyinstaller --noconfirm --clean --onefile --name "${PACKAGE_NAME}" main.py --distpath dist --workpath build/.pyinstaller --specpath build
-
-    - name: Build (Windows)
-      if: runner.os == 'Windows'
-      shell: pwsh
-      run: |
-        New-Item -ItemType Directory -Force -Path build,dist | Out-Null
-        pyinstaller --noconfirm --clean --onefile --name "$env:PACKAGE_NAME" main.py --distpath dist --workpath build/.pyinstaller --specpath build
-
-    - name: Verify build output (OS-aware)
-      shell: bash
-      run: |
-        echo "📊 Build verification"
-        ls -la dist || true
-
-        if [ "${RUNNER_OS}" = "Windows" ]; then
-          powershell -Command "
-            \$exes = Get-ChildItem -Path dist -Filter *.exe -File -ErrorAction SilentlyContinue
-            if (-not \$exes) { Write-Error 'No .exe found in dist/'; exit 1 }
-            foreach (\$e in \$exes) { Write-Host \"✅ \$($e.Name) - \$($e.Length) bytes\" }
-          "
         else
-          if ls dist/* 1> /dev/null 2>&1; then
-            for f in dist/*; do
-              if [ -f \"$f\" ]; then
-                size=$(stat -c%s \"$f\" 2>/dev/null || stat -f%z \"$f\" 2>/dev/null || echo "unknown")
-                echo "✅ $f ($size bytes)"
-              fi
-            done
-          else
-            echo "❌ No build artifacts in dist/"
-            exit 1
-          fi
+          echo "✅ main.py found"
         fi
 
-    - name: Create archive of dist (Unix)
-      if: runner.os != 'Windows'
-      shell: bash
+    - name: Build executable
       run: |
-        mkdir -p artifacts
-        ZIP_NAME="artifacts/${PACKAGE_NAME}-${{ matrix.os }}-py${{ matrix.python-version }}.zip"
-        zip -r "$ZIP_NAME" dist || ( echo "zip failed, trying tar.gz"; tar -czf "${ZIP_NAME%.zip}.tar.gz" dist && exit 0 )
-        echo "Created $ZIP_NAME"
+        # Create output directories
+        mkdir -p dist build artifacts
 
-    - name: Create archive of dist (Windows)
-      if: runner.os == 'Windows'
-      shell: pwsh
+        # OS-specific executable naming
+        if [ "$RUNNER_OS" = "Windows" ]; then
+          OUTPUT_NAME="${PACKAGE_NAME}.exe"
+        else
+          OUTPUT_NAME="${PACKAGE_NAME}"
+        fi
+
+        # Build with PyInstaller
+        pyinstaller $PYINSTALLER_OPTS --name "$OUTPUT_NAME" \
+          --distpath dist \
+          --workpath build/pyinstaller \
+          --specpath build \
+          main.py
+
+        # Verify output
+        if [ ! -f "dist/$OUTPUT_NAME" ]; then
+          echo "::error::❌ Build failed - executable not found"
+          echo "PyInstaller output:"
+          cat build/pyinstaller/*.log || true
+          exit 1
+        else
+          # Get file size in human-readable format
+          if [ "$RUNNER_OS" = "Darwin" ]; then
+            SIZE=$(stat -f%z "dist/$OUTPUT_NAME")
+          else
+            SIZE=$(stat -c%s "dist/$OUTPUT_NAME")
+          fi
+          echo "✅ Build successful: dist/$OUTPUT_NAME ($SIZE bytes)"
+        fi
+
+    - name: Package artifacts
       run: |
-        New-Item -ItemType Directory -Force -Path artifacts | Out-Null
-        $zip = "artifacts/${env:PACKAGE_NAME}-${{ matrix.os }}-py${{ matrix.python-version }}.zip"
-        Compress-Archive -Path dist\* -DestinationPath $zip -Force
-        Write-Host "Created $zip"
+        # OS-specific archive naming
+        ARCHIVE_NAME="${PACKAGE_NAME}-${RUNNER_OS}-py${matrix.python-version}"
 
-    - name: Upload build artifacts (full folders + zipped executable)
+        # Create archive based on OS
+        case "$RUNNER_OS" in
+          Windows)
+            7z a -tzip "artifacts/${ARCHIVE_NAME}.zip" "dist/${PACKAGE_NAME}.exe"
+            ;;
+          Linux|macOS)
+            tar -czf "artifacts/${ARCHIVE_NAME}.tar.gz" -C dist .
+            ;;
+        esac
+
+        echo "📦 Created archive: artifacts/${ARCHIVE_NAME}.*"
+
+    - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: snake-game-${{ matrix.os }}-py${{ matrix.python-version }}
+        name: snake-artifacts-${{ matrix.os }}-${{ matrix.python-version }}
         path: |
-          dist/**
-          build/**
-          artifacts/**
-        retention-days: 30
-        if-no-files-found: error
-
-    - name: Upload executable only
-      uses: actions/upload-artifact@v4
-      with:
-        name: snake-executable-${{ matrix.os }}-py${{ matrix.python-version }}
-        path: |
-          dist/**
-        retention-days: 30
+          dist/
+          artifacts/
+        retention-days: 7
         if-no-files-found: error
