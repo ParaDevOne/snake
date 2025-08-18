@@ -41,7 +41,6 @@ jobs:
     - name: Restore pip / pyinstaller cache (cross-platform)
       uses: actions/cache@v3
       with:
-        # intent: cache common pip cache locations for linux/mac/windows
         path: |
           ~/.cache/pip
           ~/.cache/pyinstaller
@@ -72,7 +71,6 @@ jobs:
       run: |
         choco install upx -y || echo "choco install failed, trying direct download..."
         if (-not (Get-Command upx -ErrorAction SilentlyContinue)) {
-          Write-Host "Downloading UPX release..."
           Invoke-WebRequest -Uri "https://github.com/upx/upx/releases/download/v4.2.1/upx-4.2.1-win64.zip" -OutFile "upx.zip"
           Expand-Archive -Path "upx.zip" -DestinationPath "upx"
           Copy-Item -Path "upx\upx-4.2.1-win64\upx.exe" -Destination "upx.exe" -Force
@@ -87,17 +85,6 @@ jobs:
         python -m pip install pyinstaller
       shell: bash
 
-    - name: (Optional) Run tests if present
-      if: ${{ always() && (contains(github.event.head_commit.message, '[run tests]') || false) }}
-      run: |
-        if [ -f pytest.ini ] || [ -d tests ]; then
-          python -m pip install pytest
-          pytest -q
-        else
-          echo "No tests detected, skipping."
-        fi
-      shell: bash
-
     - name: Verify entrypoint (main.py)
       run: |
         if [ -f "main.py" ]; then
@@ -110,15 +97,11 @@ jobs:
         fi
       shell: bash
 
-    # --- Build with PyInstaller: split by OS to control shell/paths ---
     - name: Build (Linux / macOS)
       if: runner.os != 'Windows'
       run: |
         mkdir -p build dist
-        echo "🔨 PyInstaller: building ${PACKAGE_NAME}"
-        # Añade assets si los tienes: --add-data "assets:assets"  (linux/mac uses ':')
         pyinstaller --noconfirm --clean --onefile --name "${PACKAGE_NAME}" main.py --distpath dist --workpath build/.pyinstaller --specpath build
-        echo "✅ pyinstaller exit code: $?"
       shell: bash
 
     - name: Build (Windows)
@@ -126,24 +109,16 @@ jobs:
       shell: powershell
       run: |
         New-Item -ItemType Directory -Force -Path build,dist | Out-Null
-        Write-Host "🔨 PyInstaller (Windows) building $env:PACKAGE_NAME"
         pyinstaller --noconfirm --clean --onefile --name "$env:PACKAGE_NAME" main.py --distpath dist --workpath build/.pyinstaller --specpath build
-        Write-Host "✅ PyInstaller finished. Checking dist\"
 
     - name: Strip / UPX compress (if UPX available)
       run: |
-        # Try compressing any single-file binaries found in dist/
         set -e
         for f in dist/*; do
           if [ -f "$f" ]; then
-            echo "Found build artifact: $f"
-            # make executable (mostly Linux/mac)
             chmod +x "$f" || true
             if command -v upx >/dev/null 2>&1; then
-              echo "Compressing $f with upx"
               upx --best --lzma "$f" || echo "upx failed for $f"
-            else
-              echo "UPX not available, skipping compression"
             fi
           fi
         done
@@ -188,11 +163,21 @@ jobs:
       shell: bash
 
     - name: Upload build artifacts (full folders + zipped executable)
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: snake-game-${{ matrix.os }}-py${{ matrix.python-version }}
         path: |
-          dist/
-          build/
-          artifacts/
+          dist/**
+          build/**
+          artifacts/**
         retention-days: 30
+        if-no-files-found: error
+
+    - name: Upload executable only
+      uses: actions/upload-artifact@v4
+      with:
+        name: snake-executable-${{ matrix.os }}-py${{ matrix.python-version }}
+        path: |
+          dist/**
+        retention-days: 30
+        if-no-files-found: error
