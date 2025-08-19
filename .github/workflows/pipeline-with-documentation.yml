@@ -44,11 +44,6 @@ jobs:
           ${{ runner.os }}-python-${{ matrix.python-version }}-poetry-
           ${{ runner.os }}-python-${{ matrix.python-version }}-
 
-    - name: Configure Poetry
-      run: |
-        poetry config virtualenvs.create true
-        poetry config virtualenvs.in-project false
-
     - name: Install dependencies
       run: poetry install --no-interaction
 
