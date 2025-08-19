@@ -34,29 +34,39 @@ jobs:
       run: pip install poetry==${{ env.POETRY_VERSION }}
 
     - name: Load cached dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
-        path: ~/.cache/pypoetry
-        key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+        path: |
+          ~/.cache/pypoetry
+          ~/.cache/pip
+        key: ${{ runner.os }}-python-${{ matrix.python-version }}-poetry-${{ hashFiles('**/poetry.lock') }}
         restore-keys: |
-          ${{ runner.os }}-poetry-
+          ${{ runner.os }}-python-${{ matrix.python-version }}-poetry-
+          ${{ runner.os }}-python-${{ matrix.python-version }}-
+
+    - name: Configure Poetry
+      run: |
+        poetry config virtualenvs.create true
+        poetry config virtualenvs.in-project false
 
     - name: Install dependencies
       run: poetry install --no-interaction
 
     - name: Run tests with coverage
-      run: poetry run pytest --cov=./ --cov-report=xml
+      run: poetry run pytest --cov=./ --cov-report=xml --cov-report=term-missing
 
     - name: Run linter
-      run: poetry run flake8 . --count --show-source --statistics
+      run: poetry run flake8 . --count --show-source --statistics --max-line-length=88
 
     - name: Run type checking
-      run: poetry run mypy . --ignore-missing-imports
+      run: poetry run mypy . --ignore-missing-imports --show-error-codes
 
     - name: Upload coverage reports
-      uses: codecov/codecov-action@v3
+      if: matrix.python-version == '3.10'  # Solo subir desde una versión
+      uses: codecov/codecov-action@v4
       with:
         file: ./coverage.xml
+        fail_ci_if_error: false
 
   # Trabajo de construcción y seguridad
   build-and-audit:
@@ -75,14 +85,24 @@ jobs:
     - name: Install Poetry
       run: pip install poetry==${{ env.POETRY_VERSION }}
 
+    - name: Load cached dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/pypoetry
+          ~/.cache/pip
+        key: ${{ runner.os }}-python-${{ env.PYTHON_VERSION }}-poetry-${{ hashFiles('**/poetry.lock') }}
+
     - name: Install dependencies
       run: poetry install --no-interaction
 
     - name: Security audit
       run: |
         poetry check
-        poetry export -f requirements.txt --without-hashes | \
-        safety check --stdin || echo "Security check completed"
+        # Instalar safety si no está en las dependencias
+        pip install safety
+        poetry export -f requirements.txt --without-hashes --output requirements.txt
+        safety check -r requirements.txt || echo "Security check completed with warnings"
 
     - name: Build package
       run: poetry build
@@ -90,8 +110,9 @@ jobs:
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: dist-packages
+        name: dist-packages-${{ github.sha }}
         path: dist/
+        retention-days: 30
 
   # Trabajo de documentación con MkDocs
   documentation:
@@ -112,32 +133,47 @@ jobs:
     - name: Install Poetry
       run: pip install poetry==${{ env.POETRY_VERSION }}
 
+    - name: Load cached dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/pypoetry
+          ~/.cache/pip
+        key: ${{ runner.os }}-python-${{ env.PYTHON_VERSION }}-poetry-docs-${{ hashFiles('**/poetry.lock') }}
+
     - name: Install documentation dependencies
-      run: poetry install --with docs --no-interaction
+      run: |
+        poetry install --with docs --no-interaction
+        # Instalar linkchecker por separado si es necesario
+        pip install linkchecker
 
     - name: Build documentation with MkDocs
       run: poetry run mkdocs build --verbose --site-dir site
 
     - name: Check for broken links
       run: |
-        # Instalar linkchecker si no está disponible
-        pip install linkchecker || echo "Linkchecker not available"
-        poetry run linkchecker site/ || echo "Link checking completed"
+        if command -v linkchecker >/dev/null 2>&1; then
+          linkchecker site/ --check-extern || echo "Link checking completed with warnings"
+        else
+          echo "Linkchecker not available, skipping link check"
+        fi
 
     - name: Deploy to GitHub Pages
-      if: github.ref == 'refs/heads/main'
-      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./site
         keep_files: false
+        force_orphan: true
 
     - name: Upload documentation artifact
       if: github.ref != 'refs/heads/main'
       uses: actions/upload-artifact@v4
       with:
-        name: documentation
+        name: documentation-${{ github.sha }}
         path: site/
+        retention-days: 30
 
   # Trabajo de despliegue (solo para releases)
   deploy:
@@ -149,16 +185,25 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write  # Para trusted publishing
 
     steps:
     - name: Download build artifacts
       uses: actions/download-artifact@v4
       with:
-        name: dist-packages
+        name: dist-packages-${{ github.sha }}
         path: dist/
 
-    - name: Publish to PyPI
-      # Usar una acción oficial de PyPI en lugar de twine directamente
+    - name: Verify artifacts
+      run: |
+        ls -la dist/
+        if [ -z "$(ls -A dist/)" ]; then
+          echo "Error: No artifacts found"
+          exit 1
+        fi
+
+    - name: Publish to PyPI (Trusted Publishing)
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        password: ${{ secrets.PYPI_API_TOKEN }}
+        verify-metadata: true
+        verbose: true
