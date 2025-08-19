@@ -1,5 +1,5 @@
 
-# 🐍 Snake Game
+# 🐍 Snake Game Version 1.6.0
 
 ![Python Version](https://img.shields.io/badge/python-3.13.5%2B-blue)
 ![Pygame](https://img.shields.io/badge/pygame-2.6.1-green)
