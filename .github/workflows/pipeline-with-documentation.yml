@@ -34,8 +34,29 @@ jobs:
       uses: snok/install-poetry@v1
       with:
         version: ${{ env.POETRY_VERSION }}
-        virtualenvs-create: true
-        virtualenvs-in-project: false
+
+    - name: Verify Poetry installation and project structure
+      run: |
+        echo "=== Poetry version ==="
+        poetry --version
+        echo "=== Current directory ==="
+        pwd
+        ls -la
+        echo "=== Checking for pyproject.toml ==="
+        if [ -f "pyproject.toml" ]; then
+          echo "pyproject.toml exists"
+          echo "=== First 20 lines of pyproject.toml ==="
+          head -20 pyproject.toml
+        else
+          echo "ERROR: pyproject.toml not found!"
+          echo "Available files:"
+          ls -la
+          exit 1
+        fi
+        echo "=== Poetry config ==="
+        poetry config --list
+        echo "=== Poetry check ==="
+        poetry check || echo "Poetry check failed"
 
     - name: Load cached dependencies
       uses: actions/cache@v4
@@ -45,18 +66,10 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-python-${{ matrix.python-version }}-poetry-
 
-    - name: Verify pyproject.toml exists
-      run: |
-        if [ ! -f "pyproject.toml" ]; then
-          echo "Error: pyproject.toml not found"
-          ls -la
-          exit 1
-        fi
-        echo "pyproject.toml found, checking content:"
-        head -10 pyproject.toml
-
     - name: Install dependencies
-      run: poetry install --no-interaction --verbose
+      run: |
+        echo "=== Installing dependencies with Poetry ==="
+        poetry install --no-interaction --verbose
 
     - name: Run tests with coverage
       run: poetry run pytest --cov=./ --cov-report=xml --cov-report=term-missing
