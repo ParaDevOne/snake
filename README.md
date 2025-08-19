@@ -64,6 +64,10 @@ snake/
 - **RAM**: 512 MB disponible
 - **Espacio en Disco**: 64 MB
 
+> [!NOTE]
+> Aqui pone **Python 3.10** pero en el archivo [pyproject.toml](pyproject.toml) **pone 3.13.5**,
+> eso es porque `Pyinstaller` necesita la version **3.13.5** para funcionar.
+
 ### Dependencias Python
 Todas las dependencias están especificadas en `requirements.txt`:
 
@@ -153,7 +157,7 @@ poetry run build
 # El ejecutable estará en dist/SnakeGame.exe (Windows) o dist/SnakeGame (Linux/macOS)
 ```
 
-> [!Warning]
+> [!WARNING]
 > Si quieres que el tamaño del ejecutable se reduzca usa UPX,
 > instalalo de forma global o en lib/upx.exe.
 > (Puede que en entorno Linux/MacOS no funcione bien esta herramienta)
