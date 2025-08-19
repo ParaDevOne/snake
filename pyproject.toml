@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = "3.13.5"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
@@ -37,9 +37,3 @@ flake8 = "^7.3.0"
 pyflakes = "^3.4.0"
 pycodestyle = "^2.14.0"
 pygments = "^2.19.2"
-
-[tool.poetry.group.docs.dependencies]
-mkdocs = "^1.5.0"
-mkdocs-material = "^9.0.0"
-mkdocstrings = "^0.23.0"
-linkchecker = "^0.1.0"
