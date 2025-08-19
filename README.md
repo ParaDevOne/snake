@@ -1,10 +1,10 @@
-# 🐍 Snake Game - Versión 1.5
+# 🐍 Snake Game - Versión 1.6
 
 ![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)
 ![Pygame](https://img.shields.io/badge/pygame-2.6.1-green)
 ![License](https://img.shields.io/badge/license-SOL%202.0-orange)
 ![Status](https://img.shields.io/badge/status-stable-success)
-![Version](https://img.shields.io/badge/version-1.5.0-brightgreen)
+![Version](https://img.shields.io/badge/version-1.6.0-brightgreen)
 
 **Una implementación moderna del clásico juego Snake con efectos visuales avanzados, sistema de logging completo y soporte multiplataforma.**
 
@@ -239,13 +239,11 @@ Los perfiles de usuario se guardan automáticamente en `Data/profiles.json`:
 ## Versiones
 
 - **v1.0.0: Versión inicial del juego clásico Snake.**
-
   - Implementación básica del juego.
   - Movimiento de la serpiente y detección de colisiones.
   - Generación de comida y aumento de tamaño de la serpiente.
 
 - **v1.1.0: Mejoras en la gestión de perfiles y almacenamiento de puntajes.**
-
   - Sistema de perfiles de usuario.
   - Almacenamiento persistente del puntaje más alto.
   - Correcciones menores de bugs.
@@ -254,8 +252,8 @@ Los perfiles de usuario se guardan automáticamente en `Data/profiles.json`:
   - Optimización del motor de colisiones.
   - Reducción del uso de memoria.
   - Corrección de errores en la lógica de crecimiento de la serpiente.
-- **v1.3.0: Mejoras gráficas avanzadas.** ✨
 
+- **v1.3.0: Mejoras gráficas avanzadas.** ✨
   - Sistema completo de efectos visuales con partículas.
   - Animaciones suaves e interpolación de movimientos.
   - Efectos de screen shake y flash para mayor impacto.
@@ -265,13 +263,11 @@ Los perfiles de usuario se guardan automáticamente en `Data/profiles.json`:
   - Interfaz de usuario moderna con sombras y efectos.
 
 - **v1.3.1: Corrección de bugs.** 🐛
-
   - Arreglado: Rectángulos negros en segmentos de la serpiente.
   - Arreglado: Problemas de interpolación con wrap-around.
   - Arreglado: Problemas menores con colores alpha en efectos.
 
 - **v1.3.2: Sistema de logging completo.** 📝
-
   - Sistema completo de logging en consola y archivo (`Data/logs.txt`).
   - Logs automáticos de eventos del juego con timestamps.
   - Diferentes niveles de logging (DEBUG, INFO, WARNING, ERROR, CRITICAL).
@@ -306,6 +302,17 @@ Los perfiles de usuario se guardan automáticamente en `Data/profiles.json`:
   - Gestión diferenciada de dependencias de desarrollo y producción.
   - Configuración de herramientas de desarrollo integrada (linting, formatting).
   - Soporte para gestores de paquetes modernos (Poetry + pip).
+
+**v1.6.0: Modularidad avanzada, workflows mejorados, licencia SOL 3.0 y documentación ampliada.** 🚀
+  - Configuración centralizada y documentada en `settings.py`, helpers de acceso y logging en `utils.py`.
+  - Logging avanzado: logs detallados de eventos, errores, perfiles y sistema en `Data/logs.txt`.
+  - Compatibilidad total con Python 3.13.5+ y dependencias actualizadas en `requirements.txt` y `pyproject.toml`.
+  - Workflows de desarrollo y build documentados: ejecución (`python -m main`), instalación (`pip install -r requirements.txt` o `poetry install`), (`pyinstaller setup.py` o `poetry run build`).
+  - Licencia actualizada a SOL 3.0, mayor claridad y protección legal.
+  - Documentación técnica y de pruebas ampliada en `docs/` y en el propio README.
+  - Estructura de datos y persistencia mejorada: perfiles, logs y puntajes organizados en `Data/`.
+  - Refactorización y optimización de código para mayor mantenibilidad y rendimiento.
+  - Corrección de bugs menores y mejoras de estabilidad.
 
 ## Características Gráficas Nuevas 🎨
 
