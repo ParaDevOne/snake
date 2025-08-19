@@ -1,4 +1,6 @@
+""""A module for managing the snake in the game."""
 # snake.py
+
 import settings
 
 class Snake:
@@ -14,15 +16,18 @@ class Snake:
         self.grow_pending = 0
 
     def set_direction(self, d):
+        """Establece la dirección de la serpiente."""
         # evita invertir 180 grados
         if (d[0], d[1]) == (-self.direction[0], -self.direction[1]):
             return
         self.direction = (d[0], d[1])
 
     def head(self):
+        """Devuelve la posición de la cabeza de la serpiente."""
         return self.body[0]
 
     def step(self, wrap=False):
+        """Avanza la serpiente en la dirección actual."""
         hx, hy = self.head()
         dx, dy = self.direction
         nx, ny = hx + dx, hy + dy
@@ -46,4 +51,5 @@ class Snake:
         return 'ok'
 
     def grow(self, n=1):
+        """Hace crecer la serpiente."""
         self.grow_pending += n

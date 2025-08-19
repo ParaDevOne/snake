@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# setup.py
 """
 Setup script para construir el ejecutable del juego Snake.
 Desarrollado por ParaDevOne - Snake Game v1.5.0

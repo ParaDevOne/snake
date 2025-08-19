@@ -1,10 +1,10 @@
-# menu.py -- Menú mejorado con efectos visuales avanzados
+"""A module for the game menu."""
+# menu.py
 # pylint: disable=no-member  # Desactivar warnings para atributos pygame dinámicos
+
 import random
 import sys
-
 import pygame
-
 import profiles
 import settings
 import utils
@@ -57,11 +57,13 @@ STATE_OPTIONS_ADVANCED = "options_advanced"
 
 # helpers
 def draw_text(surface, text, font, color, pos):
+    """Dibuja texto en la superficie dada."""
     surf = font.render(text, True, color)
     surface.blit(surf, pos)
     return surf.get_rect(topleft=pos)
 
 def center_rect(w, h, x_off=0, y_off=0):
+    """Centrar un rectángulo en la pantalla."""
     return pygame.Rect((WIDTH - w) // 2 + x_off, (HEIGHT - h) // 2 + y_off, w, h)
 
 class Button:
@@ -74,6 +76,7 @@ class Button:
         self.font = font
 
     def draw(self, surf, hover=False, selected=False):
+        """Dibuja el botón en la superficie dada."""
         # Panel bg
         panel_col = (30, 30, 40)
         border_col = (70, 70, 80)
@@ -89,6 +92,7 @@ class Button:
         surf.blit(text_surf, (tx, ty))
 
     def is_hover(self, pos):
+        """Verificar si el ratón está sobre el botón."""
         return self.rect.collidepoint(pos)
 
 class InputOverlay:
@@ -102,6 +106,7 @@ class InputOverlay:
         self.result = None
 
     def handle_event(self, event):
+        """Maneja eventos de entrada de teclado."""
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:
                 self.result = self.text.strip()
@@ -122,6 +127,7 @@ class InputOverlay:
         return False
 
     def render(self, surf):
+        """Renderizar la superposición de entrada."""
         overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         overlay.fill(OVERLAY)
         surf.blit(overlay, (0, 0))
@@ -264,7 +270,7 @@ def run():
         "Visual",
         "Controles",
         "Avanzado",
-        "← Volver",
+        "Volver",
     ]
 
     gameplay_selected = 0
@@ -276,7 +282,7 @@ def run():
         "Velocidad",
         "PowerUps",
         "Comida Especial",
-        "← Volver",
+        "Volver",
     ]
 
     visual_selected = 0
@@ -290,14 +296,14 @@ def run():
         "Efectos Brillo",
         "Pantalla Completa",
         "Mostrar FPS",
-        "← Volver",
+        "Volver",
     ]
 
     controls_selected = 0
-    controls_items = ["Esquema Control", "Permitir Reversa", "← Volver"]
+    controls_items = ["Esquema Control", "Permitir Reversa", "Volver"]
 
     advanced_selected = 0
-    advanced_items = ["Sonido", "Música", "Multi-Comida", "Resetear Todo", "← Volver"]
+    advanced_items = ["Sonido", "Música", "Multi-Comida", "Resetear Todo", "Volver"]
 
     # play state
     profile_list = profiles.list_profiles()
@@ -443,7 +449,7 @@ def run():
                         profile_name = profile_list[play_profile_idx]
                         utils.log_game_event("Iniciando nueva partida", f"Perfil: {profile_name}")
                         utils.log_info(
-                            f"Configuraciones - Wrap: {opt_wrap},Obstáculos: {opt_obs}, Velocidad: {opt_speed}ms"
+                            f"Configuraciones - Wrap: {opt_wrap}, Obstáculos: {opt_obs}, Velocidad: {opt_speed}ms"
                         )
                         game = Game(SCREEN)
                         try:
@@ -777,7 +783,7 @@ def run():
             # draw buttons
             for i, b in enumerate(btns):
                 hover = b.is_hover(mouse_pos)
-                selected = (i == selected_main)
+                selected = i == selected_main
                 b.draw(SCREEN, hover=hover, selected=selected)
 
             # help text below buttons (guaranteed not to overlap)

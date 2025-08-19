@@ -1,3 +1,4 @@
+""""A module for managing game settings."""
 # settings.py
 import os
 
@@ -13,7 +14,7 @@ MIN_MOVE_DELAY = 40
 SPEED_STEP = 6  # cuánto reduce el delay al comer
 
 # Directorio de datos
-DATA_DIR = os.path.join("Data", "score")
+DATA_DIR = os.path.join("Data")
 
 # Directorio para perfiles
 PROFILES_DIR = os.path.join("Data", "profiles")   # guarda perfiles en Data/profiles/<profile_name>/

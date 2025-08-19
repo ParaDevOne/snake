@@ -1,4 +1,5 @@
-# logic.py (actualizado para perfiles)
+""""A module for the game logic and mechanics."""
+# logic.py
 import time
 import random
 import settings
@@ -8,6 +9,7 @@ from food import Food, PowerUp
 import profiles
 
 class GameLogic:
+    """Game logic and mechanics."""
     def __init__(self, load_highscore=True, profile_name=None):
         # profile_name: si None -> settings.DEFAULT_PROFILE
         self.profile_name = profile_name or settings.DEFAULT_PROFILE
@@ -32,6 +34,7 @@ class GameLogic:
         self.reset()
 
     def reset(self):
+        """Reiniciar el juego a su estado inicial."""
         utils.log_game_event("Reiniciando juego")
         mid = (settings.COLUMNS // 2, settings.ROWS // 2)
         init = [mid, (mid[0]-1, mid[1]), (mid[0]-2, mid[1])]
@@ -63,7 +66,8 @@ class GameLogic:
             self.highscore = 0
 
     def set_profile(self, profile_name):
-        """Cambiar el perfil activo en caliente. Cargará/creará el perfil y actualizará highscore."""
+        """Cambiar el perfil activo en caliente. \
+        Cargará/creará el perfil y actualizará highscore."""
         self.profile_name = profile_name or settings.DEFAULT_PROFILE
         if not profiles.profile_exists(self.profile_name):
             profiles.create_profile(self.profile_name)
@@ -71,17 +75,22 @@ class GameLogic:
         self.highscore = self.profile.get("highscore", 0)
 
     def now_ms(self):
+        """Obtener la marca de tiempo actual en milisegundos."""
         return int(time.time() * 1000)
 
     def spawn_power_if_needed(self):
+        """Generar un power-up si es necesario."""
         if not settings.POWERUP_ENABLED:
             return
         if self.powerup is not None:
             return
         if random.random() < getattr(settings, "POWERUP_CHANCE", 0.12):
-            self.powerup = PowerUp(self.snake.body + ([self.food.pos] if self.food.pos else []) + self.obstacles, self.obstacles)
+            self.powerup = PowerUp(self.snake.body + ([self.food.pos]
+                                                    if self.food.pos else []) + self.obstacles,
+                                                    self.obstacles)
 
     def apply_powerup(self, ptype):
+        """Aplicar un power-up al jugador."""
         self.active_power = ptype
         self.power_end_time_ms = self.now_ms() + getattr(settings, "POWERUP_DURATION_MS", 7000)
         if ptype == "slow":
@@ -94,6 +103,7 @@ class GameLogic:
             self.score += 3
 
     def clear_power_effects(self):
+        """Limpiar los efectos del power-up activo."""
         if not self.active_power:
             return
         if self.active_power == "slow":
@@ -104,6 +114,7 @@ class GameLogic:
         self.power_end_time_ms = 0
 
     def handle_move(self):
+        """Manejar el movimiento del jugador y eventos relacionados."""
         if self.game_over or self.paused:
             return {"status": "idle"}
 
@@ -129,8 +140,10 @@ class GameLogic:
             self.score += 1
             self.snake.grow(1)
             if self.move_delay > settings.MIN_MOVE_DELAY:
-                self.move_delay = max(settings.MIN_MOVE_DELAY, self.move_delay - settings.SPEED_STEP)
-            utils.log_game_event("Comida consumida", f"Puntos: {self.score}, Nueva velocidad: {self.move_delay}ms")
+                self.move_delay = max(settings.MIN_MOVE_DELAY,
+                                    self.move_delay - settings.SPEED_STEP)
+            utils.log_game_event("Comida consumida",
+                                f"Puntos: {self.score}, Nueva velocidad: {self.move_delay}ms")
             self.food.respawn(self.snake.body + self.obstacles)
             events["ate_food"] = True
             self.spawn_power_if_needed()
@@ -153,7 +166,8 @@ class GameLogic:
         if is_new_record:
             self.profile["highscore"] = self.score
             self.highscore = self.score
-            utils.log_game_event("¡NUEVO RECORD!", f"Puntuación final: {self.score} (anterior: {prev_high})")
+            utils.log_game_event("¡NUEVO RECORD!",
+                                f"Puntuación final: {self.score} (anterior: {prev_high})")
         else:
             utils.log_game_event("Fin del juego", f"Puntuación: {self.score}, Record: {prev_high}")
 
@@ -163,21 +177,26 @@ class GameLogic:
         profiles.save_profile(self.profile_name, self.profile)
 
     def update(self):
+        """Actualizar el estado del juego."""
         if self.active_power and self.now_ms() > self.power_end_time_ms:
             self.clear_power_effects()
 
     def set_direction(self, d):
+        """Establecer la dirección del jugador."""
         self.snake.set_direction(d)
 
     def toggle_pause(self):
+        """Alternar pausa."""
         self.paused = not self.paused
 
     def get_state(self):
+        """Obtener el estado actual del juego."""
         return {
             "snake": list(self.snake.body),
             "prev_snake": list(self.prev_snake),
             "food": self.food.pos,
-            "powerup": (self.powerup.type, self.powerup.pos) if self.powerup and self.powerup.pos else None,
+            "powerup": (self.powerup.type,
+                        self.powerup.pos) if self.powerup and self.powerup.pos else None,
             "obstacles": list(self.obstacles),
             "score": self.score,
             "highscore": self.highscore,

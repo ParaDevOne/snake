@@ -1,6 +1,6 @@
 """A module for advanced visual effects in the Snake game."""
 # visual_effects.py
-# Módulo de efectos visuales avanzados para Snake
+# pylint: disable=no-member
 import math
 import random
 import time
@@ -273,7 +273,7 @@ class VisualEffects:
         for i, color in enumerate(colors):
             current_radius = radius - i * 2
             if current_radius > 0:
-                glow_surf = pygame.Surface((current_radius * 4, current_radius * 4), pygame.SRCALPHA)  # pylint: disable=no-member
+                glow_surf = pygame.Surface((current_radius * 4, current_radius * 4), pygame.SRCALPHA)
                 pygame.draw.circle(glow_surf, color, (current_radius * 2, current_radius * 2), current_radius)
                 surface.blit(glow_surf, (pixel_x - current_radius * 2, pixel_y - current_radius * 2))
 

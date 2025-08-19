@@ -1,4 +1,5 @@
-# game.py (renderer mejorado para pygame con efectos visuales avanzados)
+""""A module for the game logic and mechanics."""
+# game.py
 import math
 import time
 import random
@@ -37,6 +38,7 @@ class Game:
         pygame.time.set_timer(MOVE_EVENT, self.logic.move_delay)
 
     def reset_all(self):
+        """Reset all game variables and states."""
         self.logic.reset()
         self.visual_effects = VisualEffects()  # Reset efectos
         self.interpolation_progress = 0.0
@@ -46,6 +48,7 @@ class Game:
         pygame.time.set_timer(MOVE_EVENT, self.logic.move_delay)
 
     def handle_move(self):
+        """Handle player movement and related events."""
         events = self.logic.handle_move()
 
         # Manejar efectos basados en eventos
@@ -67,6 +70,7 @@ class Game:
         return events
 
     def update(self):
+        """Update the game state and visual effects."""
         self.logic.update()
         self.visual_effects.update()
 
@@ -156,6 +160,7 @@ class Game:
             pygame.draw.rect(self.screen, (160, 160, 170), obstacle_rect, 2)
 
     def render(self):
+        """Render the game state on the screen."""
         state = self.logic.get_state()
 
         # Obtener offset para screen shake
@@ -198,7 +203,7 @@ class Game:
         prev_snake = state.get("prev_snake", snake_segments)
 
         for i, seg in enumerate(snake_segments):
-            is_head = (i == 0)
+            is_head = i == 0
 
             # Interpolación suave del movimiento (con corrección para wrap-around)
             if i < len(prev_snake) and not self.logic.game_over:

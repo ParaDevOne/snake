@@ -1,4 +1,6 @@
+""""A module for utility functions."""
 # utils.py
+
 import json
 import sys
 import os
@@ -17,6 +19,7 @@ if hasattr(sys.stdout, 'reconfigure'):
         pass  # Si falla, continuar sin UTF-8
 
 def random_free_cell(occupied, extra_forbidden=None):
+    """Devuelve una celda libre aleatoria que no esté ocupada."""
     occupied_set = set(occupied)
     extra = set(extra_forbidden or [])
     free = [ (x, y)
@@ -26,6 +29,7 @@ def random_free_cell(occupied, extra_forbidden=None):
     return random.choice(free) if free else None
 
 def load_json(path, default):
+    """Carga un archivo JSON y devuelve su contenido o un valor por defecto."""
     try:
         if os.path.exists(path):
             with open(path, 'r', encoding='utf-8') as f:
@@ -35,6 +39,7 @@ def load_json(path, default):
     return default
 
 def save_json(path, obj):
+    """Guarda un objeto en un archivo JSON."""
     try:
         folder = os.path.dirname(path)
         if folder:
