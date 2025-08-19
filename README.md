@@ -159,8 +159,8 @@ poetry run build
 
 > [!WARNING]
 > Si quieres que el tamaño del ejecutable se reduzca usa UPX,
-> instalalo de forma global o en lib/upx.exe.
-> (Puede que en entorno Linux/MacOS no funcione bien esta herramienta)
+> instalalo de forma global o en lib/upx.exe
+> (Puede que en entornos Linux/MacOS no funcione bien esta herramienta, pero en Windows la recomiendo.)
 
 ## 🎮 Ejecución
 

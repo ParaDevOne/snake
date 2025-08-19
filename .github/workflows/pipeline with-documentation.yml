@@ -1,0 +1,159 @@
+name: CI/CD Pipeline with Documentation
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  release:
+    types: [published]
+  workflow_dispatch:  # Ejecución manual
+
+env:
+  PYTHON_VERSION: '3.10'
+  POETRY_VERSION: '1.7.1'
+
+jobs:
+  # Trabajo de pruebas y verificación de código
+  test-and-lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install Poetry
+      run: pip install poetry==${{ env.POETRY_VERSION }}
+
+    - name: Load cached dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pypoetry
+        key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-poetry-
+
+    - name: Install dependencies
+      run: poetry install --no-interaction
+
+    - name: Run tests with coverage
+      run: poetry run pytest --cov=./ --cov-report=xml
+
+    - name: Run linter
+      run: poetry run flake8 . --count --show-source --statistics
+
+    - name: Run type checking
+      run: poetry run mypy . --ignore-missing-imports
+
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+
+  # Trabajo de construcción y seguridad
+  build-and-audit:
+    runs-on: ubuntu-latest
+    needs: test-and-lint
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install Poetry
+      run: pip install poetry==${{ env.POETRY_VERSION }}
+
+    - name: Install dependencies
+      run: poetry install --no-interaction
+
+    - name: Security audit
+      run: |
+        poetry check
+        poetry export -f requirements.txt --without-hashes | \
+        safety check --stdin
+
+    - name: Build package
+      run: poetry build
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist-packages
+        path: dist/
+
+  # Trabajo de documentación con MkDocs
+  documentation:
+    runs-on: ubuntu-latest
+    needs: test-and-lint
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install Poetry
+      run: pip install poetry==${{ env.POETRY_VERSION }}
+
+    - name: Install dependencies
+      run: poetry install --no-interaction
+
+    - name: Build documentation with MkDocs
+      run: poetry run mkdocs build --verbose --site-dir site
+
+    - name: Check for broken links
+      run: |
+        poetry install --with docs
+        poetry run linkchecker site/ || echo "Link checking completed"
+
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./site
+        keep_files: false
+
+    - name: Upload documentation artifact
+      if: github.ref != 'refs/heads/main'
+      uses: actions/upload-artifact@v4
+      with:
+        name: documentation
+        path: site/
+
+  # Trabajo de despliegue (solo para releases)
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [test-and-lint, build-and-audit, documentation]
+    if: github.event_name == 'release' && github.event.action == 'published'
+
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: dist-packages
+        path: dist/
+
+    - name: Publish to PyPI
+      env:
+        PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+      run: |
+        pip install twine
+        twine upload dist/* -u __token__ -p $PYPI_TOKEN
