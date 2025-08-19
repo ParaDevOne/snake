@@ -6,7 +6,7 @@
 ![Status](https://img.shields.io/badge/status-stable-success)
 ![Version](https://img.shields.io/badge/version-1.5.0-brightgreen)
 
-**Una implementación moderna del clásico juego Snake con efectos visuales profesionales, sistema de logging completo y soporte multiplataforma.**
+**Una implementación moderna del clásico juego Snake con efectos visuales avanzados, sistema de logging completo y soporte multiplataforma.**
 
 ## 🎯 Características Principales
 
