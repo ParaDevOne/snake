@@ -1,16 +1,12 @@
-# 🐍 Snake Game - Versión Profesional con Efectos Visuales Avanzados
+# 🐍 Snake Game - Versión 1.5
 
-<div align="center">
-
-![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
+![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)
 ![Pygame](https://img.shields.io/badge/pygame-2.6.1-green)
 ![License](https://img.shields.io/badge/license-SOL%202.0-orange)
 ![Status](https://img.shields.io/badge/status-stable-success)
 ![Version](https://img.shields.io/badge/version-1.5.0-brightgreen)
 
-*Una implementación moderna del clásico juego Snake con efectos visuales profesionales, sistema de logging completo y soporte multiplataforma.*
-
-</div>
+**Una implementación moderna del clásico juego Snake con efectos visuales profesionales, sistema de logging completo y soporte multiplataforma.**
 
 ## 🎯 Características Principales
 
@@ -44,21 +40,15 @@ snake/
 │   ├── profiles.py          # Gestión de perfiles de usuario
 │   └── utils.py             # Utilidades generales
 │
-├── 🧪 Pruebas y Desarrollo
-│   ├── test_video_config.py    # Pruebas de configuración de video
-│   ├── test_multiplatform.py   # Pruebas multiplataforma
+├── 🧪 Desarrollo
 │   ├── setup.py                # Script de compilación PyInstaller
 │   ├── pyproject.toml          # Configuración del proyecto (Poetry/Build)
 │   └── requirements.txt        # Dependencias del proyecto
 │
 ├── 📚 Documentación
 │   ├── README.md              # Este archivo
-│   ├── LICENSE.txt            # Licencia SOL 2.0
+│   ├── LICENSE.txt            # Licencia SOL 3.0
 │   └── docs/                  # Documentación técnica
-│       ├── RESUMEN_FINAL.md   # Resumen de mejoras gráficas
-│       ├── MEJORAS_GRAFICAS.md # Detalles técnicos de efectos
-│       ├── SISTEMA_LOGGING.md # Documentación del logging
-│       └── BUGS_ARREGLADOS.md # Historial de correcciones
 │
 └── 📊 Datos del Juego
     └── Data/
@@ -69,25 +59,17 @@ snake/
 ## 📋 Requisitos del Sistema
 
 ### Requisitos Mínimos
-- **Python**: 3.8 o superior
+- **Python**: 3.10 o superior
 - **Sistema Operativo**: Windows 10+, Linux (Ubuntu 18.04+), macOS 10.14+
 - **RAM**: 512 MB disponible
-- **Espacio en Disco**: 50 MB
+- **Espacio en Disco**: 64 MB
 
 ### Dependencias Python
 Todas las dependencias están especificadas en `requirements.txt`:
 
 ```txt
-pygame==2.6.1        # Motor de juego principal
-colorama==0.4.6      # Colores en consola para logging
-astroid==3.3.11      # Análisis estático de código
-flake8==7.3.0        # Linter de código
-pylint==3.3.8        # Análisis y estilo de código
-isort==6.0.1         # Ordenamiento de imports
+Ejemplo: pygame==2.6.1
 ```
-
-### Configuración SDL (Automática)
-El juego configura automáticamente los drivers de video SDL más apropiados para tu sistema.
 
 ## 🚀 Instalación
 
@@ -116,27 +98,18 @@ cd snake
 #### 2. **Crear Entorno Virtual (Recomendado)**
 ```bash
 # Windows
-python -m venv venv
-venv\Scripts\activate
+python -m venv .venv
+.venv\Scripts\activate
 
 # Linux/macOS
-python3 -m venv venv
-source venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
 #### 3. **Instalar Dependencias**
 ```bash
 pip install --upgrade pip
 pip install -r requirements.txt
-```
-
-#### 4. **Verificar Instalación**
-```bash
-# Probar configuración de video
-python test_video_config.py
-
-# Ejecutar el juego
-python -m main
 ```
 
 ### Instalación con Poetry (Recomendado)
@@ -162,26 +135,22 @@ poetry run python -m main
 
 Para crear un ejecutable independiente:
 
-#### Con pip:
-```bash
-# Instalar PyInstaller
-pip install pyinstaller
-
 # Ejecutar script de compilación
+```
+#### Con bash
 python setup.py
+```
 ```
 
 #### Con Poetry:
 ```bash
-# Añadir PyInstaller como dependencia de desarrollo
-poetry add --group dev pyinstaller
 
 # Ejecutar script de compilación
-poetry run python setup.py
+poetry run build
 ```
 
 ```bash
-# El ejecutable estará en dist/main.exe (Windows) o dist/main (Linux/macOS)
+# El ejecutable estará en dist/SnakeGame.exe (Windows) o dist/SnakeGame (Linux/macOS)
 ```
 
 ## 🎮 Ejecución
@@ -191,23 +160,10 @@ poetry run python setup.py
 python -m main
 ```
 
-### Modo de Pruebas
-```bash
-# Probar configuración multiplataforma
-python test_multiplatform.py
-
-# Probar configuración de video específica
-python test_video_config.py
-```
-
 ### Opciones de Línea de Comandos
 ```bash
 # Ejecutar con logging en modo DEBUG
 python -m main --debug
-
-# Forzar driver de video específico
-SDL_VIDEODRIVER=windib python -m main  # Windows
-SDL_VIDEODRIVER=x11 python -m main     # Linux
 ```
 
 ## ⚙️ Configuración y Personalización
@@ -218,7 +174,7 @@ Modifica `settings.py` para personalizar:
 
 ```python
 # Configuración de juego
-GAME_SPEED = 8              # Velocidad del juego (1-20)
+OBSTACULES = True              # Velocidad del juego (1-20)
 WRAP_AROUND = True          # Permitir atravesar paredes
 POWERUPS_ENABLED = True     # Habilitar power-ups
 
@@ -270,10 +226,6 @@ Los perfiles de usuario se guardan automáticamente en `Data/profiles.json`:
   }
 }
 ```
-
-## Créditos
-
-Desarrollado por ParaDevOne.
 
 ## Versiones
 
@@ -377,35 +329,6 @@ El sistema detecta automáticamente tu plataforma y configura los drivers apropi
 - **macOS**: Utiliza el driver nativo `cocoa`
 - **Otros SO**: Usa configuración por defecto de SDL como fallback
 
-### Orden de Drivers Intentados
-
-Para cada plataforma, el sistema prueba los drivers en el siguiente orden hasta encontrar uno funcional:
-
-#### Windows:
-1. `windows` - Driver nativo de Windows (preferido)
-2. `windib` - Driver DIB de Windows (fallback)
-
-#### Linux:
-1. `x11` - Sistema de ventanas X11 (más compatible)
-2. `wayland` - Compositor Wayland moderno
-3. `fbcon` - Framebuffer console (modo texto/servidor)
-
-#### macOS:
-1. `cocoa` - Framework nativo de macOS
-
-### Variables de Entorno Configuradas
-
-El sistema configura automáticamente las siguientes variables de entorno SDL para optimizar el rendimiento:
-
-| Variable | Propósito | Valor |
-|----------|-----------|-------|
-| `SDL_VIDEODRIVER` | Driver de video principal | Según plataforma |
-| `SDL_VIDEO_WINDOW_POS` | Posición de ventana | `centered` |
-| `SDL_HINT_RENDER_DRIVER` | Driver de renderizado | `direct3d` (Windows) / `opengl` (Linux/macOS) |
-| `SDL_HINT_RENDER_SCALE_QUALITY` | Calidad de escalado | `1` (filtrado lineal) |
-| `SDL_HINT_RENDER_DRIVER_HARDWARE` | Aceleración por hardware | `1` (habilitado) |
-| `SDL_HINT_RENDER_VSYNC` | Sincronización vertical | `0` (deshabilitado para baja latencia) |
-
 ### Mensajes de Logging
 
 Durante la configuración automática, el sistema genera los siguientes tipos de mensajes en `Data/logs.txt`:
@@ -423,21 +346,6 @@ Durante la configuración automática, el sistema genera los siguientes tipos de
 [INFO] [VIDEO] Configuración completa del sistema de video finalizada exitosamente
 ```
 
-### Personalización
-
-Si necesitas personalizar la configuración de video, puedes:
-
-#### Forzar un driver específico:
-```bash
-# Windows
-set SDL_VIDEODRIVER=windib
-python -m main
-
-# Linux/macOS
-export SDL_VIDEODRIVER=x11
-python -m main
-```
-
 #### Modificar variables de renderizado:
 ```bash
 # Habilitar VSync
@@ -450,13 +358,6 @@ set SDL_HINT_RENDER_SCALE_QUALITY=2
 set SDL_HINT_RENDER_DRIVER_HARDWARE=0
 ```
 
-#### Personalizar configuración en código:
-Puedes modificar el archivo `video_config.py` para:
-- Cambiar el orden de drivers intentados
-- Agregar nuevos drivers para tu plataforma
-- Modificar las variables de entorno por defecto
-- Implementar lógica personalizada de detección
-
 #### Depuración de problemas:
 Si experimentas problemas gráficos, revisa los logs en `Data/logs.txt` y:
 1. Verifica qué driver se está usando
@@ -466,50 +367,7 @@ Si experimentas problemas gráficos, revisa los logs en `Data/logs.txt` y:
 
 ## Pruebas Manuales Realizadas ✅
 
-Se han realizado pruebas exhaustivas del sistema de configuración de video y logging en múltiples entornos:
-
-### 🖥️ Windows (Probado Físicamente)
-
-**Configuración Detectada:**
-- ✅ Driver SDL: `windows` (nativo)
-- ✅ Render Driver: `direct3d`
-- ✅ Variables configuradas: 5 variables de optimización
-- ✅ Inicialización pygame: Exitosa
-
-**Logging Verificado:**
-```
-[11:21:13] INFO     [VIDEO] Intentando driver de video: windows
-[11:21:13] INFO     [VIDEO] Driver de video configurado exitosamente: windows
-[11:21:13] INFO     [SYS] 🖥️ Iniciando Snake Game
-[11:21:13] INFO     [SYS] 🖥️ Python version: 3.13.5
-```
-
-**Estado:** ✅ Sin errores de SDL_VIDEODRIVER, juego inicia correctamente
-
-### 🐧 Linux (Simulado)
-
-**Configuración Esperada:**
-- ✅ Driver SDL: `x11` (primera opción)
-- ✅ Fallbacks: `wayland` → `fbcon`
-- ✅ Render Driver: `opengl`
-- ✅ Detección automática de entorno de escritorio
-
-**Comportamiento Esperado:**
-- Sistema detecta automáticamente X11/Wayland
-- Fallback a fbcon en servidores sin GUI
-- Logging completo de intentos y selección final
-
-### 🍎 macOS (Simulado)
-
-**Configuración Esperada:**
-- ✅ Driver SDL: `cocoa` (nativo macOS)
-- ✅ Render Driver: `opengl`
-- ✅ Integración completa con sistema de ventanas nativo
-
-**Comportamiento Esperado:**
-- Detección automática de macOS (Darwin)
-- Configuración directa sin fallbacks necesarios
-- Optimización para Retina displays
+Se han realizado pruebas exhaustivas del sistema de configuración de video y logging en múltiples entornos.
 
 ### 📊 Resultados de Pruebas
 
@@ -519,69 +377,6 @@ Se han realizado pruebas exhaustivas del sistema de configuración de video y lo
 | Linux      | `x11`          | ✅ OK  | `wayland`, `fbcon`    |
 | macOS      | `cocoa`        | ✅ OK  | Ninguno necesario     |
 
-### 🔧 Variables de Entorno Configuradas
-
-El sistema configura automáticamente estas variables para optimización:
-
-```bash
-# Variables principales
-SDL_VIDEODRIVER=<driver_detectado>
-SDL_VIDEO_WINDOW_POS=centered
-
-# Optimización de renderizado
-SDL_HINT_RENDER_DRIVER=<direct3d|opengl>
-SDL_HINT_RENDER_SCALE_QUALITY=1
-SDL_HINT_RENDER_DRIVER_HARDWARE=1
-SDL_HINT_RENDER_VSYNC=0
-```
-
-### 📝 Logging Completo Verificado
-
-**En Consola:**
-- ✅ Información de driver seleccionado
-- ✅ Variables de configuración aplicadas
-- ✅ Estado de inicialización
-- ✅ Colores para diferentes niveles
-
-**En Archivo (`Data/logs.txt`):**
-- ✅ Histórico completo de sesiones
-- ✅ Timestamps precisos
-- ✅ Detalles técnicos (DEBUG level)
-- ✅ Eventos de configuración de video
-
-### ⚡ Optimizaciones Adicionales por Plataforma
-
-**Windows:**
-- Aceleración Direct3D habilitada
-- VSync deshabilitado para mejor rendimiento
-- Ventana centrada automáticamente
-
-**Linux:**
-- Detección automática X11/Wayland
-- OpenGL como render preferido
-- Soporte para servidores sin GUI (fbcon)
-
-**macOS:**
-- Framework Cocoa nativo
-- Soporte optimizado para Retina
-- Integración completa con sistema de ventanas
-
-### 🛠️ Instrucciones de Prueba Manual
-
-Para verificar el funcionamiento en tu sistema:
-
-```bash
-# Ejecutar script de pruebas
-python test_multiplatform.py
-
-# Probar configuración específica
-python test_video_config.py
-
-# Verificar logs del juego
-python -m main
-# Después revisar: Data/logs.txt
-```
-
 ### 🔍 Troubleshooting
 
 Si experimentas problemas:
@@ -590,16 +385,6 @@ Si experimentas problemas:
 2. **Forzar driver:** `export SDL_VIDEODRIVER=<driver>`
 3. **Verificar pygame:** Los logs muestran si pygame está disponible
 4. **Probar fallbacks:** El sistema intenta múltiples drivers automáticamente
-
-### ✅ Conclusión de Pruebas
-
-**SISTEMA COMPLETAMENTE FUNCIONAL:**
-- ✅ Detección automática de plataforma
-- ✅ Configuración óptima de drivers SDL
-- ✅ Logging completo de proceso de configuración
-- ✅ Sin errores de SDL_VIDEODRIVER en ninguna plataforma
-- ✅ Fallbacks automáticos funcionando
-- ✅ Variables de optimización configuradas correctamente
 
 ## 🎮 Controles del Juego
 
@@ -619,7 +404,6 @@ Si experimentas problemas:
 ### Atajos Especiales
 - **F11** - Alternar pantalla completa (si está disponible)
 - **F10** - Captura de pantalla (si está implementada)
-- **F1** - Mostrar ayuda/controles
 
 ## 👾 Cómo Jugar
 
@@ -641,7 +425,7 @@ Controla la serpiente para comer la mayor cantidad de comida posible sin chocar 
 ## 🛠️ Desarrollo y Arquitectura
 
 ### Tecnologías Utilizadas
-- **Python 3.8+**: Lenguaje principal
+- **Python 3.10+**: Lenguaje principal
 - **Pygame 2.6.1**: Motor de juego y gráficos
 - **SDL**: Sistema de bajo nivel para gráficos y audio
 - **JSON**: Almacenamiento de datos de perfiles
@@ -652,35 +436,6 @@ Controla la serpiente para comer la mayor cantidad de comida posible sin chocar 
 - **Sistema de Componentes**: Efectos visuales modulares
 - **Event-Driven**: Manejo basado en eventos de Pygame
 - **Configuration-First**: Toda la configuración centralizada
-
-### Módulos Principales
-```
-📋 Lógica de Negocio:
-├── game.py      # Controlador principal del juego
-├── snake.py     # Lógica de la serpiente y movimiento
-├── food.py      # Sistema de comida y powerups
-└── logic.py     # Utilidades de lógica del juego
-
-🎨 Sistema Visual:
-└── visual_effects.py  # Partículas, animaciones, efectos
-
-📊 Interfaz de Usuario:
-└── menu.py      # Sistema de menús y navegación
-
-🔧 Configuración y Utilidades:
-├── settings.py      # Configuración global
-├── video_config.py  # Auto-configuración SDL
-├── profiles.py      # Gestión de perfiles
-└── utils.py         # Utilidades generales
-```
-
-### Características Técnicas Avanzadas
-- **Sistema de Partículas Optimizado**: Pool de objetos reutilizables
-- **Interpolación Cúbica**: Animaciones suaves de alta calidad
-- **Screen Space Effects**: Screen shake, flash, gradientes
-- **Auto-Configuration System**: Detección automática de hardware óptimo
-- **Structured Logging**: Sistema de logging con categorías y niveles
-- **Cross-Platform Compatibility**: Soporte nativo para múltiples SO
 
 ## 👥 Contribuciones
 
@@ -712,16 +467,6 @@ isort *.py --check-only
 - ⚡ **Performance**: Optimizaciones de rendimiento
 - 🔧 **Refactoring**: Mejoras en la estructura del código
 
-#### Testing
-```bash
-# Ejecutar pruebas antes de contribuir
-python test_video_config.py
-python test_multiplatform.py
-
-# Probar el juego completo
-python -m main
-```
-
 ### Áreas Que Necesitan Contribución
 - 🎵 **Sistema de Audio**: Música y efectos de sonido
 - 🌍 **Localización**: Traducción a otros idiomas
@@ -735,16 +480,6 @@ python -m main
 - **Repositorio**: [https://github.com/ParaDevOne/snake](https://github.com/ParaDevOne/snake)
 - **Issues**: [Reportar bugs o sugerir features](https://github.com/ParaDevOne/snake/issues)
 - **Releases**: [Descargar versiones compiladas](https://github.com/ParaDevOne/snake/releases)
-- **Wiki**: [Documentación técnica extendida](https://github.com/ParaDevOne/snake/wiki)
-
-## 🏆 Logros y Reconocimientos
-
-- ✅ **Código Limpio**: Cumple con estándares PEP8
-- ✅ **Multiplataforma**: Funciona en Windows, Linux y macOS
-- ✅ **Bien Documentado**: Documentación completa y actualizada
-- ✅ **Estable**: Sin bugs críticos conocidos
-- ✅ **Rendimiento Óptimo**: 60 FPS constantes
-- ✅ **Sistema de Logging Completo**: Debugging y monitoring avanzado
 
 ## 🔎 FAQ (Preguntas Frecuentes)
 
@@ -760,31 +495,24 @@ Modifica las variables en `settings.py`, como `PARTICLES_ENABLED` o `SMOOTH_MOVE
 ### ¿Dónde se guardan mis puntajes?
 En el archivo `Data/profiles.json` que se crea automáticamente.
 
-### ¿El juego funciona en Raspberry Pi?
-Sí, debería funcionar en Raspberry Pi 3+ con Python 3.8+.
-
 ### ¿Puedo compilarlo para distribución?
 Sí, usa el script `setup.py` con PyInstaller para crear ejecutables.
 
 ## 📞 Futuras Mejoras
 
-### Version 1.5.0 - Planificada
+### Version - Planificada
 - 🎵 **Sistema de Audio Completo**
   - Música de fondo dinámica
   - Efectos de sonido para todas las acciones
   - Control de volumen por categorías
 
-### Version 1.6.0 - Planificada
+### Version - Planificada
 - 🌍 **Localización**
   - Soporte para múltiples idiomas
-  - Interfaz localizada completa
-  - Menús contextuales por región
 
-### Version 2.0.0 - Concepto
+### Version - Concepto
 - 👥 **Modo Multijugador**
   - Pantalla dividida local
-  - Modo competitivo
-  - Tablas de clasificación globales
 
 - 🎆 **Modos de Juego Adicionales**
   - Supervivencia con obstáculos dinámicos
@@ -795,7 +523,7 @@ Sí, usa el script `setup.py` con PyInstaller para crear ejecutables.
 ## 📋 Licencia
 
 ```
-Simplified Open License (SOL) v2.0
+Simplified Open License (SOL) v3.0
 Copyright (c) 2025 ParaDevOne
 
 • Uso libre para cualquier propósito (personal, educativo, comercial)
@@ -807,24 +535,10 @@ Copyright (c) 2025 ParaDevOne
 • Indemnización requerida por parte del usuario
 ```
 
-La nueva licencia SOL 2.0 incluye protecciones adicionales y clarificaciones sobre:
-- Atribución requerida en distribuciones
-- Protección de marcas comerciales
-- Licencias de patentes automáticas
-- Cláusulas de indemnización
-- Compatibilidad con proyectos de licencias más restrictivas
-
 Para más detalles, consulta el archivo [`LICENSE.txt`](LICENSE.txt) incluido en este repositorio.
 
 ---
 
-<div align="center">
-
 **🐍 Hecho con ❤️ por [ParaDevOne](https://github.com/ParaDevOne)**
 
 *Si te gusta este proyecto, ¡dale una ⭐ en GitHub!*
-
-![Pygame](https://img.shields.io/badge/Made%20with-Pygame-green?style=for-the-badge&logo=python)
-![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python&logoColor=white)
-
-</div>
