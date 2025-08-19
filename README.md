@@ -153,6 +153,11 @@ poetry run build
 # El ejecutable estará en dist/SnakeGame.exe (Windows) o dist/SnakeGame (Linux/macOS)
 ```
 
+> [!Warning]
+> Si quieres que el tamaño del ejecutable se reduzca usa UPX,
+> instalalo de forma global o en lib/upx.exe.
+> (Puede que en entorno Linux/MacOS no funcione bien esta herramienta)
+
 ## 🎮 Ejecución
 
 ### Modo Normal
