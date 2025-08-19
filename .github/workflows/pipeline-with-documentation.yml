@@ -31,21 +31,32 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Install Poetry
-      run: pip install poetry==${{ env.POETRY_VERSION }}
+      uses: snok/install-poetry@v1
+      with:
+        version: ${{ env.POETRY_VERSION }}
+        virtualenvs-create: true
+        virtualenvs-in-project: false
 
     - name: Load cached dependencies
       uses: actions/cache@v4
       with:
-        path: |
-          ~/.cache/pypoetry
-          ~/.cache/pip
+        path: ~/.cache/pypoetry
         key: ${{ runner.os }}-python-${{ matrix.python-version }}-poetry-${{ hashFiles('**/poetry.lock') }}
         restore-keys: |
           ${{ runner.os }}-python-${{ matrix.python-version }}-poetry-
-          ${{ runner.os }}-python-${{ matrix.python-version }}-
+
+    - name: Verify pyproject.toml exists
+      run: |
+        if [ ! -f "pyproject.toml" ]; then
+          echo "Error: pyproject.toml not found"
+          ls -la
+          exit 1
+        fi
+        echo "pyproject.toml found, checking content:"
+        head -10 pyproject.toml
 
     - name: Install dependencies
-      run: poetry install --no-interaction
+      run: poetry install --no-interaction --verbose
 
     - name: Run tests with coverage
       run: poetry run pytest --cov=./ --cov-report=xml --cov-report=term-missing
@@ -78,18 +89,20 @@ jobs:
         python-version: ${{ env.PYTHON_VERSION }}
 
     - name: Install Poetry
-      run: pip install poetry==${{ env.POETRY_VERSION }}
+      uses: snok/install-poetry@v1
+      with:
+        version: ${{ env.POETRY_VERSION }}
+        virtualenvs-create: true
+        virtualenvs-in-project: false
 
     - name: Load cached dependencies
       uses: actions/cache@v4
       with:
-        path: |
-          ~/.cache/pypoetry
-          ~/.cache/pip
+        path: ~/.cache/pypoetry
         key: ${{ runner.os }}-python-${{ env.PYTHON_VERSION }}-poetry-${{ hashFiles('**/poetry.lock') }}
 
     - name: Install dependencies
-      run: poetry install --no-interaction
+      run: poetry install --no-interaction --verbose
 
     - name: Security audit
       run: |
@@ -126,21 +139,20 @@ jobs:
         python-version: ${{ env.PYTHON_VERSION }}
 
     - name: Install Poetry
-      run: pip install poetry==${{ env.POETRY_VERSION }}
+      uses: snok/install-poetry@v1
+      with:
+        version: ${{ env.POETRY_VERSION }}
+        virtualenvs-create: true
+        virtualenvs-in-project: false
 
     - name: Load cached dependencies
       uses: actions/cache@v4
       with:
-        path: |
-          ~/.cache/pypoetry
-          ~/.cache/pip
+        path: ~/.cache/pypoetry
         key: ${{ runner.os }}-python-${{ env.PYTHON_VERSION }}-poetry-docs-${{ hashFiles('**/poetry.lock') }}
 
     - name: Install documentation dependencies
-      run: |
-        poetry install --with docs --no-interaction
-        # Instalar linkchecker por separado si es necesario
-        pip install linkchecker
+      run: poetry install --with docs --no-interaction --verbose
 
     - name: Build documentation with MkDocs
       run: poetry run mkdocs build --verbose --site-dir site
