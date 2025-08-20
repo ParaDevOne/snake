@@ -181,6 +181,12 @@ LOG_TO_CONSOLE = True
   - Refactorización y optimización de código para mayor mantenibilidad y rendimiento.
   - Corrección de bugs menores y mejoras de estabilidad.
 
+**v1.7.0: Obstáculos y nuevos componentes de UI.** 🧱🖼️
+  - Añadido sistema de obstáculos: colisiones, generación y gestión desde `obstacles.py`.
+  - Nuevo archivo `ui_components.py`: componentes reutilizables para menús y HUD.
+  - Mejoras visuales en la interfaz y menús usando los nuevos componentes UI.
+  - Corrección de bugs menores y mejoras de estabilidad.
+
 ---
 
 ## 👾 Cómo Jugar
