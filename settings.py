@@ -1,5 +1,6 @@
-""""A module for managing game settings."""
+"""Configuraciones del juego"""
 # settings.py
+
 import os
 
 WIDTH = 800
@@ -24,9 +25,9 @@ PROFILE_FILENAME = "profile.json"  # dentro de la carpeta del perfil
 
 # opciones del juego
 # Nombre de la ventana principal (fallback directo)
-WINDOW_TITLE = "Snake Game"
+WINDOW_TITLE = "Snake Game - Fallback"
 # Nombre de la ventana del menú principal
-MENU_WINDOW_TITLE = "Snake Game - Fallback"
+MENU_WINDOW_TITLE = "Snake Game"
 WRAP_AROUND = True
 # Activar/desactivar obstáculos
 USE_OBSTACLES = True
@@ -39,6 +40,21 @@ OBSTACLE_COLOR = (120, 120, 120)
 POWERUP_ENABLED = True
 POWERUP_CHANCE = 0.12  # probabilidad de que aparezca un powerup cuando aparece comida
 POWERUP_DURATION_MS = 5000
+
+# --- Constantes y estados de menú ---
+HELP_TEXT = "Usa flechas o ratón. Enter/Clic: elegir. M/ESC en juego: volver al menú"
+
+# Estados del menú
+STATE_MAIN = "main"
+STATE_PLAY = "play"
+STATE_PROFILES = "profiles"
+STATE_OPTIONS = "options"
+STATE_GAME = "game"
+STATE_OPTIONS_GAMEPLAY = "options_gameplay"
+STATE_OPTIONS_VISUAL = "options_visual"
+STATE_OPTIONS_CONTROLS = "options_controls"
+STATE_OPTIONS_ADVANCED = "options_advanced"
+""""A module for managing game settings."""
 
 # ===== NUEVAS OPCIONES MEJORADAS =====
 # Modos de dificultad
@@ -200,3 +216,29 @@ ACCENT = MENU_COLORS["accent"]
 BAD = MENU_COLORS["bad"]
 OK = MENU_COLORS["ok"]
 OVERLAY = MENU_COLORS["overlay"]
+
+# --- Paleta de colores para menús y UI ---
+def get_menu_colors():
+    """Devuelve el diccionario de colores del menú, usando defaults si no está en settings."""
+    _menu_colors = globals().get("MENU_COLORS", None)
+    if _menu_colors:
+        return {
+            "text": _menu_colors.get("text", (245, 245, 245)),
+            "muted": _menu_colors.get("muted", (160, 160, 160)),
+            "bg": _menu_colors.get("bg", (18, 22, 30)),
+            "accent": _menu_colors.get("accent", (80, 160, 255)),
+            "bad": _menu_colors.get("bad", (220, 80, 80)),
+            "ok": _menu_colors.get("ok", (120, 200, 120)),
+            "overlay": _menu_colors.get("overlay", (10, 10, 10, 160)),
+        }
+    if not _menu_colors:
+        return {
+            "text": (245, 245, 245),
+            "muted": (150, 150, 150),
+            "bg": (28, 32, 40),
+            "accent": (80, 160, 255),
+            "bad": (220, 80, 80),
+            "ok": (120, 200, 120),
+            "overlay": (10, 10, 10, 160),
+        }
+    return None
