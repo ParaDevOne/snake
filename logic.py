@@ -1,12 +1,15 @@
 """"A module for the game logic and mechanics."""
 # logic.py
-import time
 import random
+import time
+
+import profiles
 import settings
 import utils
-from snake import Snake
 from food import Food, PowerUp
-import profiles
+from obstacles import ObstacleManager
+from snake import Snake
+
 
 class GameLogic:
     """Game logic and mechanics."""
@@ -18,6 +21,7 @@ class GameLogic:
         # Inicializar todos los atributos de instancia
         self.snake = None
         self.obstacles = []
+        self.obstacle_manager = None
         self.food = None
         self.powerup = None
         self.score = 0
@@ -39,7 +43,19 @@ class GameLogic:
         mid = (settings.COLUMNS // 2, settings.ROWS // 2)
         init = [mid, (mid[0]-1, mid[1]), (mid[0]-2, mid[1])]
         self.snake = Snake(init)
-        self.obstacles = list(settings.OBSTACLES) if settings.USE_OBSTACLES else []
+        if settings.USE_OBSTACLES:
+            self.obstacle_manager = ObstacleManager(
+                grid_size=settings.GRID_SIZE,
+                grid_width=settings.COLUMNS,
+                grid_height=settings.ROWS,
+                count=getattr(settings, 'OBSTACLE_COUNT', 8)
+            )
+            # Generar obstáculos aleatorios evitando la serpiente y la comida inicial
+            self.obstacle_manager.generate_obstacles(self.snake.body, None)
+            self.obstacles = self.obstacle_manager.get_obstacles()
+        else:
+            self.obstacles = []
+            self.obstacle_manager = None
         self.food = Food(self.snake.body + self.obstacles, self.obstacles)
         self.powerup = None
         self.score = 0

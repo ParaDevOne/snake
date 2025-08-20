@@ -13,23 +13,28 @@ INIT_MOVE_DELAY = 120
 MIN_MOVE_DELAY = 40
 SPEED_STEP = 6  # cuánto reduce el delay al comer
 
-# Directorio de datos
+# Directorio de datos y assets
 DATA_DIR = os.path.join("Data")
+ASSETS_DIR = os.path.join("Data", "assets")
 
 # Directorio para perfiles
-PROFILES_DIR = os.path.join("Data", "profiles")   # guarda perfiles en Data/profiles/<profile_name>/
+PROFILES_DIR = os.path.join("Data", "profiles")
 DEFAULT_PROFILE = "default"
 PROFILE_FILENAME = "profile.json"  # dentro de la carpeta del perfil
 
 # opciones del juego
 WRAP_AROUND = True
-USE_OBSTACLES = False
-OBSTACLES = [(10,8), (11,8), (12,8), (15,12), (15,13)]  # coordenadas en celdas
+# Activar/desactivar obstáculos
+USE_OBSTACLES = True
+# Cantidad de obstáculos aleatorios
+OBSTACLE_COUNT = 8
+# Color de los obstáculos (usar paleta o RGB)
+OBSTACLE_COLOR = (120, 120, 120)
 
 # powerups
 POWERUP_ENABLED = True
 POWERUP_CHANCE = 0.12  # probabilidad de que aparezca un powerup cuando aparece comida
-POWERUP_DURATION_MS = 7000
+POWERUP_DURATION_MS = 5000
 
 # ===== NUEVAS OPCIONES MEJORADAS =====
 # Modos de dificultad
@@ -151,9 +156,9 @@ FPS_LIMIT = 60
 SHOW_FPS = False
 SHOW_SCORE_HISTORY = True
 
-FONT_NAME = None  # usa fuente por defecto
+FONT_NAME = "Arial"  # Usa fuente por defecto
 
-# ===== Temas / Colores (centralizados) =====
+# ===== Temas / Colores =====
 # Paleta principal mejorada
 PALETTE = {
     "bg_top": (8, 12, 28),
@@ -170,7 +175,7 @@ PALETTE = {
     "trail": (100, 255, 150, 60)
 }
 
-# Colores específicos para el menú / UI (puedes editarlos aquí)
+# Colores específicos para el menú / UI
 MENU_COLORS = {
     "bg": (18, 22, 30),         # fondo del menú
     "panel": (30, 30, 40),      # fondo de botones/rectángulos
@@ -183,7 +188,7 @@ MENU_COLORS = {
     "overlay": (10, 10, 10, 160), # overlay con alpha para modales (r,g,b,a)
 }
 
-# Opcional: alias antiguos para compatibilidad (si algo del código usa WHITE/GRAY/DARK...)
+# Alias antiguos para compatibilidad (si algo del código usa WHITE/GRAY/DARK...)
 WHITE = MENU_COLORS["text"]
 GRAY = MENU_COLORS["muted"]
 DARK = MENU_COLORS["bg"]

@@ -1,9 +1,11 @@
 """"A module for the game logic and mechanics."""
 # game.py
 import math
-import time
 import random
+import time
+
 import pygame
+
 import settings
 from logic import GameLogic
 from visual_effects import VisualEffects
@@ -16,9 +18,9 @@ class Game:
 
     def __init__(self, screen):
         self.screen = screen
-        self.font = pygame.font.Font(settings.FONT_NAME, 20)
-        self.bigfont = pygame.font.Font(settings.FONT_NAME, 48)
-        self.title_font = pygame.font.Font(settings.FONT_NAME, 32)
+        self.font = pygame.font.SysFont(settings.FONT_NAME, 20)
+        self.bigfont = pygame.font.SysFont(settings.FONT_NAME, 48)
+        self.title_font = pygame.font.SysFont(settings.FONT_NAME, 32)
         self.logic = GameLogic(load_highscore=True)
 
         # Efectos visuales
