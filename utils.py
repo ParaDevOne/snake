@@ -1,13 +1,13 @@
 """"A module for utility functions."""
 # utils.py
 
-import json
-import sys
-import os
 import datetime
+import json
+import os
+import random
+import sys
 import threading
 from enum import Enum
-import random
 import settings
 
 # Configurar encoding UTF-8 para Windows

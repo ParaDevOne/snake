@@ -3,6 +3,7 @@
 import random
 import utils
 
+
 class Food:
 
     """Food class for the game, which can respawn at random positions."""
