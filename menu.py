@@ -17,6 +17,7 @@ pygame.font.init()
 
 WIDTH, HEIGHT = settings.WIDTH, settings.HEIGHT
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption(getattr(settings, "MENU_WINDOW_TITLE", "Snake Game - Menú"))
 CLOCK = pygame.time.Clock()
 
 TITLE_FONT = pygame.font.SysFont(None, 56)
