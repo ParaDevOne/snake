@@ -23,6 +23,10 @@ DEFAULT_PROFILE = "default"
 PROFILE_FILENAME = "profile.json"  # dentro de la carpeta del perfil
 
 # opciones del juego
+# Nombre de la ventana principal (fallback directo)
+WINDOW_TITLE = "Snake Game"
+# Nombre de la ventana del menú principal
+MENU_WINDOW_TITLE = "Snake Game - Fallback"
 WRAP_AROUND = True
 # Activar/desactivar obstáculos
 USE_OBSTACLES = True

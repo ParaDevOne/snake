@@ -5,11 +5,13 @@
 
 # Configurar video antes de cualquier importación o inicialización de pygame
 import sys
-import utils
-from game import Game, MOVE_EVENT
-import settings
+
 import menu
+import settings
+import utils
 import video_config
+from game import MOVE_EVENT, Game
+
 video_config.configure_video_driver()
 
 try:
@@ -27,28 +29,22 @@ def run():
         utils.log_debug("Intentando cargar menu.py", "MAIN")
         if hasattr(menu, "run"):
             utils.log_info("Iniciando juego con menú principal")
+            # Cambiar el nombre de la ventana para el menú
+            if pygame:
+                pygame.display.set_caption(settings.MENU_WINDOW_TITLE)
             menu.run()
             return
         else:
-            utils.log_warning("menu.py encontrado pero no tiene 'run()'." \
-            "Arrancando game directo...")
+            utils.log_warning("menu.py encontrado pero no tiene 'run()'.")
             raise ImportError("menu.run missing")
     except (ImportError, ModuleNotFoundError, AttributeError):
-        # fallback: intentar iniciar game directamente (por compatibilidad)
+        # fallback: iniciar el juego directo
         if pygame is None:
-            print("No se pudo arrancar el menú ni el juego directamente." \
-            "Error: pygame no disponible")
+            print("No se pudo arrancar el menú ni el juego directamente. Error: pygame no disponible")
             sys.exit(1)
-        try:
-            pass
-        except (ImportError, ModuleNotFoundError) as e2:
-            print("No se pudo arrancar el menú ni el juego directamente. Error:", e2)
-            sys.exit(1)
-
-        # Modo simple: crear la ventana y ejecutar loop similar al antiguo main.py
         pygame.init()
         screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
-        pygame.display.set_caption("Snake - Fallback (directo)")
+        pygame.display.set_caption(settings.WINDOW_TITLE)
         clock = pygame.time.Clock()
         game = Game(screen)
 
