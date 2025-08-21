@@ -113,7 +113,7 @@ LOG_TO_CONSOLE = True
 	- Corrección de bugs menores y mejoras de estabilidad.
 
 > [!NOTE]
-> **Las versiones anteriores a la ultima se pueden encontrar en el archivo [`./docs/CHANGELOG.md`](CHANGELOG.md).**
+> **Las versiones anteriores a la ultima se pueden encontrar en el archivo [`CHANGELOG.md`](./docs/CHANGELOG.md).**
 
 ## 👾 Cómo Jugar
 
