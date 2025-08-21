@@ -6,18 +6,18 @@ Se ha implementado un **sistema completo de logging** en el juego Snake que regi
 
 ## 🎯 **IMPLEMENTADO COMPLETAMENTE**
 
-✅ **Archivo de logs en `Data/logs.txt`**  
-✅ **Logs en consola con colores**  
-✅ **Niveles configurables de logging**  
-✅ **Logs automáticos de eventos del juego**  
-✅ **Timestamps y formato estructurado**  
-✅ **Thread-safe para concurrencia**  
-✅ **Sistema de sesiones**  
+✅ **Archivo de logs en `Data/logs.txt`**
+✅ **Logs en consola con colores**
+✅ **Niveles configurables de logging**
+✅ **Logs automáticos de eventos del juego**
+✅ **Timestamps y formato estructurado**
+✅ **Thread-safe para concurrencia**
+✅ **Sistema de sesiones**
 
 ## 📁 **Ubicación del Archivo de Logs**
 
 ```
-C:\Users\Usuario\Desktop\snake\Data\logs.txt
+./Data/logs.txt
 ```
 
 El archivo se crea automáticamente la primera vez que se ejecuta el juego.
@@ -30,7 +30,7 @@ Se ha expandido `utils.py` con un sistema completo de logging que incluye:
 ```python
 # Niveles de logging disponibles
 DEBUG    # Información detallada para desarrollo
-INFO     # Información general del juego  
+INFO     # Información general del juego
 WARNING  # Advertencias y situaciones inusuales
 ERROR    # Errores no críticos
 CRITICAL # Errores críticos que pueden afectar el juego
@@ -84,7 +84,7 @@ CRITICAL # Errores críticos que pueden afectar el juego
 - 🔵 **DEBUG**: Cian - Información técnica detallada
 - 🟢 **INFO**: Verde - Información general del juego
 - 🟡 **WARNING**: Amarillo - Situaciones inusuales
-- 🔴 **ERROR**: Rojo - Errores no críticos  
+- 🔴 **ERROR**: Rojo - Errores no críticos
 - 🟣 **CRITICAL**: Magenta - Errores críticos
 
 ## 📈 **Funciones Específicas Implementadas**
@@ -181,31 +181,6 @@ file_enabled = True      # Escribir en archivo
 - **Análisis de uso**: Patrones de juego registrados
 - **Estadísticas**: Información sobre rendimiento
 - **Troubleshooting**: Historia completa para resolver problemas
-
-## 📋 **Ejemplo de Sesión Completa**
-
-```
-============================================================
-🐍 SNAKE GAME - NUEVA SESIÓN INICIADA
-📅 2025-08-13 12:29:58
-============================================================
-[12:29:58] INFO     [SYS] 🖥️ Iniciando Snake Game
-[12:29:58] INFO     [SYS] 🖥️ Python version: 3.13.5
-[12:29:58] INFO      Iniciando juego con menú principal
-[12:29:58] INFO      Iniciando sistema de menús
-[12:29:58] INFO     [SYS] 🖥️ Resolución: 800x600
-[12:30:34] INFO     [USER] 👤 Navegó a sección JUGAR
-[12:31:02] INFO     [GAME] 🎮 Iniciando nueva partida - Perfil: New
-[12:31:02] INFO      Configuraciones - Wrap: True, Obstáculos: False, Velocidad: 120ms
-[12:31:02] INFO     [GAME] 🎮 Reiniciando juego
-[12:31:04] INFO     [GAME] 🎮 Comida consumida - Puntos: 1, Nueva velocidad: 114ms
-[12:31:14] INFO     [GAME] 🎮 Powerup recogido - Tipo: slow
-[12:32:04] INFO     [GAME] 🎮 ¡NUEVO RECORD! - Puntuación final: 10 (anterior: 0)
-[12:32:04] INFO      Partidas jugadas: 1
-
-📅 SESIÓN TERMINADA: 2025-08-13 12:32:15
-============================================================
-```
 
 ## ✅ **Estado Final**
 

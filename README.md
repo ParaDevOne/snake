@@ -1,11 +1,11 @@
 
-# 🐍 Snake Game Version 1.6.0
+# 🐍 Snake Game Version 1.7.0
 
 ![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)
 ![Pygame](https://img.shields.io/badge/pygame-2.6.1-green)
 ![License](https://img.shields.io/badge/license-SOL%203.0-orange)
 ![Status](https://img.shields.io/badge/status-stable-success)
-![Version](https://img.shields.io/badge/version-1.6.0-brightgreen)
+![Version](https://img.shields.io/badge/version-1.7.0-brightgreen)
 
 > **Snake, modular y multiplataforma con efectos visuales avanzados, perfiles persistentes y workflows.**
 
@@ -15,42 +15,17 @@
 - 🐍 Serpiente mejorada: gradientes, sombras, ojos animados
 - 🍎 Comida y powerups dinámicos: formas, animaciones, efectos
 - 🌅 Fondos: gradientes, grid, obstáculos volumétricos
-- 📝 Logging: consola y archivo, niveles, colores
+- 📝 Logging: consola y archivo, niveles, colores [Para más información](./docs/SISTEMA_LOGGING.md)
 - 👤 Perfiles persistentes: multiusuario, datos en `Data/profiles/`
 - ⚙️ Configuración centralizada: todo en `settings.py`
 - 🖥️ Soporte multiplataforma: Windows, Linux, macOS
 - 🔧 Workflows: ejecución, instalación, build y logs documentados
 - 📄 Documentación técnica: comentarios en el código, guías y ejemplos
 - 📦 Distribución: empaquetado y distribución del juego
+- 🔍 Análisis de rendimiento: herramientas y métricas
+- 🛠️ Mantenimiento: scripts y herramientas de soporte
 
 ---
-
-## 📦 Instalación y Workflows
-
-### Instalación Rápida
-
-```bash
-git clone https://github.com/ParaDevOne/snake.git
-cd snake
-pip install -r requirements.txt
-python -m main
-```
-
-### Instalación con Poetry
-
-```bash
-poetry install
-poetry run start
-```
-
-### Build de ejecutable
-
-```bash
-# PyInstaller
-python setup.py
-# O con Poetry
-poetry run build
-```
 
 ### Logs y datos
 - Logs: `Data/logs.txt`
@@ -122,17 +97,16 @@ LOG_TO_CONSOLE = True
 - **Reiniciar:** R
 - **Menús:** ENTER para seleccionar, TAB para cambiar perfil
 - **Pantalla completa:** F11
-- **Captura:** F10
 
 ### Objetivo
-Come la mayor cantidad de comida posible sin chocar contigo mismo ni con obstáculos.
+Come la mayor cantidad de comida posible sin chocar contigo mismo ni con obstáculos (o con las paredes si tienes el modo wrap-around desactivado).
 
 ### Puntuación
 - 🍎 Comida: +10
-- ⚡ Speed Powerup: +15 y velocidad
-- 🔷 Grow Powerup: +20 y crecimiento
+- ⚡ Speed Powerup: +1 y velocidad
+- 🔷 Grow Powerup: +5 y crecimiento
 - ⭐ Score Powerup: +50
-- 🔵 Slow Powerup: +15 y ralentización
+- 🔵 Slow Powerup: +10 y ralentización
 
 ---
 
@@ -145,10 +119,11 @@ Come la mayor cantidad de comida posible sin chocar contigo mismo ni con obstác
 - **Espacio en Disco**: 64 MB
 
 > [!NOTE]
-> Aqui pone **Python 3.10** pero en el archivo [pyproject.toml](pyproject.toml) **pone 3.13.5**,
-> eso es porque `Pyinstaller` necesita la version **3.13.5** para funcionar.
+> Estos requisitos son para la version ya publicada.
 
----
+> [!NOTE]
+> Aqui pone **Python 3.10** pero en el archivo [pyproject.toml](./pyproject.toml) **pone 3.13.5**,
+> eso es porque `Pyinstaller` necesita la version **3.13.5** para funcionar.
 
 ---
 
@@ -178,9 +153,9 @@ cd snake
 
 #### 2. **Crear Entorno Virtual (Recomendado)**
 ```bash
-# Windows
+# Windows Powershell
 python -m venv .venv
-.venv\Scripts\activate
+.venv\Scripts\activate.ps1
 
 # Linux/macOS
 python3 -m venv .venv
@@ -209,7 +184,7 @@ cd snake
 poetry install
 
 # 4. Ejecutar el juego
-poetry run python -m main
+poetry run start
 ```
 
 # Compilación a Ejecutable (Opcional)
@@ -223,7 +198,7 @@ python setup.py
 ```
 ```
 
-#### Con Poetry:
+#### Con Poetry en bash:
 ```bash
 
 # Ejecutar script de compilación
@@ -231,7 +206,7 @@ poetry run build
 ```
 
 ```bash
-# El ejecutable estará en dist/SnakeGame.exe (Windows) o dist/SnakeGame (Linux/macOS)
+# El ejecutable estará en dist/Snake Game.exe (Windows) o dist/Snake Game (Linux/macOS)
 ```
 
 > [!WARNING]
@@ -245,27 +220,6 @@ poetry run build
 ```bash
 python -m main
 ```
-
----
-
-### Gestión de Perfiles
-
-Los perfiles de usuario se guardan automáticamente en `Data/profiles.json`:
-
-```json
-{
-  "default": {
-    "high_score": 150,
-    "total_games": 25,
-    "total_food_eaten": 380,
-    "settings": {
-      "wrap_around": true,
-      "game_speed": 8
-    }
-  }
-}
-```
----
 
 ### 🔍 Troubleshooting
 
@@ -301,17 +255,9 @@ Si experimentas problemas:
 2. **Crear una rama para tu feature**: `git checkout -b feature/nueva-caracteristica`
 3. **Hacer commit de tus cambios**: `git commit -m 'Añadir nueva característica'`
 4. **Push a la rama**: `git push origin feature/nueva-caracteristica`
-5. **Abrir un Pull Request**
+5. **Abrir una Pull Request**
 
 ### Guías de Contribución
-
-#### Estándares de Código
-```bash
-# Ejecutar linters antes de contribuir
-pylint *.py
-flake8 *.py
-isort *.py --check-only
-```
 
 #### Tipos de Contribución
 - 🐛 **Bug Fixes**: Corrección de errores
@@ -322,7 +268,6 @@ isort *.py --check-only
 - 🔧 **Refactoring**: Mejoras en la estructura del código
 
 ### Áreas Que Necesitan Contribución
-- 🎵 **Sistema de Audio**: Música y efectos de sonido
 - 🌍 **Localización**: Traducción a otros idiomas
 - 🚀 **Optimización**: Mejoras de rendimiento
 - 🎨 **Arte**: Sprites y texturas mejoradas
@@ -331,7 +276,7 @@ isort *.py --check-only
 
 ## 📞 Futuras Mejoras
 
-### Version - Planificada
+### Version - 1.8
 - 🎵 **Sistema de Audio Completo**
   - Música de fondo dinámica
   - Efectos de sonido para la mayoría de acciones
@@ -339,6 +284,7 @@ isort *.py --check-only
 ### Version - Planificada
 - 🌍 **Localización**
   - Soporte para múltiples idiomas
+  - Arreglo de pantalla completa y menús
 
 ### Version - Concepto
 - 👥 **Modo Multijugador**
