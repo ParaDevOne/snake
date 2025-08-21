@@ -9,6 +9,8 @@
 
 > **Snake, modular y multiplataforma con efectos visuales avanzados, perfiles persistentes y workflows.**
 
+---
+
 ## 🎯 Características Destacadas
 
 - 🎨 Efectos visuales avanzados: partículas, gradientes, animaciones suaves
@@ -89,6 +91,8 @@ LOG_TO_CONSOLE = True
 
 > [!NOTE]
 > **Las versiones anteriores a la ultima se pueden encontrar en el archivo [`CHANGELOG.md`](./docs/CHANGELOG.md).**
+
+---
 
 ## 👾 Cómo Jugar
 
