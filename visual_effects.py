@@ -1,6 +1,7 @@
 """A module for advanced visual effects in the Snake game."""
 # visual_effects.py
 # pylint: disable=no-member
+
 import math
 import random
 import time
