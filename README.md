@@ -299,6 +299,13 @@ Si experimentas problemas:
   - Contrarreloj
   - Modo arcade
 
+- **Config**
+  - Añadir soporte para archivos de configuración
+  - Permitir la carga de configuraciones desde `./Data/config.json`
+  - Validar y aplicar configuraciones en tiempo de ejecución
+  - Documentar las opciones de configuración disponibles
+  - Agregar aplicación externa para la gestión de configuraciones
+
 ## 🛠️ Desarrollo
 
 ---

@@ -1,7 +1,8 @@
 # setup.py
 """
-Setup script para construir el ejecutable del juego Snake.
-Desarrollado por ParaDevOne - Snake Game v1.5.0
+Setup script para construir el ejecutable del juego Snake
+y la aplicacion externa para la gestion de configuraciones.
+Desarrollado por ParaDevOne - Snake Game v1.7.0
 """
 
 import ctypes
@@ -11,7 +12,6 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-
 
 class Colors:
     """Colores para output en consola."""
@@ -26,7 +26,6 @@ class Colors:
     BOLD = "\033[1m"
     UNDERLINE = "\033[4m"
 
-
 def print_colored(message, color=Colors.ENDC):
     """Imprime mensaje con color si la terminal lo soporta."""
     if platform.system() == "Windows":
@@ -37,7 +36,6 @@ def print_colored(message, color=Colors.ENDC):
             # No fallar si no se puede cambiar modo de consola
             pass
     print(f"{color}{message}{Colors.ENDC}")
-
 
 def clean_build_files():
     """Limpia archivos y carpetas de builds anteriores."""
@@ -78,7 +76,6 @@ def clean_build_files():
     else:
         print_colored("✅ No hay archivos que limpiar.", Colors.OKGREEN)
 
-
 def find_upx_windows():
     """Busca UPX solo en Windows en ubicaciones específicas."""
     upx_locations = [
@@ -86,7 +83,7 @@ def find_upx_windows():
         Path("C:/Program Files/upx/upx.exe"),
         Path("C:/Program Files (x86)/upx/upx.exe"),
         Path.home() / "AppData/Local/upx/upx.exe",
-        Path("upx/upx.exe"),  # Directorio upx/ del proyecto
+        Path("Data/lib/upx.exe"),  # Directorio Data/upx/ del proyecto
     ]
 
     for path in upx_locations:
@@ -109,7 +106,6 @@ def find_upx_windows():
                 continue
 
     return None, None
-
 
 def check_dependencies():
     """Verifica que PyInstaller y UPX (solo en Windows) estén disponibles."""
@@ -171,7 +167,6 @@ def check_dependencies():
 
     return dependencies_ok, upx_path
 
-
 def check_main_file():
     """Verifica que el archivo main.py exista."""
     if not os.path.exists("main.py"):
@@ -184,13 +179,11 @@ def check_main_file():
     print_colored("✅ Archivo main.py encontrado.", Colors.OKGREEN)
     return True
 
-
 def create_lib_directory():
     """Crea el directorio lib/ si no existe."""
     lib_dir = Path("lib")
     lib_dir.mkdir(exist_ok=True)
     return lib_dir
-
 
 def build_executable(upx_path=None):
     """Construye el ejecutable usando PyInstaller."""
@@ -241,10 +234,10 @@ def build_executable(upx_path=None):
     # Configurar icono
     icon_ext = "ico" if system == "Windows" else "icns" if system == "Darwin" else "png"
     icon_files = [
-        f"icon.{icon_ext}",
-        f"assets/icon.{icon_ext}",
-        "icon.ico",
-        "assets/icon.ico",
+        f"./icon.{icon_ext}",
+        f"./Data/assets/icon.{icon_ext}",
+        "./icon.ico",
+        "./Data/assets/icon.ico",
     ]
 
     for icon_file in icon_files:
@@ -384,7 +377,6 @@ def build_executable(upx_path=None):
         print_colored(f"❌ Error inesperado: {str(e)}", Colors.FAIL)
         return False
 
-
 def show_build_info(upx_used=False):
     """Muestra información del ejecutable creado."""
     dist_dir = Path("dist")
@@ -448,17 +440,16 @@ def show_build_info(upx_used=False):
                 if system != "Windows":
                     print_colored(f"💡 Ejecutar: chmod +x '{exe_file}'", Colors.OKCYAN)
 
-
 def main():
     """Función principal del script de setup."""
-    print_colored("\n🐍 Snake Game - Build Script v1.5.0", Colors.HEADER)
+    print_colored("\n🐍 Snake Game - Build Script v1.7.0", Colors.HEADER)
     print_colored("🔧 Desarrollado por ParaDevOne", Colors.HEADER)
     print_colored("=" * 50, Colors.HEADER)
 
     system = platform.system()
     if system == "Windows":
         print_colored("💡 UPX se usará solo para compresión en Windows", Colors.OKCYAN)
-        print_colored("   - Se buscará en lib/ y ubicaciones comunes", Colors.OKCYAN)
+        print_colored("   - Se buscará en Data/lib/ y ubicaciones comunes", Colors.OKCYAN)
     else:
         print_colored(
             "💡 UPX no se usará (solo disponible para Windows)", Colors.OKCYAN
@@ -496,7 +487,6 @@ def main():
     except ImportError as e:
         print_colored(f"\n❌ Error inesperado: {str(e)}", Colors.FAIL)
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()
