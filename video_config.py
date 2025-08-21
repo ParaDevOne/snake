@@ -167,9 +167,6 @@ def configure_video_driver():
 def _detect_available_drivers():
     """
     Detecta los controladores de video disponibles en el sistema.
-
-    Returns:
-        list: Lista de controladores de video disponibles.
     """
     # Implementar detección de controladores
     return []
@@ -178,10 +175,8 @@ def _detect_available_drivers():
 def _initialize_pygame_test():
     """
     Realiza una prueba de inicialización con pygame si está disponible.
-
-    Returns:
-        bool: True si la inicialización fue exitosa, False en caso contrario.
     """
+
     if not PYGAME_AVAILABLE:
         return False
 
@@ -194,19 +189,11 @@ def _initialize_pygame_test():
 
 def configure_video_complete():
     """
-    Configura completamente el sistema de video, incluyendo el driver principal
-    y las variables de entorno adicionales para rendimiento.
-
     Esta función combina la configuración del driver de video principal con
     las variables de entorno adicionales para proporcionar una configuración
     completa y optimizada del sistema de video.
-
-    Returns:
-        dict: Diccionario con toda la configuración de video aplicada.
-
-    Raises:
-        RuntimeError: Si ocurre un error crítico en la configuración.
     """
+
     complete_config = {}
 
     try:
@@ -236,9 +223,6 @@ def configure_video_complete():
 def get_video_info():
     """
     Obtiene información detallada sobre la configuración de video actual.
-
-    Returns:
-        dict: Información detallada sobre video y controladores.
     """
     # Variables SDL relevantes para video
     sdl_video_vars = [
