@@ -292,16 +292,14 @@ Si experimentas problemas:
   - Pantalla dividida local
 
 - 🎆 **Modos de Juego Adicionales**
-  - Supervivencia con obstáculos dinámicos
   - Contrarreloj
-  - Laberintos procedurales
-  - Modo arcade con power-ups especiales
+  - Modo arcade
 
 ## 🛠️ Desarrollo
 
 ---
 
-## ❓ FAQ Rápido
+### ❓ FAQ Rápido
 
 - ¿Funciona offline? **Sí**
 - ¿Dónde están mis puntajes? `Data/profiles/`
@@ -311,7 +309,7 @@ Si experimentas problemas:
 
 ---
 
-## 📄 Licencia
+### 📄 Licencia
 
 **Simplified Open License (SOL) v3.0**
 
