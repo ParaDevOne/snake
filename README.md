@@ -284,6 +284,7 @@ Si experimentas problemas:
 ### Version - Planificada
 - 🌍 **Localización**
   - Soporte para múltiples idiomas
+  - En `./Data/lang` se pondrán JSON con las traducciones
   - Arreglo de pantalla completa y menús
 
 ### Version - Concepto
