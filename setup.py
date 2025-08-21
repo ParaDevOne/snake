@@ -4,12 +4,12 @@ Setup script para construir el ejecutable del juego Snake.
 Desarrollado por ParaDevOne - Snake Game v1.5.0
 """
 
-import os
-import sys
-import shutil
 import ctypes
-import subprocess
+import os
 import platform
+import shutil
+import subprocess
+import sys
 from pathlib import Path
 
 

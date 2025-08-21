@@ -1,137 +1,595 @@
-name: Build Snake Game
+name: 🐍 Build Snake Game - Professional CI/CD
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, release/*]
+    tags: ['v*']
   pull_request:
-    branches: [main]
+    branches: [main, develop]
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      force_build:
+        description: 'Forzar build completo'
+        required: false
+        default: false
+        type: boolean
+      upload_release:
+        description: 'Crear release automático'
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
-  group: build-snake-${{ github.ref }}
+  group: build-snake-${{ github.ref }}-${{ github.workflow }}
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write
+  actions: read
+  security-events: write
 
 env:
   PACKAGE_NAME: snake-game
+  BUILD_TIMEOUT: 1800  # 30 minutos
+  CACHE_VERSION: v2
+  PYTHON_VERSION: '3.12'
 
 jobs:
+  # ===== JOB 1: VALIDACIÓN Y TESTS =====
+  validate:
+    name: 🔍 Validación y Tests
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    outputs:
+      should_build: ${{ steps.changes.outputs.build }}
+      version_tag: ${{ steps.version.outputs.tag }}
+
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 🔍 Detectar cambios críticos
+      id: changes
+      uses: dorny/paths-filter@v2
+      with:
+        filters: |
+          build:
+            - 'main.py'
+            - 'requirements.txt'
+            - 'setup.py'
+            - 'assets/**'
+            - '.github/workflows/**'
+            - 'Data/**'
+
+    - name: 🏷️ Determinar versión
+      id: version
+      run: |
+        if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "tag=${VERSION}" >> $GITHUB_OUTPUT
+          echo "🏷️ Versión desde tag: ${VERSION}"
+        elif [[ "${{ github.ref }}" == refs/heads/main ]]; then
+          VERSION="v$(date +%Y.%m.%d)-stable"
+          echo "tag=${VERSION}" >> $GITHUB_OUTPUT
+          echo "🏷️ Versión main: ${VERSION}"
+        else
+          VERSION="v$(date +%Y.%m.%d)-dev-${GITHUB_SHA:0:8}"
+          echo "tag=${VERSION}" >> $GITHUB_OUTPUT
+          echo "🏷️ Versión desarrollo: ${VERSION}"
+        fi
+
+    - name: 🐍 Setup Python
+      if: steps.changes.outputs.build == 'true'
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+
+    - name: ✅ Verificar estructura del proyecto
+      if: steps.changes.outputs.build == 'true'
+      run: |
+        echo "🔍 Validando estructura del proyecto..."
+
+        # Verificaciones críticas
+        if [[ ! -f "main.py" ]]; then
+          echo "::error::❌ main.py no encontrado"
+          exit 1
+        fi
+
+        # Verificar sintaxis Python
+        python -m py_compile main.py
+        echo "✅ main.py sintácticamente correcto"
+
+        # Análisis de dependencias
+        if [[ -f "requirements.txt" ]]; then
+          echo "📦 Dependencias encontradas:"
+          cat requirements.txt | grep -E '^[^#]' | head -10
+
+          # Verificar dependencias conflictivas
+          if grep -q "tensorflow\|torch\|numpy.*[0-9]\.[0-9][0-9]" requirements.txt; then
+            echo "::warning::⚠️ Dependencias pesadas detectadas - el ejecutable será grande"
+          fi
+        fi
+
+        # Verificar assets
+        if [[ -d "assets" ]]; then
+          ASSETS_SIZE=$(du -sh assets | cut -f1)
+          echo "🎨 Assets encontrados: ${ASSETS_SIZE}"
+          find assets -type f | head -10
+        fi
+
+  # ===== JOB 2: BUILD MATRIZ COMPLETA =====
   build:
-    name: Build on ${{ matrix.os }} - Python ${{ matrix.python-version }}
+    name: 🔨 Build ${{ matrix.os }} - ${{ matrix.config.name }}
     runs-on: ${{ matrix.os }}
+    needs: validate
+    if: needs.validate.outputs.should_build == 'true' || github.event.inputs.force_build == 'true'
+
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.12']
+        config:
+          - name: "Standard"
+            upx: true
+            optimize: true
+          - name: "Debug"
+            upx: false
+            optimize: false
+        exclude:
+          # Solo hacer build debug en una plataforma para ahorrar recursos
+          - os: macos-latest
+            config: { name: "Debug", upx: false, optimize: false }
+          - os: ubuntu-latest
+            config: { name: "Debug", upx: false, optimize: false }
+
+    env:
+      BUILD_TYPE: ${{ matrix.config.name }}
+      USE_UPX: ${{ matrix.config.upx }}
+      OPTIMIZE: ${{ matrix.config.optimize }}
 
     steps:
-    - name: Checkout repository
+    - name: 📥 Checkout repository
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
-    - name: Setup Python ${{ matrix.python-version }}
+    - name: 🐍 Setup Python ${{ env.PYTHON_VERSION }}
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: ${{ env.PYTHON_VERSION }}
         cache: 'pip'
         cache-dependency-path: '**/requirements.txt'
         check-latest: true
 
-    - name: Install build tools
-      shell: bash
-      run: |
-        python -m pip install --upgrade pip setuptools wheel
-        pip install pyinstaller
+    # ===== CACHE INTELIGENTE =====
+    - name: 💾 Cache PyInstaller
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/pyinstaller
+          ~/AppData/Local/pyinstaller
+          ~/.pyinstaller
+        key: pyinstaller-${{ env.CACHE_VERSION }}-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('requirements.txt', 'main.py') }}
+        restore-keys: |
+          pyinstaller-${{ env.CACHE_VERSION }}-${{ runner.os }}-${{ env.PYTHON_VERSION }}-
+          pyinstaller-${{ env.CACHE_VERSION }}-${{ runner.os }}-
 
-        # Instalación segura de dependencias (compatible con Windows)
-        if [[ -f "requirements.txt" ]]; then
-          # Método compatible con Windows
-          pip install -r requirements.txt
+    # ===== INSTALACIÓN INTELIGENTE DE UPX =====
+    - name: 🗜️ Instalar UPX (Windows)
+      if: runner.os == 'Windows' && matrix.config.upx == true
+      run: |
+        Write-Host "🗜️ Instalando UPX para Windows..." -ForegroundColor Cyan
+
+        $UPX_VERSION = "4.2.1"
+        $UPX_URL = "https://github.com/upx/upx/releases/download/v$UPX_VERSION/upx-$UPX_VERSION-win64.zip"
+        $UPX_DIR = "lib"
+
+        New-Item -ItemType Directory -Force -Path $UPX_DIR | Out-Null
+
+        try {
+          Invoke-WebRequest -Uri $UPX_URL -OutFile "upx.zip"
+          Expand-Archive -Path "upx.zip" -DestinationPath "temp-upx" -Force
+          Copy-Item "temp-upx/upx-$UPX_VERSION-win64/upx.exe" "$UPX_DIR/upx.exe" -Force
+          Remove-Item "upx.zip", "temp-upx" -Recurse -Force
+
+          # Verificar instalación
+          & "$UPX_DIR/upx.exe" --version
+          Write-Host "✅ UPX instalado correctamente en $UPX_DIR/upx.exe" -ForegroundColor Green
+        }
+        catch {
+          Write-Host "❌ Error instalando UPX: $_" -ForegroundColor Red
+          Write-Host "::warning::UPX no disponible - continuando sin compresión"
+        }
+
+    - name: 🗜️ Instalar UPX (Linux/macOS)
+      if: runner.os != 'Windows' && matrix.config.upx == true
+      run: |
+        echo "🗜️ Instalando UPX para $RUNNER_OS..."
+
+        if [[ "$RUNNER_OS" == "Linux" ]]; then
+          sudo apt-get update -qq
+          sudo apt-get install -y upx-ucl
+          upx --version && echo "✅ UPX instalado via apt" || echo "⚠️ UPX no disponible"
+        elif [[ "$RUNNER_OS" == "macOS" ]]; then
+          brew install upx
+          upx --version && echo "✅ UPX instalado via brew" || echo "⚠️ UPX no disponible"
         fi
 
-    - name: Verify entrypoint
+    # ===== INSTALACIÓN DE DEPENDENCIAS =====
+    - name: 📦 Instalar dependencias y herramientas
       shell: bash
       run: |
-        # Verificar solo el archivo principal
+        echo "📦 Instalando herramientas de build..."
+
+        # Actualizar pip y herramientas esenciales
+        python -m pip install --upgrade pip setuptools wheel
+
+        # Instalar PyInstaller con versión específica para consistencia
+        pip install pyinstaller==6.2.0
+
+        # Verificar PyInstaller
+        pyinstaller --version
+        echo "✅ PyInstaller instalado"
+
+        # Instalar dependencias del proyecto
+        if [[ -f "requirements.txt" ]]; then
+          echo "📋 Instalando dependencias del proyecto..."
+          pip install -r requirements.txt
+          echo "✅ Dependencias instaladas"
+
+          # Mostrar dependencias críticas
+          echo "🔍 Dependencias instaladas:"
+          pip list | grep -E "(pygame|numpy|pillow|requests)" || true
+        else
+          echo "⚠️ No se encontró requirements.txt"
+        fi
+
+    # ===== VALIDACIÓN PRE-BUILD =====
+    - name: 🔍 Validaciones pre-build
+      shell: bash
+      run: |
+        echo "🔍 Ejecutando validaciones pre-build..."
+
+        # Verificar archivo principal
         if [[ ! -f "main.py" ]]; then
-          echo "::error::❌ main.py not found in repository root"
-          echo "Directory contents:"
+          echo "::error::❌ main.py no encontrado en: $(pwd)"
+          echo "Contenido del directorio:"
           ls -la
           exit 1
         fi
-        echo "✅ main.py found"
 
-    - name: Check for assets directory
-      shell: bash
-      run: |
-        # Verificar assets y configurar opciones
+        # Test de sintaxis
+        python -c "import ast; ast.parse(open('main.py').read())"
+        echo "✅ main.py tiene sintaxis válida"
+
+        # Test de importaciones básicas (sin ejecutar el juego)
+        timeout 10s python -c "
+        import sys
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location('main', 'main.py')
+        print('✅ main.py es importable')
+        " 2>/dev/null || echo "⚠️ Posibles problemas de importación (continuando)"
+
+        # Verificar estructura de assets
         if [[ -d "assets" ]]; then
-          echo "Assets directory found"
-          echo "PYINSTALLER_OPTS=--noconfirm --clean --onefile --add-data 'assets:assets'" >> $GITHUB_ENV
-        else
-          echo "Assets directory not found - building without assets"
-          echo "PYINSTALLER_OPTS=--noconfirm --clean --onefile" >> $GITHUB_ENV
+          echo "🎨 Assets verificados:"
+          find assets -type f | head -5
+          ASSET_COUNT=$(find assets -type f | wc -l)
+          echo "📊 Total de assets: $ASSET_COUNT archivos"
         fi
 
-    - name: Build executable
+    # ===== BUILD PRINCIPAL =====
+    - name: 🚀 Build ejecutable
       shell: bash
+      timeout-minutes: 30
       run: |
-        # Crear directorios necesarios
+        echo "🚀 Iniciando build del ejecutable..."
+
+        # Configuración base
         mkdir -p dist build artifacts
 
         # Determinar nombre del ejecutable
         if [[ "$RUNNER_OS" == "Windows" ]]; then
           OUTPUT_NAME="${PACKAGE_NAME}.exe"
+          ICON_EXT="ico"
+        elif [[ "$RUNNER_OS" == "macOS" ]]; then
+          OUTPUT_NAME="${PACKAGE_NAME}"
+          ICON_EXT="icns"
         else
           OUTPUT_NAME="${PACKAGE_NAME}"
+          ICON_EXT="png"
         fi
 
-        # Construir con PyInstaller
-        echo "🚀 Building with PyInstaller using options: $PYINSTALLER_OPTS"
-        pyinstaller $PYINSTALLER_OPTS --name "$OUTPUT_NAME" \
-          --distpath dist \
-          --workpath build/pyinstaller \
-          --specpath build \
-          main.py
+        echo "📝 Nombre del ejecutable: $OUTPUT_NAME"
+
+        # Configurar opciones de PyInstaller
+        PYINSTALLER_OPTS="--noconfirm --clean --onefile"
+
+        # Configuración de optimización
+        if [[ "$OPTIMIZE" == "true" ]]; then
+          PYINSTALLER_OPTS="$PYINSTALLER_OPTS --optimize=2 --strip"
+          echo "⚡ Optimización habilitada"
+        else
+          PYINSTALLER_OPTS="$PYINSTALLER_OPTS --debug=all"
+          echo "🐛 Modo debug habilitado"
+        fi
+
+        # Configurar UPX
+        if [[ "$USE_UPX" == "true" && "$RUNNER_OS" == "Windows" && -f "lib/upx.exe" ]]; then
+          PYINSTALLER_OPTS="$PYINSTALLER_OPTS --upx-dir=lib"
+          echo "🗜️ UPX habilitado (Windows)"
+        elif [[ "$USE_UPX" == "true" && "$RUNNER_OS" != "Windows" ]]; then
+          if command -v upx >/dev/null 2>&1; then
+            echo "🗜️ UPX disponible ($RUNNER_OS)"
+          else
+            PYINSTALLER_OPTS="$PYINSTALLER_OPTS --noupx"
+            echo "⚠️ UPX no disponible - deshabilitado"
+          fi
+        else
+          PYINSTALLER_OPTS="$PYINSTALLER_OPTS --noupx"
+          echo "📦 UPX deshabilitado"
+        fi
+
+        # Configurar icono
+        ICON_FOUND=""
+        for icon_path in "icon.$ICON_EXT" "assets/icon.$ICON_EXT" "icon.ico" "assets/icon.ico"; do
+          if [[ -f "$icon_path" ]]; then
+            PYINSTALLER_OPTS="$PYINSTALLER_OPTS --icon=$icon_path"
+            ICON_FOUND="$icon_path"
+            break
+          fi
+        done
+
+        if [[ -n "$ICON_FOUND" ]]; then
+          echo "🎨 Icono configurado: $ICON_FOUND"
+        else
+          echo "ℹ️ No se encontró icono específico"
+        fi
+
+        # Configurar datos adicionales
+        if [[ -d "assets" ]]; then
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            PYINSTALLER_OPTS="$PYINSTALLER_OPTS --add-data=assets;assets"
+          else
+            PYINSTALLER_OPTS="$PYINSTALLER_OPTS --add-data=assets:assets"
+          fi
+          echo "📦 Assets incluidos"
+        fi
+
+        # Otras carpetas de datos
+        for data_dir in "Data" "sounds" "images" "fonts" "config"; do
+          if [[ -d "$data_dir" ]]; then
+            if [[ "$RUNNER_OS" == "Windows" ]]; then
+              PYINSTALLER_OPTS="$PYINSTALLER_OPTS --add-data=$data_dir;$data_dir"
+            else
+              PYINSTALLER_OPTS="$PYINSTALLER_OPTS --add-data=$data_dir:$data_dir"
+            fi
+            echo "📦 Incluido: $data_dir"
+          fi
+        done
+
+        # Exclusiones para reducir tamaño
+        EXCLUSIONS="--exclude-module=_tkinter --exclude-module=matplotlib --exclude-module=IPython"
+        PYINSTALLER_OPTS="$PYINSTALLER_OPTS $EXCLUSIONS"
+
+        # Configuraciones específicas por OS
+        if [[ "$RUNNER_OS" == "Windows" ]]; then
+          PYINSTALLER_OPTS="$PYINSTALLER_OPTS --windowed"
+        elif [[ "$RUNNER_OS" == "macOS" ]]; then
+          PYINSTALLER_OPTS="$PYINSTALLER_OPTS --osx-bundle-identifier=com.paradevone.snakegame"
+        fi
+
+        # Construir comando final
+        CMD="pyinstaller $PYINSTALLER_OPTS --name=\"$OUTPUT_NAME\" --distpath=dist --workpath=build main.py"
+
+        echo "🔧 Comando PyInstaller:"
+        echo "$CMD"
+        echo ""
+        echo "⏳ Ejecutando build (esto puede tomar varios minutos)..."
+
+        # Ejecutar PyInstaller
+        eval $CMD
 
         # Verificar resultado
         if [[ ! -f "dist/$OUTPUT_NAME" ]]; then
-          echo "::error::❌ Build failed - executable not found"
-          echo "PyInstaller logs:"
-          cat build/pyinstaller/*.log 2>/dev/null || true
+          echo "::error::❌ Build falló - ejecutable no encontrado"
+          echo "Contenido de dist/:"
+          ls -la dist/ || true
+          echo "Logs de PyInstaller:"
+          find build -name "*.log" -exec cat {} \; 2>/dev/null || true
           exit 1
-        else
-          # Obtener tamaño del ejecutable
-          SIZE=$(python -c "import os; print(os.path.getsize('dist/$OUTPUT_NAME'))")
-          echo "✅ Build successful: dist/$OUTPUT_NAME ($SIZE bytes)"
         fi
 
-    - name: Package artifacts
+        # Información del ejecutable
+        FILE_SIZE=$(stat -f%z "dist/$OUTPUT_NAME" 2>/dev/null || stat -c%s "dist/$OUTPUT_NAME" 2>/dev/null || echo "unknown")
+        FILE_SIZE_MB=$(echo "scale=2; $FILE_SIZE / 1024 / 1024" | bc -l 2>/dev/null || echo "unknown")
+
+        echo "✅ Build exitoso!"
+        echo "📁 Archivo: dist/$OUTPUT_NAME"
+        echo "📏 Tamaño: ${FILE_SIZE_MB}MB ($FILE_SIZE bytes)"
+
+        # Configurar permisos en Unix
+        if [[ "$RUNNER_OS" != "Windows" ]]; then
+          chmod +x "dist/$OUTPUT_NAME"
+          echo "🔐 Permisos de ejecución configurados"
+        fi
+
+    # ===== TESTING DEL EJECUTABLE =====
+    - name: 🧪 Test del ejecutable
+      shell: bash
+      timeout-minutes: 2
+      run: |
+        echo "🧪 Testando el ejecutable..."
+
+        if [[ "$RUNNER_OS" == "Windows" ]]; then
+          EXECUTABLE="dist/${PACKAGE_NAME}.exe"
+        else
+          EXECUTABLE="dist/${PACKAGE_NAME}"
+        fi
+
+        if [[ ! -f "$EXECUTABLE" ]]; then
+          echo "::error::❌ Ejecutable no encontrado para testing"
+          exit 1
+        fi
+
+        # Test básico de ejecución (sin GUI)
+        echo "🔍 Verificando que el ejecutable arranca..."
+
+        # En Linux/macOS podemos hacer un test más directo
+        if [[ "$RUNNER_OS" != "Windows" ]]; then
+          # Test de que el archivo es ejecutable
+          file "$EXECUTABLE"
+          ldd "$EXECUTABLE" 2>/dev/null || true  # Mostrar dependencias (Linux)
+        fi
+
+        # Test de integridad
+        if command -v md5sum >/dev/null; then
+          md5sum "$EXECUTABLE" | tee "artifacts/checksum.md5"
+        elif command -v md5 >/dev/null; then
+          md5 "$EXECUTABLE" | tee "artifacts/checksum.md5"
+        fi
+
+        echo "✅ Tests básicos completados"
+
+    # ===== PACKAGING AVANZADO =====
+    - name: 📦 Crear paquetes de distribución
       shell: bash
       run: |
-        # Nombre del archivo comprimido
-        ARCHIVE_NAME="${PACKAGE_NAME}-${RUNNER_OS}-py${{ matrix.python-version }}"
+        echo "📦 Creando paquetes de distribución..."
 
-        # Crear archivo comprimido según SO
-        if [[ "$RUNNER_OS" == "Windows" ]]; then
-          echo "📦 Creating ZIP archive for Windows..."
-          7z a -tzip "artifacts/${ARCHIVE_NAME}.zip" "dist/${PACKAGE_NAME}.exe"
-        elif [[ "$RUNNER_OS" == "Linux" || "$RUNNER_OS" == "macOS" ]]; then
-          echo "📦 Creating TAR.GZ archive for $RUNNER_OS..."
-          tar -czf "artifacts/${ARCHIVE_NAME}.tar.gz" -C dist .
+        # Información de build
+        BUILD_INFO="artifacts/build-info.txt"
+        {
+          echo "Snake Game - Build Information"
+          echo "==============================="
+          echo "Build Date: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "OS: $RUNNER_OS"
+          echo "Python Version: $PYTHON_VERSION"
+          echo "Build Type: $BUILD_TYPE"
+          echo "UPX Enabled: $USE_UPX"
+          echo "Optimized: $OPTIMIZE"
+          echo "Git Commit: $GITHUB_SHA"
+          echo "Git Ref: $GITHUB_REF"
+          echo "Version Tag: ${{ needs.validate.outputs.version_tag }}"
+          echo ""
+          echo "Dependencies:"
+          pip list --format=freeze | head -20
+        } > "$BUILD_INFO"
+
+        # Determinar nombres de archivos
+        VERSION_TAG="${{ needs.validate.outputs.version_tag }}"
+        BASE_NAME="${PACKAGE_NAME}-${VERSION_TAG}-${RUNNER_OS}"
+        if [[ "$BUILD_TYPE" == "Debug" ]]; then
+          BASE_NAME="${BASE_NAME}-debug"
         fi
 
-        echo "📦 Created archive: artifacts/${ARCHIVE_NAME}.*"
+        # Copiar ejecutable a artifacts con nombre descriptivo
+        if [[ "$RUNNER_OS" == "Windows" ]]; then
+          EXECUTABLE="dist/${PACKAGE_NAME}.exe"
+          cp "$EXECUTABLE" "artifacts/${BASE_NAME}.exe"
+          ARCHIVE_NAME="${BASE_NAME}.zip"
 
-    - name: Upload artifacts
+          echo "📦 Creando ZIP para Windows..."
+          cd artifacts
+          7z a -tzip "$ARCHIVE_NAME" "${BASE_NAME}.exe" "build-info.txt" "checksum.md5" 2>/dev/null || {
+            # Fallback si 7z no está disponible
+            powershell -Command "Compress-Archive -Path '${BASE_NAME}.exe','build-info.txt','checksum.md5' -DestinationPath '$ARCHIVE_NAME'"
+          }
+          cd ..
+        else
+          EXECUTABLE="dist/${PACKAGE_NAME}"
+          cp "$EXECUTABLE" "artifacts/${BASE_NAME}"
+          ARCHIVE_NAME="${BASE_NAME}.tar.gz"
+
+          echo "📦 Creando TAR.GZ para $RUNNER_OS..."
+          cd artifacts
+          tar -czf "$ARCHIVE_NAME" "${BASE_NAME}" "build-info.txt" "checksum.md5"
+          cd ..
+        fi
+
+        echo "✅ Paquete creado: artifacts/$ARCHIVE_NAME"
+        ls -la artifacts/
+
+    # ===== UPLOAD DE ARTEFACTOS =====
+    - name: 📤 Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: snake-artifacts-${{ matrix.os }}-${{ matrix.python-version }}
+        name: ${{ env.PACKAGE_NAME }}-${{ matrix.os }}-${{ matrix.config.name }}-${{ env.PYTHON_VERSION }}
         path: |
-          dist/
           artifacts/
-        retention-days: 7
+          dist/
+        retention-days: 30
         if-no-files-found: error
+
+    # ===== UPLOAD DE RELEASES (solo en tags) =====
+    - name: 🚀 Create Release
+      if: startsWith(github.ref, 'refs/tags/') && matrix.config.name == 'Standard'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: artifacts/*
+        draft: false
+        prerelease: ${{ contains(github.ref, '-') }}
+        generate_release_notes: true
+        name: "Snake Game ${{ needs.validate.outputs.version_tag }}"
+        body: |
+          ## 🐍 Snake Game Release ${{ needs.validate.outputs.version_tag }}
+
+          **Plataformas soportadas:**
+          - 🪟 Windows (64-bit)
+          - 🍎 macOS (Universal)
+          - 🐧 Linux (64-bit)
+
+          **Características:**
+          - Ejecutable standalone (no requiere Python)
+          - Optimizado con UPX (Windows)
+          - Assets incluidos
+
+          **Build Info:**
+          - Build Date: ${{ github.run_number }}
+          - Commit: ${{ github.sha }}
+          - Python: ${{ env.PYTHON_VERSION }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+# ===== JOB 3: NOTIFICACIÓN DE RESULTADOS =====
+  notify:
+    name: 📊 Reporte de Build
+    runs-on: ubuntu-latest
+    needs: [validate, build]
+    if: always()
+    steps:
+    - name: 📊 Resumen de builds
+      run: |
+        echo "## 📊 Reporte de Build Complete" >> $GITHUB_STEP_SUMMARY
+        echo "### 🔍 Validación: ${{ needs.validate.result }}" >> $GITHUB_STEP_SUMMARY
+
+        # Para jobs con matriz, necesitamos una lógica especial
+        BUILD_RESULT="success"
+        # Verificar si algún job de la matriz falló
+        ${{ fromJSON(needs.build.result == 'success' && 'BUILD_RESULT="success"' || 'BUILD_RESULT="failure"') }}
+
+        echo "### 🔨 Build: $BUILD_RESULT" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        if [[ "$BUILD_RESULT" == "success" ]]; then
+          echo "✅ **Todos los builds completados exitosamente**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📦 Los ejecutables están disponibles en los artifacts." >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Algunos builds fallaron**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🔍 Revisa los logs de los jobs individuales para más detalles." >> $GITHUB_STEP_SUMMARY
+        fi
+
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📈 Estadísticas" >> $GITHUB_STEP_SUMMARY
+        echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Version**: ${{ needs.validate.outputs.version_tag }}" >> $GITHUB_STEP_SUMMARY

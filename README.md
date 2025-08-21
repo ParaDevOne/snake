@@ -286,11 +286,11 @@ poetry install
 poetry run python -m main
 ```
 
-### Compilación a Ejecutable (Opcional)
+# Compilación a Ejecutable (Opcional)
 
 Para crear un ejecutable independiente:
 
-# Ejecutar script de compilación
+## Ejecutar script de compilación
 ```
 #### Con bash
 python setup.py
@@ -408,8 +408,7 @@ isort *.py --check-only
 ### Version - Planificada
 - 🎵 **Sistema de Audio Completo**
   - Música de fondo dinámica
-  - Efectos de sonido para todas las acciones
-  - Control de volumen por categorías
+  - Efectos de sonido para la mayoría de acciones
 
 ### Version - Planificada
 - 🌍 **Localización**
