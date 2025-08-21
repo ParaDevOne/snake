@@ -17,7 +17,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -29,7 +28,6 @@ var/
 # PyInstaller
 *.manifest
 *.spec
-SnakeGame.exe.spec
 
 # Installer logs
 pip-log.txt
@@ -64,14 +62,11 @@ dmypy.json
 # profiling
 profiler-results/
 
-# VS Code
+# IDE
 .vscode/
 .idea/
 
-# Data and scores
-Data/score/*
-Data/score/
-Data/profiles/*
+# Data and logs
 Data/profiles/
 Data/logs.txt
 
@@ -80,6 +75,3 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 .DS_Store
-
-# Poetry
-poetry.lock
