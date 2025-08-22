@@ -123,9 +123,9 @@ Eat as much food as possible without colliding with yourself or obstacles (or th
 
 > [!NOTE]
 > These requirements refer to the currently published release.
-
-> [!NOTE]
-> This README lists **Python 3.10**, but the [`pyproject.toml`](./pyproject.toml) file specifies **3.13.5** — that is because `PyInstaller` requires version **3.13.5** to build correctly.
+>
+>
+> This README lists **Python 3.10**, but the [`pyproject.toml`](./pyproject.toml) file specifies **3.13.5**, that is because `PyInstaller` requires version **3.13.5** to build correctly.
 
 ---
 
@@ -283,10 +283,13 @@ Contributions are welcome! This project follows an open development model.
   - Sound effects for most actions
 
 ### Planned Version
-- 🌍 **Localization**
-  - Multi-language support
+- 🛠️ **Configuration**
   - JSON files with translations under `./Data/lang`
   - Fix fullscreen and menu issues
+
+- 🔧 **Global Translation**
+  - Translation of comments, logs, game menus ...
+  - Multi-language support
 
 ### Concept Version
 - 👥 **Multiplayer Mode**
