@@ -1,8 +1,8 @@
 """A module for the food and power-up items in the game."""
 # food.py
+
 import random
 import utils
-
 
 class Food:
 

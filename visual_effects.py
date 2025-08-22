@@ -274,9 +274,17 @@ class VisualEffects:
         for i, color in enumerate(colors):
             current_radius = radius - i * 2
             if current_radius > 0:
-                glow_surf = pygame.Surface((current_radius * 4, current_radius * 4), pygame.SRCALPHA)
-                pygame.draw.circle(glow_surf, color, (current_radius * 2, current_radius * 2), current_radius)
-                surface.blit(glow_surf, (pixel_x - current_radius * 2, pixel_y - current_radius * 2))
+                glow_surf = pygame.Surface((current_radius * 4,
+                                        current_radius * 4),
+                                        pygame.SRCALPHA)
+                pygame.draw.circle(glow_surf,
+                                color,
+                                (current_radius * 2,
+                                current_radius * 2),
+                                current_radius)
+                surface.blit(glow_surf,
+                            (pixel_x - current_radius * 2,
+                            pixel_y - current_radius * 2))
 
         # Añadir brillo especial
         self.draw_glow_circle(surface, (pixel_x, pixel_y), radius // 2, (255, 200, 100))
