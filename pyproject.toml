@@ -10,13 +10,12 @@ readme = "README.md"
 requires-python = "3.13.5"
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
+requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 start = 'main:run'
 build = 'setup:main'
-build-docs = "mkdocs:main"
 
 # algunas subdependencias adicionales no hay que eliminarlas
 # porque no sabes que subdependencias pueden ser necesarias para las dependencias en si

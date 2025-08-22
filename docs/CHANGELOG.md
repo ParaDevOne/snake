@@ -2,14 +2,16 @@
 
 Todas las modificaciones, mejoras y correcciones del proyecto Snake Game se documentan aquí siguiendo el formato semántico.
 
-## [1.7.0] - 2025-08-21
+---
+
+## [1.7.0] - 20-08-2025
 - Obstáculos y nuevos componentes de UI.
 	- Añadido sistema de obstáculos: colisiones, generación y gestión desde `obstacles.py`.
 	- Nuevo archivo `ui_components.py`: componentes reutilizables para menús y HUD.
 	- Mejoras visuales en la interfaz y menús usando los nuevos componentes UI.
 	- Corrección de bugs menores y mejoras de estabilidad.
 
-## [1.6.0] - 2025-08-21
+## [1.6.0] - 19-08-2025
 - Modularidad avanzada, workflows mejorados, licencia SOL 3.0 y documentación ampliada.
 	- Configuración centralizada y documentada en `settings.py`, helpers de acceso y logging en `utils.py`.
 	- Logging avanzado: logs detallados de eventos, errores, perfiles y sistema en `Data/logs.txt`.
@@ -21,7 +23,7 @@ Todas las modificaciones, mejoras y correcciones del proyecto Snake Game se docu
 	- Refactorización y optimización de código para mayor mantenibilidad y rendimiento.
 	- Corrección de bugs menores y mejoras de estabilidad.
 
-## [1.5.0] - 2025-08-21
+## [1.5.0] - 17-08-2025
 - Modernización del sistema de construcción y gestión de dependencias.
 	- Licencia actualizada de SOL 1.0 a SOL 2.0 (más detallada y completa).
 	- Nuevo archivo `pyproject.toml` con soporte completo para Poetry.
@@ -33,7 +35,7 @@ Todas las modificaciones, mejoras y correcciones del proyecto Snake Game se docu
 	- Configuración de herramientas de desarrollo integrada (linting, formatting).
 	- Soporte para gestores de paquetes modernos (Poetry + pip).
 
-## [1.4.0] - 2025-08-21
+## [1.4.0] - 17-08-2025
 - Release de estabilidad y optimización.
 	- Consolidación de todas las correcciones de bugs anteriores.
 	- Optimización general del rendimiento.
@@ -46,14 +48,14 @@ Todas las modificaciones, mejoras y correcciones del proyecto Snake Game se docu
 	- Mejora en la precisión de las colisiones.
 	- Optimización de las animaciones y efectos visuales.
 
-## [1.3.3] - 2025-08-21
+## [1.3.3] - 21-08-2025
 - Corrección de bugs detectados por pylint.
 	- Eliminación de variables no utilizadas.
 	- Corrección de errores de estilo y convenciones de nombres.
 	- Mejora en la legibilidad del código.
 	- Ajustes en la lógica para evitar posibles errores en tiempo de ejecución.
 
-## [1.3.2] - 2025-08-21
+## [1.3.2] - 13-08-2025
 - Sistema de logging completo.
 	- Sistema completo de logging en consola y archivo (`Data/logs.txt`).
 	- Logs automáticos de eventos del juego con timestamps.
@@ -61,13 +63,13 @@ Todas las modificaciones, mejoras y correcciones del proyecto Snake Game se docu
 	- Logs con colores en consola para mejor legibilidad.
 	- Registro de estadísticas de juego y acciones del usuario.
 
-## [1.3.1] - 2025-08-21
+## [1.3.1] - 13-08-2025
 - Corrección de bugs.
-	- Arreglado: Rectángulos negros en segmentos de la serpiente.
-	- Arreglado: Problemas de interpolación con wrap-around.
-	- Arreglado: Problemas menores con colores alpha en efectos.
+	- [x]: Rectángulos negros en segmentos de la serpiente.
+	- [x]: Problemas de interpolación con wrap-around.
+	- [x]: Problemas menores con colores alpha en efectos.
 
-## [1.3.0] - 2025-08-21
+## [1.3.0] - 13-08-2025
 - Mejoras gráficas avanzadas.
 	- Sistema completo de efectos visuales con partículas.
 	- Animaciones suaves e interpolación de movimientos.
@@ -77,19 +79,19 @@ Todas las modificaciones, mejoras y correcciones del proyecto Snake Game se docu
 	- Fondo mejorado con gradientes y grid sutil.
 	- Interfaz de usuario moderna con sombras y efectos.
 
-## [1.2.0] - 2025-08-21
+## [1.2.0] - 13-08-2025
 - Corrección de bugs y optimización de rendimiento.
 	- Optimización del motor de colisiones.
 	- Reducción del uso de memoria.
 	- Corrección de errores en la lógica de crecimiento de la serpiente.
 
-## [1.1.0] - 2025-08-21
+## [1.1.0] - 13-08-2025
 - Mejoras en la gestión de perfiles y almacenamiento de puntajes.
 	- Sistema de perfiles de usuario.
 	- Almacenamiento persistente del puntaje más alto.
 	- Correcciones menores de bugs.
 
-## [1.0.0] - 2025-08-21
+## [1.0.0] - 12-08-2025
 - Versión inicial del juego clásico Snake.
 	- Implementación básica del juego.
 	- Movimiento de la serpiente y detección de colisiones.
@@ -99,5 +101,4 @@ Todas las modificaciones, mejoras y correcciones del proyecto Snake Game se docu
 
 Estas notas de la versión documentan los cambios, mejoras y correcciones realizadas en el proyecto Snake Game. Cada versión sigue un esquema semántico para facilitar la comprensión de las modificaciones y su impacto en el proyecto. Se recomienda revisar las notas antes de actualizar o contribuir al código para asegurar la compatibilidad y seguir las mejores prácticas establecidas.
 
-> [!NOTE]
-> Las fechas no están correctas, todavía.
+---

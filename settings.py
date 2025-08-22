@@ -180,24 +180,25 @@ TIME_LIMIT = int(os.environ.get("SNAKE_TIME_LIMIT", 120))  # segundos para modo 
 SURVIVAL_SPAWN_RATE = float(os.environ.get("SNAKE_SURVIVAL_SPAWN_RATE", 0.05))
 ZEN_NO_WALLS = os.environ.get("SNAKE_ZEN_NO_WALLS", "True") == "True"
 
-
 # --- Serpiente ---
 SNAKE_INITIAL_LENGTH = int(os.environ.get("SNAKE_INITIAL_LENGTH", 3))
 SNAKE_GROWTH_RATE = int(os.environ.get("SNAKE_GROWTH_RATE", 1))  # segmentos que crece al comer
 SNAKE_MAX_LENGTH = int(os.environ.get("SNAKE_MAX_LENGTH", 200))  # límite máximo de longitud
 
-
 # --- Comida ---
-FOOD_TYPES = os.environ.get("SNAKE_FOOD_TYPES", "True") == "True"  # habilita diferentes tipos de comida
-FOOD_SPECIAL_CHANCE = float(os.environ.get("SNAKE_FOOD_SPECIAL_CHANCE", 0.15))  # probabilidad de comida especial
-MULTI_FOOD = os.environ.get("SNAKE_MULTI_FOOD", "False") == "True"  # múltiples piezas de comida a la vez
-FOOD_COUNT = int(os.environ.get("SNAKE_FOOD_COUNT", 3))  # número de piezas de comida cuando MULTI_FOOD es True
-
+FOOD_TYPES = os.environ.get("SNAKE_FOOD_TYPES",
+                        "True") == "True"  # habilita diferentes tipos de comida
+FOOD_SPECIAL_CHANCE = float(os.environ.get("SNAKE_FOOD_SPECIAL_CHANCE",
+                                        0.15))  # probabilidad de comida especial
+MULTI_FOOD = os.environ.get("SNAKE_MULTI_FOOD",
+                        "False") == "True"  # múltiples piezas de comida a la vez
+FOOD_COUNT = int(os.environ.get("SNAKE_FOOD_COUNT",
+                                3))  # número de piezas de comida cuando MULTI_FOOD es True
 
 # --- Controles ---
 CONTROL_SCHEME = os.environ.get("SNAKE_CONTROL_SCHEME", "arrows")  # "arrows", "wasd", "both"
-ALLOW_REVERSE = os.environ.get("SNAKE_ALLOW_REVERSE", "False") == "True"  # permitir reversa inmediata
-
+ALLOW_REVERSE = os.environ.get("SNAKE_ALLOW_REVERSE",
+                            "False") == "True"  # permitir reversa inmediata
 
 # --- Pantalla y UI ---
 FULLSCREEN = os.environ.get("SNAKE_FULLSCREEN", "False") == "True"
@@ -205,7 +206,6 @@ FPS_LIMIT = int(os.environ.get("SNAKE_FPS_LIMIT", 60))
 SHOW_FPS = os.environ.get("SNAKE_SHOW_FPS", "False") == "True"
 SHOW_SCORE_HISTORY = os.environ.get("SNAKE_SHOW_SCORE_HISTORY", "True") == "True"
 FONT_NAME = os.environ.get("SNAKE_FONT_NAME", "Arial")  # Usa fuente por defecto
-
 
 # ===== Paleta principal mejorada =====
 PALETTE = {
@@ -223,7 +223,6 @@ PALETTE = {
     "trail": (100, 255, 150, 60)
 }
 
-
 # --- Colores específicos para el menú / UI ---
 MENU_COLORS = {
     "bg": (18, 22, 30),         # fondo del menú
@@ -237,7 +236,6 @@ MENU_COLORS = {
     "overlay": (10, 10, 10, 160), # overlay con alpha para modales (r,g,b,a)
 }
 
-
 # --- Alias antiguos para compatibilidad (si algo del código usa WHITE/GRAY/DARK...) ---
 WHITE = MENU_COLORS["text"]
 GRAY = MENU_COLORS["muted"]
@@ -246,7 +244,6 @@ ACCENT = MENU_COLORS["accent"]
 BAD = MENU_COLORS["bad"]
 OK = MENU_COLORS["ok"]
 OVERLAY = MENU_COLORS["overlay"]
-
 
 def get_menu_colors():
     """Devuelve el diccionario de colores del menú, usando defaults si no está en settings."""
