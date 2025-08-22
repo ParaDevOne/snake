@@ -1,50 +1,59 @@
-"""Configuraciones del juego"""
-# settings.py
+
+"""
+settings.py
+-------------------
+Módulo centralizado para la configuración del juego Snake.
+Incluye helpers para obtener configuraciones dinámicas y permite override por variables de entorno.
+"""
 
 import os
 
-WIDTH = 800
-HEIGHT = 600
-GRID_SIZE = 20
+# ===================
+# --- RESOLUCIÓN Y GRID ---
+# ===================
+WIDTH = int(os.environ.get("SNAKE_WIDTH", 800))
+HEIGHT = int(os.environ.get("SNAKE_HEIGHT", 600))
+GRID_SIZE = int(os.environ.get("SNAKE_GRID_SIZE", 20))
 COLUMNS = WIDTH // GRID_SIZE
 ROWS = HEIGHT // GRID_SIZE
 
-# movimiento (delay en ms entre pasos de la serpiente)
-INIT_MOVE_DELAY = 120
-MIN_MOVE_DELAY = 40
-SPEED_STEP = 6  # cuánto reduce el delay al comer
+# ===================
+# --- MOVIMIENTO Y VELOCIDAD ---
+# ===================
+INIT_MOVE_DELAY = int(os.environ.get("SNAKE_INIT_MOVE_DELAY", 135))
+MIN_MOVE_DELAY = int(os.environ.get("SNAKE_MIN_MOVE_DELAY", 35))
+SPEED_STEP = int(os.environ.get("SNAKE_SPEED_STEP", 4))  # cuánto reduce el delay al comer
 
-# Directorio de datos y assets
+# ===================
+# --- DIRECTORIOS Y ARCHIVOS ---
+# ===================
 DATA_DIR = os.path.join("Data")
-ASSETS_DIR = os.path.join("Data", "assets")
-
-# Directorio para perfiles
-PROFILES_DIR = os.path.join("Data", "profiles")
+AUDIO_DIR = os.path.join(DATA_DIR, "assets", "audio")
+PROFILES_DIR = os.path.join(DATA_DIR, "profiles")
 DEFAULT_PROFILE = "default"
 PROFILE_FILENAME = "profile.json"  # dentro de la carpeta del perfil
 
-# opciones del juego
-# Nombre de la ventana principal (fallback directo)
-WINDOW_TITLE = "Snake Game - Fallback"
-# Nombre de la ventana del menú principal
-MENU_WINDOW_TITLE = "Snake Game"
-WRAP_AROUND = True
-# Activar/desactivar obstáculos
-USE_OBSTACLES = True
-# Cantidad de obstáculos aleatorios
-OBSTACLE_COUNT = 8
-# Color de los obstáculos (usar paleta o RGB)
-OBSTACLE_COLOR = (120, 120, 120)
+# ===================
+# --- OPCIONES GENERALES DEL JUEGO ---
+# ===================
+WINDOW_TITLE = os.environ.get("SNAKE_WINDOW_TITLE", "Snake Game - Fallback")
+MENU_WINDOW_TITLE = os.environ.get("SNAKE_MENU_WINDOW_TITLE", "Snake Game")
+WRAP_AROUND = os.environ.get("SNAKE_WRAP_AROUND", "True") == "True"
+USE_OBSTACLES = os.environ.get("SNAKE_USE_OBSTACLES", "True") == "True"
+OBSTACLE_COUNT = int(os.environ.get("SNAKE_OBSTACLE_COUNT", 12))
+OBSTACLE_COLOR = (120, 120, 120)  # Color de los obstáculos (usar paleta o RGB)
 
-# powerups
-POWERUP_ENABLED = True
-POWERUP_CHANCE = 0.12  # probabilidad de que aparezca un powerup cuando aparece comida
-POWERUP_DURATION_MS = 5000
+# ===================
+# --- POWERUPS ---
+# ===================
+POWERUP_ENABLED = os.environ.get("SNAKE_POWERUP_ENABLED", "True") == "True"
+POWERUP_CHANCE = float(os.environ.get("SNAKE_POWERUP_CHANCE", 0.35))
+POWERUP_DURATION_MS = int(os.environ.get("SNAKE_POWERUP_DURATION_MS", 5000))
 
-# --- Constantes y estados de menú ---
+# ===================
+# --- MENÚ Y ESTADOS ---
+# ===================
 HELP_TEXT = "Usa flechas o ratón. Enter/Clic: elegir. M/ESC en juego: volver al menú"
-
-# Estados del menú
 STATE_MAIN = "main"
 STATE_PLAY = "play"
 STATE_PROFILES = "profiles"
@@ -54,44 +63,52 @@ STATE_OPTIONS_GAMEPLAY = "options_gameplay"
 STATE_OPTIONS_VISUAL = "options_visual"
 STATE_OPTIONS_CONTROLS = "options_controls"
 STATE_OPTIONS_ADVANCED = "options_advanced"
-""""A module for managing game settings."""
 
-# ===== NUEVAS OPCIONES MEJORADAS =====
-# Modos de dificultad
-DIFFICULTY = "normal"  # "easy", "normal", "hard", "extreme"
+"""A module for managing game settings."""
+
+
+# ===== OPCIONES MEJORADAS =====
+# --- Dificultad ---
+DIFFICULTY = os.environ.get("SNAKE_DIFFICULTY", "normal")  # "easy", "normal", "hard", "extreme"
 DIFFICULTY_SETTINGS = {
     "easy": {
-        "init_speed": 160,
-        "min_speed": 80,
+        "init_speed": 165,
+        "min_speed": 95,
         "speed_increase": 4,
-        "powerup_chance": 0.20,
+        "powerup_chance": 0.25,
         "obstacle_count": 0
     },
     "normal": {
-        "init_speed": 120,
+        "init_speed": 135,
         "min_speed": 40,
         "speed_increase": 6,
-        "powerup_chance": 0.12,
-        "obstacle_count": 5
+        "powerup_chance": 0.18,
+        "obstacle_count": 12
     },
     "hard": {
-        "init_speed": 90,
+        "init_speed": 95,
         "min_speed": 30,
         "speed_increase": 8,
         "powerup_chance": 0.08,
-        "obstacle_count": 12
+        "obstacle_count": 16
     },
     "extreme": {
-        "init_speed": 60,
-        "min_speed": 20,
+        "init_speed": 75,
+        "min_speed": 5,
         "speed_increase": 10,
         "powerup_chance": 0.05,
         "obstacle_count": 20
     }
 }
 
-# Temas visuales
-THEME = "default"  # "default", "neon", "retro", "forest", "ocean"
+def get_difficulty_settings(level=None):
+    """Devuelve la configuración de dificultad actual o de un nivel dado."""
+    lvl = level or DIFFICULTY
+    return DIFFICULTY_SETTINGS.get(lvl, DIFFICULTY_SETTINGS["normal"])
+
+
+# --- Temas visuales ---
+THEME = os.environ.get("SNAKE_THEME", "default")  # "default", "neon", "retro", "forest", "ocean"
 THEMES = {
     "default": {
         "bg_top": (8, 12, 28),
@@ -135,51 +152,62 @@ THEMES = {
     }
 }
 
-# Configuraciones de sonido (para futura implementación)
-SOUND_ENABLED = False
-MUSIC_ENABLED = False
-SOUND_VOLUME = 0.7
-MUSIC_VOLUME = 0.5
+def get_theme_colors(theme=None):
+    """Devuelve el diccionario de colores del tema actual o de uno dado."""
+    th = theme or THEME
+    return THEMES.get(th, THEMES["default"])
 
-# Configuraciones de efectos visuales
-VISUAL_EFFECTS = True
-PARTICLE_EFFECTS = True
-SCREEN_SHAKE = True
-SMOOTH_MOVEMENT = True
-SHOW_GRID = True
-GLOW_EFFECTS = True
 
-# Modos de juego especiales
-GAME_MODE = "classic"  # "classic", "timed", "survival", "zen"
-TIME_LIMIT = 120  # segundos para modo "timed"
-SURVIVAL_SPAWN_RATE = 0.05  # probabilidad de spawn de obstáculos en modo survival
-ZEN_NO_WALLS = True  # en modo zen, no hay paredes
+# --- Sonido ---
+SOUND_ENABLED = os.environ.get("SNAKE_SOUND_ENABLED", "False") == "True"
+MUSIC_ENABLED = os.environ.get("SNAKE_MUSIC_ENABLED", "False") == "True"
+SOUND_VOLUME = float(os.environ.get("SNAKE_SOUND_VOLUME", 0.7))
+MUSIC_VOLUME = float(os.environ.get("SNAKE_MUSIC_VOLUME", 0.5))
 
-# Configuraciones de la serpiente
-SNAKE_INITIAL_LENGTH = 3
-SNAKE_GROWTH_RATE = 1  # segmentos que crece al comer
-SNAKE_MAX_LENGTH = 200  # límite máximo de longitud
 
-# Configuraciones de comida
-FOOD_TYPES = True  # habilita diferentes tipos de comida
-FOOD_SPECIAL_CHANCE = 0.15  # probabilidad de comida especial
-MULTI_FOOD = False  # múltiples piezas de comida a la vez
-FOOD_COUNT = 1  # número de piezas de comida cuando MULTI_FOOD es True
+# --- Efectos visuales ---
+VISUAL_EFFECTS = os.environ.get("SNAKE_VISUAL_EFFECTS", "True") == "True"
+PARTICLE_EFFECTS = os.environ.get("SNAKE_PARTICLE_EFFECTS", "True") == "True"
+SCREEN_SHAKE = os.environ.get("SNAKE_SCREEN_SHAKE", "True") == "True"
+SMOOTH_MOVEMENT = os.environ.get("SNAKE_SMOOTH_MOVEMENT", "True") == "True"
+SHOW_GRID = os.environ.get("SNAKE_SHOW_GRID", "True") == "True"
+GLOW_EFFECTS = os.environ.get("SNAKE_GLOW_EFFECTS", "True") == "True"
 
-# Configuraciones de control
-CONTROL_SCHEME = "arrows"  # "arrows", "wasd", "both"
-ALLOW_REVERSE = False  # permitir reversa inmediata
 
-# Configuraciones de pantalla
-FULLSCREEN = False
-FPS_LIMIT = 60
-SHOW_FPS = False
-SHOW_SCORE_HISTORY = True
+# --- Modos de juego especiales ---
+GAME_MODE = os.environ.get("SNAKE_GAME_MODE", "classic")  # "classic", "timed", "survival", "zen"
+TIME_LIMIT = int(os.environ.get("SNAKE_TIME_LIMIT", 120))  # segundos para modo "timed"
+SURVIVAL_SPAWN_RATE = float(os.environ.get("SNAKE_SURVIVAL_SPAWN_RATE", 0.05))
+ZEN_NO_WALLS = os.environ.get("SNAKE_ZEN_NO_WALLS", "True") == "True"
 
-FONT_NAME = "Arial"  # Usa fuente por defecto
 
-# ===== Temas / Colores =====
-# Paleta principal mejorada
+# --- Serpiente ---
+SNAKE_INITIAL_LENGTH = int(os.environ.get("SNAKE_INITIAL_LENGTH", 3))
+SNAKE_GROWTH_RATE = int(os.environ.get("SNAKE_GROWTH_RATE", 1))  # segmentos que crece al comer
+SNAKE_MAX_LENGTH = int(os.environ.get("SNAKE_MAX_LENGTH", 200))  # límite máximo de longitud
+
+
+# --- Comida ---
+FOOD_TYPES = os.environ.get("SNAKE_FOOD_TYPES", "True") == "True"  # habilita diferentes tipos de comida
+FOOD_SPECIAL_CHANCE = float(os.environ.get("SNAKE_FOOD_SPECIAL_CHANCE", 0.15))  # probabilidad de comida especial
+MULTI_FOOD = os.environ.get("SNAKE_MULTI_FOOD", "False") == "True"  # múltiples piezas de comida a la vez
+FOOD_COUNT = int(os.environ.get("SNAKE_FOOD_COUNT", 3))  # número de piezas de comida cuando MULTI_FOOD es True
+
+
+# --- Controles ---
+CONTROL_SCHEME = os.environ.get("SNAKE_CONTROL_SCHEME", "arrows")  # "arrows", "wasd", "both"
+ALLOW_REVERSE = os.environ.get("SNAKE_ALLOW_REVERSE", "False") == "True"  # permitir reversa inmediata
+
+
+# --- Pantalla y UI ---
+FULLSCREEN = os.environ.get("SNAKE_FULLSCREEN", "False") == "True"
+FPS_LIMIT = int(os.environ.get("SNAKE_FPS_LIMIT", 60))
+SHOW_FPS = os.environ.get("SNAKE_SHOW_FPS", "False") == "True"
+SHOW_SCORE_HISTORY = os.environ.get("SNAKE_SHOW_SCORE_HISTORY", "True") == "True"
+FONT_NAME = os.environ.get("SNAKE_FONT_NAME", "Arial")  # Usa fuente por defecto
+
+
+# ===== Paleta principal mejorada =====
 PALETTE = {
     "bg_top": (8, 12, 28),
     "bg_bottom": (18, 24, 48),
@@ -195,7 +223,8 @@ PALETTE = {
     "trail": (100, 255, 150, 60)
 }
 
-# Colores específicos para el menú / UI
+
+# --- Colores específicos para el menú / UI ---
 MENU_COLORS = {
     "bg": (18, 22, 30),         # fondo del menú
     "panel": (30, 30, 40),      # fondo de botones/rectángulos
@@ -208,7 +237,8 @@ MENU_COLORS = {
     "overlay": (10, 10, 10, 160), # overlay con alpha para modales (r,g,b,a)
 }
 
-# Alias antiguos para compatibilidad (si algo del código usa WHITE/GRAY/DARK...)
+
+# --- Alias antiguos para compatibilidad (si algo del código usa WHITE/GRAY/DARK...) ---
 WHITE = MENU_COLORS["text"]
 GRAY = MENU_COLORS["muted"]
 DARK = MENU_COLORS["bg"]
@@ -217,7 +247,7 @@ BAD = MENU_COLORS["bad"]
 OK = MENU_COLORS["ok"]
 OVERLAY = MENU_COLORS["overlay"]
 
-# --- Paleta de colores para menús y UI ---
+
 def get_menu_colors():
     """Devuelve el diccionario de colores del menú, usando defaults si no está en settings."""
     _menu_colors = globals().get("MENU_COLORS", None)
@@ -231,14 +261,19 @@ def get_menu_colors():
             "ok": _menu_colors.get("ok", (120, 200, 120)),
             "overlay": _menu_colors.get("overlay", (10, 10, 10, 160)),
         }
-    if not _menu_colors:
-        return {
-            "text": (245, 245, 245),
-            "muted": (150, 150, 150),
-            "bg": (28, 32, 40),
-            "accent": (80, 160, 255),
-            "bad": (220, 80, 80),
-            "ok": (120, 200, 120),
-            "overlay": (10, 10, 10, 160),
-        }
-    return None
+    return {
+        "text": (245, 245, 245),
+        "muted": (150, 150, 150),
+        "bg": (28, 32, 40),
+        "accent": (80, 160, 255),
+        "bad": (220, 80, 80),
+        "ok": (120, 200, 120),
+        "overlay": (10, 10, 10, 160),
+    }
+
+# ===================
+# --- HELPERS GLOBALES ---
+# ===================
+def get_setting(key, default=None):
+    """Permite obtener cualquier setting por clave, útil para acceso dinámico."""
+    return globals().get(key, default)
