@@ -1,4 +1,3 @@
-
 # 🐍 Snake Game Version 1.7.0
 
 ![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)
@@ -7,69 +6,69 @@
 ![Status](https://img.shields.io/badge/status-stable-success)
 ![Version](https://img.shields.io/badge/version-1.7.0-brightgreen)
 
-> **Snake, modular y multiplataforma con efectos visuales avanzados, perfiles persistentes y workflows.**
+> **Snake — modular, cross-platform with advanced visual effects, persistent profiles and developer workflows.**
 
 ---
 
-## 🎯 Características Destacadas
+## 🎯 Key Features
 
-- 🎨 Efectos visuales avanzados: partículas, gradientes, animaciones suaves
-- 🐍 Serpiente mejorada: gradientes, sombras, ojos animados
-- 🍎 Comida y powerups dinámicos: formas, animaciones, efectos
-- 🌅 Fondos: gradientes, grid, obstáculos volumétricos
-- 📝 Logging: consola y archivo, niveles, colores [Para más información](./docs/SISTEMA_LOGGING.md)
-- 👤 Perfiles persistentes: multiusuario, datos en `Data/profiles/`
-- ⚙️ Configuración centralizada: todo en `settings.py`
-- 🖥️ Soporte multiplataforma: Windows, Linux, macOS
-- 🔧 Workflows: ejecución, instalación, build y logs documentados
-- 📄 Documentación técnica: comentarios en el código, guías y ejemplos
-- 📦 Distribución: empaquetado y distribución del juego
-- 🔍 Análisis de rendimiento: herramientas y métricas
-- 🛠️ Mantenimiento: scripts y herramientas de soporte
+- 🎨 Advanced visual effects: particles, gradients, smooth animations
+- 🐍 Enhanced snake: gradients, shadows, animated eyes
+- 🍎 Dynamic food & powerups: shapes, animations, effects
+- 🌅 Backgrounds: gradients, grid, volumetric obstacles
+- 📝 Logging: console + file, levels, colors [More info](./docs/SISTEMA_LOGGING.md)
+- 👤 Persistent profiles: multi-user, stored under `Data/profiles/`
+- ⚙️ Centralized configuration: everything in `settings.py`
+- 🖥️ Cross-platform support: Windows, Linux, macOS
+- 🔧 Workflows: run, install, build and logs documented
+- 📄 Technical docs: inline comments, guides and examples
+- 📦 Distribution: packaging and release-ready distribution
+- 🔍 Performance analysis: tools and metrics
+- 🛠️ Maintenance: helper scripts and support tools
 
 ---
 
-### Logs y datos
+### Logs & data
 - Logs: `Data/logs.txt`
-- Perfiles: `Data/profiles/`
+- Profiles: `Data/profiles/`
 
 ---
 
-## 🗂️ Estructura del Proyecto
+## 🗂️ Project Structure
 
 ```
 snake/
-├── main.py           # Loop principal y orquestación
-├── game.py           # Controlador y estado del juego
-├── snake.py          # Lógica de la serpiente
-├── food.py           # Comida y powerups
-├── menu.py           # Menús y navegación
-├── logic.py          # Funciones auxiliares
-├── settings.py       # Configuración centralizada
-├── profiles.py       # Gestión de perfiles y puntajes
-├── utils.py          # Utilidades y logging
-├── visual_effects.py # Efectos visuales y partículas
-├── video_config.py   # Configuración SDL automática
-├── requirements.txt  # Dependencias
-├── pyproject.toml    # Configuración Poetry/Build
-├── setup.py          # Build PyInstaller
-├── Data/             # Perfiles, logs
-└── docs/             # Documentación técnica
+├── main.py           # Main loop and orchestration
+├── game.py           # Game controller and state
+├── snake.py          # Snake logic
+├── food.py           # Food and powerups
+├── menu.py           # Menus and navigation
+├── logic.py          # Helper functions
+├── settings.py       # Centralized configuration
+├── profiles.py       # Profile and score management
+├── utils.py          # Utilities and logging
+├── visual_effects.py # Visual effects and particle system
+├── video_config.py   # Automatic SDL configuration
+├── requirements.txt  # Dependencies
+├── pyproject.toml    # Poetry / build config
+├── setup.py          # PyInstaller build script
+├── Data/             # Profiles, logs, persisted data
+└── docs/             # Technical documentation
 ```
 
 ---
 
-## ⚙️ Configuración y Personalización
+## ⚙️ Configuration & Customization
 
-- Todas las opciones en `settings.py` (controles, visual, gameplay)
-- Drivers y optimización SDL en `video_config.py`
-- Perfiles y puntajes: `Data/profiles/` (nombres de perfil por usuario)
-- Logging configurable: niveles, archivo, consola
+- All options are in `settings.py` (controls, visuals, gameplay)
+- Drivers and SDL optimizations in `video_config.py`
+- Profiles and scores: `Data/profiles/` (one profile name per user)
+- Logging configurable: levels, file, console
 
-Ejemplo de configuración:
+Example configuration:
 
 ```python
-OBSTACULES = True
+OBSTACLES = True
 WRAP_AROUND = True
 POWERUPS_ENABLED = True
 SMOOTH_MOVEMENT = True
@@ -80,84 +79,83 @@ LOG_TO_CONSOLE = True
 
 ---
 
-## 📝 Versiones y Cambios
+## 📝 Versions & Changes
 
 ## [1.7.0] - 2025-08-21
-- Obstáculos y nuevos componentes de UI.
-	- Añadido sistema de obstáculos: colisiones, generación y gestión desde `obstacles.py`.
-	- Nuevo archivo `ui_components.py`: componentes reutilizables para menús y HUD.
-	- Mejoras visuales en la interfaz y menús usando los nuevos componentes UI.
-	- Corrección de bugs menores y mejoras de estabilidad.
+- Obstacles and new UI components.
+	- Added obstacles system: collisions, generation and management in `obstacles.py`.
+	- New file `ui_components.py`: reusable components for menus and HUD.
+	- Visual improvements in the interface and menus using the new UI components.
+	- Minor bug fixes and stability improvements.
 
 > [!NOTE]
-> **Las versiones anteriores a la ultima se pueden encontrar en el archivo [`CHANGELOG.md`](./docs/CHANGELOG.md).**
+> **Previous releases can be found in the [`CHANGELOG.md`](./docs/CHANGELOG.md) file.**
 
 ---
 
-## 👾 Cómo Jugar
+## 👾 How to Play
 
-- **Mover:** ↑ ↓ ← → o WASD
-- **Pausar:** ESC o ESPACIO
-- **Reiniciar:** R
-- **Menús:** ENTER para seleccionar, TAB para cambiar perfil
-- **Pantalla completa:** F11
+- **Move:** ↑ ↓ ← → or WASD
+- **Pause:** ESC or SPACE
+- **Restart:** R
+- **Menus:** ENTER to select, TAB to switch profile
+- **Fullscreen:** F11
 
-### Objetivo
-Come la mayor cantidad de comida posible sin chocar contigo mismo ni con obstáculos (o con las paredes si tienes el modo wrap-around desactivado).
+### Objective
+Eat as much food as possible without colliding with yourself or obstacles (or the walls if wrap-around mode is disabled).
 
-### Puntuación
-- 🍎 Comida: +10
-- ⚡ Speed Powerup: +1 y velocidad
-- 🔷 Grow Powerup: +5 y crecimiento
+### Scoring
+- 🍎 Food: +10
+- ⚡ Speed Powerup: +1 and increases speed
+- 🔷 Grow Powerup: +5 and increases length
 - ⭐ Score Powerup: +50
-- 🔵 Slow Powerup: +10 y ralentización
+- 🔵 Slow Powerup: +10 and slows the game
 
 ---
 
-## 📋 Requisitos del Sistema
+## 📋 System Requirements
 
-### Requisitos Mínimos
-- **Python**: 3.10 o superior
-- **Sistema Operativo**: Windows 10+, Linux (Ubuntu 18.04+), macOS 10.14+
-- **RAM**: 512 MB disponible
-- **Espacio en Disco**: 64 MB
-
-> [!NOTE]
-> Estos requisitos son para la version ya publicada.
+### Minimum Requirements
+- **Python**: 3.10 or higher
+- **Operating System**: Windows 10+, Linux (Ubuntu 18.04+), macOS 10.14+
+- **RAM**: 512 MB available
+- **Disk Space**: 64 MB
 
 > [!NOTE]
-> Aqui pone **Python 3.10** pero en el archivo [pyproject.toml](./pyproject.toml) **pone 3.13.5**,
-> eso es porque `Pyinstaller` necesita la version **3.13.5** para funcionar.
+> These requirements refer to the currently published release.
+
+> [!NOTE]
+> This README lists **Python 3.10**, but the [`pyproject.toml`](./pyproject.toml) file specifies **3.13.5** — that is because `PyInstaller` requires version **3.13.5** to build correctly.
 
 ---
 
-## 🚀 Instalación
+## 🚀 Installation
 
-### Instalación Rápida
+### Quick Install
 
 ```bash
-# 1. Clonar el repositorio
+# 1. Clone the repository
 git clone https://github.com/ParaDevOne/snake.git
 cd snake
 
-# 2. Instalar dependencias
+# 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. Ejecutar el juego
+# 3. Run the game
 python -m main
 ```
 
-### Instalación Paso a Paso
+### Step-by-step Installation
 
-#### 1. **Clonar el Repositorio**
+#### 1. **Clone the repository**
 ```bash
 git clone https://github.com/ParaDevOne/snake.git
 cd snake
 ```
 
-#### 2. **Crear Entorno Virtual (Recomendado)**
+#### 2. **Create a virtual environment (recommended)**
 ```bash
-# Windows Powershell
+# Windows PowerShell
 python -m venv .venv
 .venv\Scripts\activate.ps1
 
@@ -166,170 +164,174 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-#### 3. **Instalar Dependencias**
+#### 3. **Install dependencies**
 ```bash
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### Instalación con Poetry (Recomendado)
+### Install with Poetry (Recommended)
 
-Si prefieres usar Poetry para un mejor manejo de dependencias:
+If you prefer Poetry for dependency management:
 
 ```bash
-# 1. Instalar Poetry (si no lo tienes)
+# 1. Install Poetry (if you don't have it)
 curl -sSL https://install.python-poetry.org | python3 -
 
-# 2. Clonar el repositorio
+# 2. Clone the repository
 git clone https://github.com/ParaDevOne/snake.git
 cd snake
 
-# 3. Instalar dependencias con Poetry
+# 3. Install dependencies with Poetry
 poetry install
 
-# 4. Ejecutar el juego
+# 4. Run the game
 poetry run start
 ```
 
-# Compilación a Ejecutable (Opcional)
+# Build to Executable (Optional)
 
-Para crear un ejecutable independiente:
+To produce a standalone executable:
 
-## Ejecutar script de compilación
+### Run the build script
+
+#### With bash
 ```
-#### Con bash
 python setup.py
 ```
-```
 
-#### Con Poetry en bash:
+#### With Poetry (bash)
 ```bash
-
-# Ejecutar script de compilación
+# Run the build script
 poetry run build
 ```
 
 ```bash
-# El ejecutable estará en dist/Snake Game.exe (Windows) o dist/Snake Game (Linux/macOS)
+# The executable will be in:
+#   dist/Snake Game.exe    (Windows)
+#   dist/Snake Game        (Linux/macOS)
 ```
 
 > [!WARNING]
-> Si quieres que el tamaño del ejecutable se reduzca usa UPX,
-> instalalo de forma global o en lib/upx.exe
-> (Puede que en entornos Linux/MacOS no funcione bien esta herramienta, pero en Windows la recomiendo.)
+> If you want to reduce the executable size, use UPX. Install it globally or place it in `lib/upx.exe`. (UPX may not work reliably on some Linux/macOS environments; it is recommended for Windows builds.)
 
-## 🎮 Ejecución
+## 🎮 Running
 
-### Modo Normal
+### Normal mode
 ```bash
 python -m main
 ```
 
 ### 🔍 Troubleshooting
 
-Si experimentas problemas:
+If you run into issues:
 
-1. **Revisar logs:** `Data/logs.txt` contiene información detallada
-2. **Forzar driver:** `export SDL_VIDEODRIVER=<driver>`
-3. **Verificar pygame:** Los logs muestran si pygame está disponible
-4. **Probar fallbacks:** El sistema intenta múltiples drivers automáticamente
+1. **Check logs:** `Data/logs.txt` contains detailed info
+2. **Force driver:** `export SDL_VIDEODRIVER=<driver>`
+3. **Verify pygame:** Logs indicate whether pygame is available
+4. **Try fallbacks:** The system will attempt multiple drivers automatically
 
-## 🛠️ Desarrollo y Arquitectura
+## 🛠️ Development & Architecture
 
-### Tecnologías Utilizadas
-- **Python 3.10+**: Lenguaje principal
-- **Pygame 2.6.1**: Motor de juego y gráficos
-- **SDL**: Sistema de bajo nivel para gráficos y audio
-- **JSON**: Almacenamiento de datos de perfiles
-- **Logging**: Sistema nativo de Python para logs
+### Technologies Used
+- **Python 3.10+**: Primary language
+- **Pygame 2.6.1**: Game engine and rendering
+- **SDL**: Low-level system for graphics and audio
+- **JSON**: Profile data storage
+- **Logging**: Python native logging system
 
-### Patrón de Arquitectura
-- **MVC (Model-View-Controller)**: Separación clara de lógica
-- **Sistema de Componentes**: Efectos visuales modulares
-- **Event-Driven**: Manejo basado en eventos de Pygame
-- **Configuration-First**: Toda la configuración centralizada
+### Architectural Pattern
+- **MVC (Model-View-Controller)**: Clear separation of concerns
+- **Component System**: Modular visual effects
+- **Event-Driven**: Pygame event-based handling
+- **Configuration-First**: Centralized configuration
 
-## 👥 Contribuciones
+## 👥 Contributions
 
-¡Las contribuciones son bienvenidas! Este proyecto sigue un modelo de desarrollo abierto.
+Contributions are welcome! This project follows an open development model.
 
-### Cómo Contribuir
+### How to Contribute
 
-1. **Fork el repositorio**
-2. **Crear una rama para tu feature**: `git checkout -b feature/nueva-caracteristica`
-3. **Hacer commit de tus cambios**: `git commit -m 'Añadir nueva característica'`
-4. **Push a la rama**: `git push origin feature/nueva-caracteristica`
-5. **Abrir una Pull Request**
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/new-feature`
+3. **Commit your changes**: `git commit -m 'Add new feature'`
+4. **Push the branch**: `git push origin feature-new-feature`
+5. **Open a Pull Request**
 
-### Guías de Contribución
+### Contribution Types
 
-#### Tipos de Contribución
-- 🐛 **Bug Fixes**: Corrección de errores
-- ✨ **Features**: Nuevas características
-- 🎨 **Graphics**: Mejoras visuales
-- 📄 **Documentación**: Mejoras en documentación
-- ⚡ **Performance**: Optimizaciones de rendimiento
-- 🔧 **Refactoring**: Mejoras en la estructura del código
+#### Types of contributions
+- 🐛 **Bug Fixes**: Fix bugs
+- ✨ **Features**: New features
+- 🎨 **Graphics**: Visual improvements
+- 📄 **Documentation**: Docs and guides
+- ⚡ **Performance**: Optimizations
+- 🔧 **Refactoring**: Code structure improvements
 
-### Áreas Que Necesitan Contribución
-- 🌍 **Localización**: Traducción a otros idiomas
-- 🚀 **Optimización**: Mejoras de rendimiento
-- 🎨 **Arte**: Sprites y texturas mejoradas
-- 📁 **Documentación**: Guías y tutoriales
-- 🧪 **Testing**: Más pruebas automatizadas
+### Areas That Need Contributions
+- 🌍 **Localization**: Translations to other languages
+- 🚀 **Optimization**: Performance improvements
+- 🎨 **Art**: Better sprites and textures
+- 📁 **Documentation**: Guides and tutorials
+- 🧪 **Testing**: More automated tests
 
-## 📞 Futuras Mejoras
+## 📞 Future Improvements
 
 ### Version - 1.8
-- 🎵 **Sistema de Audio Completo**
-  - Música de fondo dinámica
-  - Efectos de sonido para la mayoría de acciones
+- 🎵 **Full Audio System**
+  - Dynamic background music
+  - Sound effects for most actions
 
-### Version - Planificada
-- 🌍 **Localización**
-  - Soporte para múltiples idiomas
-  - En `./Data/lang` se pondrán JSON con las traducciones
-  - Arreglo de pantalla completa y menús
+### Planned Version
+- 🌍 **Localization**
+  - Multi-language support
+  - JSON files with translations under `./Data/lang`
+  - Fix fullscreen and menu issues
 
-### Version - Concepto
-- 👥 **Modo Multijugador**
-  - Pantalla dividida local
+### Concept Version
+- 👥 **Multiplayer Mode**
+  - Local split-screen
 
-- 🎆 **Modos de Juego Adicionales**
-  - Contrarreloj
-  - Modo arcade
+- 🎆 **Additional Game Modes**
+  - Time trial
+  - Arcade mode
 
 - **Config**
-  - Añadir soporte para archivos de configuración
-  - Permitir la carga de configuraciones desde `./Data/config.json`
-  - Validar y aplicar configuraciones en tiempo de ejecución
-  - Documentar las opciones de configuración disponibles
-  - Agregar aplicación externa para la gestión de configuraciones
+  - Add support for external config files
+  - Allow loading configs from `./Data/config.json`
+  - Validate and apply configs at runtime
+  - Document available configuration options
+  - Add an external app for config management
 
-## 🛠️ Desarrollo
-
----
-
-### ❓ FAQ Rápido
-
-- ¿Funciona offline? **Sí**
-- ¿Dónde están mis puntajes? `Data/profiles/`
-- ¿Puedo modificar gráficos? Sí, en `settings.py` y `visual_effects.py`
-- ¿Compilar para distribución? Sí, con `setup.py` o `Poetry run build`
-- ¿Logs? En `Data/logs.txt`
+## 🛠️ Development
 
 ---
 
-### 📄 Licencia
+### ❓ Quick FAQ
+
+- Does it work offline? **Yes**
+- Where are my scores? `Data/profiles/`
+- Can I modify graphics? Yes — see `settings.py` and `visual_effects.py`
+- Compile for distribution? Yes — use `setup.py` or `poetry run build`
+- Logs? In `Data/logs.txt`
+
+---
+
+### 📄 License
 
 **Simplified Open License (SOL) v3.0**
 
-Uso libre para cualquier propósito (personal, educativo, comercial). Modificación y distribución permitidas con atribución. Uso comercial permitido. Protección de marcas y patentes. Sin garantía, uso bajo tu responsabilidad. Indemnización requerida por parte del usuario.
+Free to use for any purpose (personal, educational, commercial). Modification and distribution allowed with attribution. Commercial use permitted. Trademark and patent protections apply. No warranty — use at your own risk. Indemnification required by the user.
 
-Consulta el archivo [`LICENSE.txt`](LICENSE.txt) para detalles completos.
+See the [`LICENSE.txt`](LICENSE.txt) file for full details.
 
 ---
 
-**🐍 Hecho con ❤️ por [ParaDevOne](https://github.com/ParaDevOne)**
+### 📄 Third-party Licenses
 
-*Si te gusta este proyecto, ¡dale una ⭐ en GitHub!*
+This project uses third-party components.
+To view third-party licenses, check the [`THIRD-PARTY-LICENSES.md`](./docs/THIRD-PARTY-LICENSES.md) file.
+
+**🐍 Made with ❤️ by [ParaDevOne](https://github.com/ParaDevOne)**
+
+*If you like this project, please give it a ⭐ on GitHub!*

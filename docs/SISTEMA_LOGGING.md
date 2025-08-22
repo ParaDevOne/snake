@@ -1,31 +1,31 @@
-# 📝 Sistema de Logging - Snake Game
+# 📝 Logging System - Snake Game
 
-## 📋 Resumen
+## 📋 Summary
 
-Se ha implementado un **sistema completo de logging** en el juego Snake que registra eventos tanto en **consola** como en un **archivo de logs** (`Data/logs.txt`). El sistema es flexible, configurable y está diseñado para proporcionar información útil sin afectar el rendimiento del juego.
+A **complete logging system** has been implemented in the Snake game that records events both to the **console** and to a **log file** (`Data/logs.txt`). The system is flexible, configurable, and designed to provide useful information without affecting the game's performance.
 
-## 🎯 **IMPLEMENTADO COMPLETAMENTE**
+## 🎯 **FULLY IMPLEMENTED**
 
-✅ **Archivo de logs en `Data/logs.txt`**
-✅ **Logs en consola con colores**
-✅ **Niveles configurables de logging**
-✅ **Logs automáticos de eventos del juego**
-✅ **Timestamps y formato estructurado**
-✅ **Thread-safe para concurrencia**
-✅ **Sistema de sesiones**
+✅ **Log file at `Data/logs.txt`**
+✅ **Colored console logs**
+✅ **Configurable logging levels**
+✅ **Automatic game event logging**
+✅ **Timestamps and structured format**
+✅ **Thread-safe for concurrency**
+✅ **Session system**
 
-## 📁 **Ubicación del Archivo de Logs**
+## 📁 **Log File Location**
 
 ```
 ./Data/logs.txt
 ```
 
-El archivo se crea automáticamente la primera vez que se ejecuta el juego.
+The file is created automatically the first time the game runs.
 
-## 🛠️ **Implementación Técnica**
+## 🛠️ **Technical Implementation**
 
-### **Archivo Principal: `utils.py`**
-Se ha expandido `utils.py` con un sistema completo de logging que incluye:
+### **Main File: `utils.py`**
+`utils.py` has been expanded with a full logging system that includes:
 
 ```python
 # Niveles de logging disponibles
@@ -36,37 +36,37 @@ ERROR    # Errores no críticos
 CRITICAL # Errores críticos que pueden afectar el juego
 ```
 
-### **Configuración Automática**
-- **Consola**: Solo muestra INFO y superiores (con colores)
-- **Archivo**: Registra TODO (DEBUG y superiores)
-- **Thread-safe**: Seguro para uso concurrente
-- **Timestamps**: Formato HH:MM:SS para fácil lectura
+### **Automatic Configuration**
+- **Console**: Shows only INFO and above (with colors)
+- **File**: Records EVERYTHING (DEBUG and above)
+- **Thread-safe**: Safe for concurrent use
+- **Timestamps**: HH:MM:SS format for easy reading
 
-## 🎮 **Eventos Registrados Automáticamente**
+## 🎮 **Automatically Logged Events**
 
-### **🚀 Sistema y Inicio**
-- Inicio del juego y versión de Python
-- Carga de menús y configuración de pantalla
-- Inicialización de perfiles
+### **🚀 System & Startup**
+- Game start and Python version
+- Loading of menus and screen configuration
+- Profile initialization
 
-### **👤 Acciones del Usuario**
-- Navegación entre menús (Jugar, Perfiles, Opciones)
-- Inicio de nuevas partidas
-- Configuraciones aplicadas
+### **👤 User Actions**
+- Navigation between menus (Play, Profiles, Options)
+- Starting new games
+- Applied settings
 
-### **🎯 Eventos del Juego**
-- Reinicio de juegos
-- Comida consumida (con puntos y nueva velocidad)
-- Powerups recogidos (tipo específico)
-- Nuevos records conseguidos
-- Fin del juego (con estadísticas)
-- Número de partidas jugadas
+### **🎯 Game Events**
+- Game resets
+- Food consumed (with points and new speed)
+- Powerups collected (specific type)
+- New high scores achieved
+- Game over (with statistics)
+- Number of games played
 
-### **📊 Ejemplos de Logs Reales**
+### **📊 Real Log Examples**
 
 ```
 ============================================================
-🐍 SNAKE GAME - NUEVA SESIÓN INICIADA
+🐍 SNAKE GAME - NEW SESSION STARTED
 📅 2025-08-13 12:29:58
 ============================================================
 [12:29:58] INFO     [SYS] 🖥️ Iniciando Snake Game
@@ -79,17 +79,19 @@ CRITICAL # Errores críticos que pueden afectar el juego
 [12:32:04] INFO      Partidas jugadas: 1
 ```
 
-## 🎨 **Logs con Colores en Consola**
+> **Note:** The above example log block is shown as-is (preserved from the original) to illustrate format and content.
 
-- 🔵 **DEBUG**: Cian - Información técnica detallada
-- 🟢 **INFO**: Verde - Información general del juego
-- 🟡 **WARNING**: Amarillo - Situaciones inusuales
-- 🔴 **ERROR**: Rojo - Errores no críticos
-- 🟣 **CRITICAL**: Magenta - Errores críticos
+## 🎨 **Colored Console Logs**
 
-## 📈 **Funciones Específicas Implementadas**
+- 🔵 **DEBUG**: Cyan — Detailed technical information
+- 🟢 **INFO**: Green — General game information
+- 🟡 **WARNING**: Yellow — Unusual situations
+- 🔴 **ERROR**: Red — Non-critical errors
+- 🟣 **CRITICAL**: Magenta — Critical errors
 
-### **Funciones de Conveniencia**
+## 📈 **Specific Functions Implemented**
+
+### **Convenience Functions**
 ```python
 utils.log_info("Mensaje general")
 utils.log_warning("Advertencia")
@@ -103,94 +105,94 @@ utils.log_visual_effect("Efecto", "Detalles")
 utils.log_performance("Acción", duracion_ms)
 ```
 
-### **Control de Sesiones**
+### **Session Control**
 ```python
 utils.close_logging_session()  # Cierra la sesión correctamente
 ```
 
-## 🔧 **Configuraciones Disponibles**
+## 🔧 **Available Configurations**
 
-### **Niveles de Log por Destino**
+### **Log Levels per Destination**
 ```python
 # En utils.py - Logger class
 min_console_level = LogLevel.INFO    # Solo INFO y superiores en consola
 min_file_level = LogLevel.DEBUG      # Todo en archivo
 ```
 
-### **Activar/Desactivar Destinos**
+### **Enable/Disable Destinations**
 ```python
 console_enabled = True   # Mostrar en consola
 file_enabled = True      # Escribir en archivo
 ```
 
-## 🎯 **Integración en el Código**
+## 🎯 **Code Integration**
 
 ### **main.py**
-- Log de inicio del sistema
-- Información de versión de Python
-- Manejo de errores críticos
-- Cierre limpio de sesión
+- System startup logging
+- Python version info
+- Critical error handling
+- Clean session shutdown
 
 ### **menu.py**
-- Navegación entre menús
-- Inicio de partidas
-- Configuraciones aplicadas
+- Menu navigation logging
+- Game start logging
+- Applied configurations
 
 ### **logic.py**
-- Eventos de juego (comida, powerups, records)
-- Reinicio de partidas
-- Estadísticas de perfil
+- Game events (food, powerups, records)
+- Game resets
+- Profile statistics
 
 ### **game.py**
-- Efectos visuales (opcionalmente)
-- Información de rendimiento
+- Visual effects (optional)
+- Performance information
 
-## 📊 **Información Registrada**
+## 📊 **Recorded Information**
 
-### **Para cada evento se registra:**
-- ⏰ **Timestamp** exacto (HH:MM:SS)
-- 🏷️ **Nivel** de log (INFO, WARNING, etc.)
-- 📂 **Módulo** donde ocurrió ([GAME], [USER], [SYS])
-- 🎯 **Evento** principal
-- 📝 **Detalles** específicos cuando son relevantes
+### **For each event we log:**
+- ⏰ **Exact timestamp** (HH:MM:SS)
+- 🏷️ **Log level** (INFO, WARNING, etc.)
+- 📂 **Module** where it occurred ([GAME], [USER], [SYS])
+- 🎯 **Main event**
+- 📝 **Specific details** when relevant
 
-### **Información del Sistema:**
-- Versión de Python utilizada
-- Resolución de pantalla configurada
-- Configuraciones de juego aplicadas
+### **System Information:**
+- Python version used
+- Configured screen resolution
+- Applied game settings
 
-### **Estadísticas de Juego:**
-- Puntuación actual y récords
-- Velocidad del juego (delay en ms)
-- Tipos de powerups recogidos
-- Número total de partidas jugadas
+### **Game Statistics:**
+- Current score and records
+- Game speed (delay in ms)
+- Types of powerups collected
+- Total number of games played
 
-## 🚀 **Beneficios del Sistema**
+## 🚀 **Benefits of the System**
 
-### **Para Desarrollo:**
-- **Debug fácil**: Toda la información necesaria en un lugar
-- **Seguimiento de eventos**: Historia completa de cada sesión
-- **Detección de problemas**: Logs automáticos de errores
+### **For Development:**
+- **Easy debugging**: All needed information in one place
+- **Event tracking**: Full session history
+- **Issue detection**: Automatic error logging
 
-### **Para el Usuario:**
-- **No intrusivo**: Solo información relevante en consola
-- **Histórico completo**: Archivo con toda la actividad
-- **Rendimiento**: Sistema optimizado sin impacto en FPS
+### **For the Player:**
+- **Non-intrusive**: Only relevant info in console
+- **Complete history**: File with full activity log
+- **Performance**: Optimized system with no FPS impact
 
-### **Para Mantenimiento:**
-- **Análisis de uso**: Patrones de juego registrados
-- **Estadísticas**: Información sobre rendimiento
-- **Troubleshooting**: Historia completa para resolver problemas
+### **For Maintenance:**
+- **Usage analysis**: Recorded gameplay patterns
+- **Statistics**: Performance information
+- **Troubleshooting**: Complete history to resolve issues
 
-## ✅ **Estado Final**
+## ✅ **Final Status**
 
-**SISTEMA DE LOGGING COMPLETAMENTE IMPLEMENTADO Y FUNCIONAL**
+**LOGGING SYSTEM FULLY IMPLEMENTED AND OPERATIONAL**
 
-- ✅ Archivo `Data/logs.txt` creado automáticamente
-- ✅ Logs en consola con información general y colores
-- ✅ Registro automático de eventos importantes del juego
-- ✅ Sistema thread-safe y optimizado para rendimiento
-- ✅ Configuración flexible y expandible
-- ✅ Integración completa en todos los módulos principales
+- ✅ `Data/logs.txt` file created automatically
+- ✅ Console logs with general information and colors
+- ✅ Automatic recording of important game events
+- ✅ Thread-safe system optimized for performance
+- ✅ Flexible and extensible configuration
+- ✅ Full integration across main modules
 
-¡El sistema de logging está completamente implementado y funcionando perfectamente! 📝✨
+The logging system is fully implemented and working perfectly! 📝✨
