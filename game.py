@@ -18,9 +18,9 @@ class Game:
 
     def __init__(self, screen):
         self.screen = screen
-        self.font = pygame.font.SysFont(settings.FONT_NAME, 20)
-        self.bigfont = pygame.font.SysFont(settings.FONT_NAME, 48)
-        self.title_font = pygame.font.SysFont(settings.FONT_NAME, 32)
+        self.font = pygame.font.SysFont(settings.FONT, 20)
+        self.bigfont = pygame.font.SysFont(settings.FONT, 48)
+        self.title_font = pygame.font.SysFont(settings.FONT, 32)
         self.logic = GameLogic(load_highscore=True)
 
         # Efectos visuales

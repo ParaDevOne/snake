@@ -14,7 +14,7 @@ from game import MOVE_EVENT, Game
 from settings import (HELP_TEXT, STATE_GAME, STATE_MAIN, STATE_OPTIONS,
                       STATE_OPTIONS_ADVANCED, STATE_OPTIONS_CONTROLS,
                       STATE_OPTIONS_GAMEPLAY, STATE_OPTIONS_VISUAL, STATE_PLAY,
-                      STATE_PROFILES)
+                      STATE_PROFILES, FONT)
 from ui_components import (Button, InputOverlay, apply_all_settings,
                            center_rect, draw_text)
 
@@ -24,12 +24,12 @@ pygame.font.init()
 
 WIDTH, HEIGHT = settings.WIDTH, settings.HEIGHT
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption(getattr(settings, "MENU_WINDOW_TITLE", "Snake Game - Menú"))
+pygame.display.set_caption(getattr(settings, "MENU_WINDOW_TITLE", "Snake Game"))
 CLOCK = pygame.time.Clock()
 
-TITLE_FONT = pygame.font.SysFont(None, 56)
-MENU_FONT = pygame.font.SysFont(None, 34)
-UI_FONT = pygame.font.SysFont(None, 20)
+TITLE_FONT = pygame.font.Font(FONT, 56)
+MENU_FONT = pygame.font.Font(FONT, 34)
+UI_FONT = pygame.font.Font(FONT, 20)
 
 
 # Colores centralizados desde settings
@@ -63,7 +63,7 @@ def run():
     prof_msg = ""
     prof_msg_until = 0
 
-    # options state (local) - todas las opciones mejoradas
+    # options state (local)
     opt_wrap = getattr(settings, "WRAP_AROUND", False)
     opt_obs = getattr(settings, "USE_OBSTACLES", True)
     opt_speed = getattr(settings, "INIT_SPEED", None) or getattr(settings, "INIT_MOVE_DELAY", 120)
@@ -620,7 +620,7 @@ def run():
 
         elif state == STATE_PLAY:
             draw_text(SCREEN, "JUGAR", TITLE_FONT, ACCENT, (40, 28))
-            draw_text(SCREEN, "Perfil seleccionado (← → para cambiar)", UI_FONT, WHITE, (40, 100))
+            draw_text(SCREEN, "Perfil seleccionado:", UI_FONT, WHITE, (40, 100))
             profile_list = profiles.list_profiles()
             if not profile_list:
                 draw_text(SCREEN, "No hay perfiles. Crea uno en Perfiles.", UI_FONT, BAD, (40, 160))

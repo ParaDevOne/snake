@@ -205,7 +205,7 @@ FULLSCREEN = os.environ.get("SNAKE_FULLSCREEN", "False") == "True"
 FPS_LIMIT = int(os.environ.get("SNAKE_FPS_LIMIT", 60))
 SHOW_FPS = os.environ.get("SNAKE_SHOW_FPS", "False") == "True"
 SHOW_SCORE_HISTORY = os.environ.get("SNAKE_SHOW_SCORE_HISTORY", "True") == "True"
-FONT_NAME = os.environ.get("SNAKE_FONT_NAME", "Arial")  # Usa fuente por defecto
+FONT = os.environ.get("SNAKE_FONT_NAME", "./Data/assets/f.ttf")
 
 # ===== Paleta principal mejorada =====
 PALETTE = {
