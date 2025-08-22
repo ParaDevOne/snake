@@ -196,13 +196,12 @@ To produce a standalone executable:
 ### Run the build script
 
 #### With bash
-```
+```bash
 python setup.py
 ```
 
 #### With Poetry (bash)
 ```bash
-# Run the build script
 poetry run build
 ```
 
@@ -305,6 +304,9 @@ Contributions are welcome! This project follows an open development model.
   - Validate and apply configs at runtime
   - Document available configuration options
   - Add an external app for config management
+
+- Add splash screen support
+  - Add a splash screen with the game logo and loading animation
 
 ## 🛠️ Development
 
