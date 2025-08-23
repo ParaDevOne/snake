@@ -1,10 +1,10 @@
-# 🐍 Snake Game Version 1.7.0
+# 🐍 Snake Game Version 1.8.0
 
 ![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)
 ![Pygame](https://img.shields.io/badge/pygame-2.6.1-green)
 ![License](https://img.shields.io/badge/license-SOL%203.0-orange)
 ![Status](https://img.shields.io/badge/status-stable-success)
-![Version](https://img.shields.io/badge/version-1.7.0-brightgreen)
+![Version](https://img.shields.io/badge/version-1.8.0-brightgreen)
 
 > **Snake — modular, cross-platform with advanced visual effects, persistent profiles and developer workflows.**
 
@@ -12,25 +12,28 @@
 
 ## 🎯 Key Features
 
-- 🎨 Advanced visual effects: particles, gradients, smooth animations
-- 🐍 Enhanced snake: gradients, shadows, animated eyes
-- 🍎 Dynamic food & powerups: shapes, animations, effects
-- 🌅 Backgrounds: gradients, grid, volumetric obstacles
-- 📝 Logging: console + file, levels, colors [More info](./docs/SISTEMA_LOGGING.md)
-- 👤 Persistent profiles: multi-user, stored under `Data/profiles/`
-- ⚙️ Centralized configuration: everything in `settings.py`
-- 🖥️ Cross-platform support: Windows, Linux, macOS
-- 🔧 Workflows: run, install, build and logs documented
-- 📄 Technical docs: inline comments, guides and examples
-- 📦 Distribution: packaging and release-ready distribution
-- 🔍 Performance analysis: tools and metrics
-- 🛠️ Maintenance: helper scripts and support tools
+**Key Features**
+
+- 🎨 Modern visual effects: particle system, gradients, smooth transitions, shadows, animated elements
+- 🐍 Advanced snake rendering: gradient body, dynamic shadows, animated eyes, smooth movement
+- 🍎 Dynamic food & powerups: multiple shapes, animated effects, powerup system
+- 🌅 Customizable backgrounds: gradient fills, grid overlays, volumetric obstacles
+- 📝 Robust logging: console and file output, log levels, colorized logs ([details](./docs/SISTEMA_LOGGING.md))
+- 👤 Persistent multi-user profiles: per-user data, high scores, stored in `Data/profiles/`
+- ⚙️ Centralized configuration: all settings in `settings.py`, easy customization
+- 🖥️ Cross-platform: Windows, Linux, macOS support
+- 🔧 Developer workflows: run, install, build, logging, and packaging documented
+- 📄 Technical documentation: inline comments, guides, and examples
+- 📦 Ready for distribution: build scripts, packaging, release management
+- 🔍 Performance tools: metrics, analysis utilities
+- 🛠️ Maintenance: helper scripts, support tools, automated tasks
 
 ---
 
 ### Logs & data
 - Logs: `Data/logs.txt`
 - Profiles: `Data/profiles/`
+- Audio: `Data/assets/audio/`
 
 ---
 
@@ -52,6 +55,8 @@ snake/
 ├── requirements.txt  # Dependencies
 ├── pyproject.toml    # Poetry / build config
 ├── setup.py          # PyInstaller build script
+├── obstacles.py      # Obstacle logic and rendering
+├── ui_components.py  # UI components and widgets
 ├── Data/             # Profiles, logs, persisted data
 └── docs/             # Technical documentation
 ```
@@ -63,7 +68,7 @@ snake/
 - All options are in `settings.py` (controls, visuals, gameplay)
 - Drivers and SDL optimizations in `video_config.py`
 - Profiles and scores: `Data/profiles/` (one profile name per user)
-- Logging configurable: levels, file, console
+- Logging configurable: levels, file, console, warnings, errors
 
 Example configuration:
 
@@ -81,12 +86,12 @@ LOG_TO_CONSOLE = True
 
 ## 📝 Versions & Changes
 
-## [1.7.0] - 2025-08-21
-- Obstacles and new UI components.
-	- Added obstacles system: collisions, generation and management in `obstacles.py`.
-	- New file `ui_components.py`: reusable components for menus and HUD.
-	- Visual improvements in the interface and menus using the new UI components.
-	- Minor bug fixes and stability improvements.
+## [1.8.0] - 23-08-2025
+- New features and improvements.
+	- Full audio system: dynamic background music and sound effects for most actions.
+  - Added splash screen with game logo and loading animation.
+	- Fixed fullscreen and menu.
+	- Preparation for multiplayer and new game modes.
 
 > [!NOTE]
 > **Previous releases can be found in the [`CHANGELOG.md`](./docs/CHANGELOG.md) file.**
@@ -105,11 +110,11 @@ LOG_TO_CONSOLE = True
 Eat as much food as possible without colliding with yourself or obstacles (or the walls if wrap-around mode is disabled).
 
 ### Scoring
-- 🍎 Food: +10
+- 🍎 Food: +1
 - ⚡ Speed Powerup: +1 and increases speed
 - 🔷 Grow Powerup: +5 and increases length
-- ⭐ Score Powerup: +50
-- 🔵 Slow Powerup: +10 and slows the game
+- ⭐ Score Powerup: +20
+- 🔵 Slow Powerup: +1 and slows the game
 
 ---
 
@@ -277,17 +282,16 @@ Contributions are welcome! This project follows an open development model.
 ## 📞 Future Improvements
 
 ### Version - 1.8
-- 🎵 **Full Audio System**
-  - Dynamic background music
-  - Sound effects for most actions
+- Fixes & Improvements
+  - Fix fullscreen and menu
+  - Add splash screen support
+  - Add a splash screen with the game logo and loading animation
 
-### Planned Version
-- 🛠️ **Configuration**
-  - JSON files with translations under `./Data/lang`
-  - Fix fullscreen and menu issues
+### Planned Version - 1.9
 
 - 🔧 **Global Translation**
   - Translation of comments, logs, game menus ...
+  - JSON files with translations under `./Data/lang`
   - Multi-language support
 
 ### Concept Version
@@ -298,7 +302,7 @@ Contributions are welcome! This project follows an open development model.
   - Time trial
   - Arcade mode
 
-- **Config**
+- 🛠️ **Configuration**
   - Add support for external config files
   - Allow loading configs from `./Data/config.json`
   - Validate and apply configs at runtime
