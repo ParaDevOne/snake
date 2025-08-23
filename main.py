@@ -43,7 +43,10 @@ def run():
             print("No se pudo arrancar el menú ni el juego directamente. Error: pygame no disponible")
             sys.exit(1)
         pygame.init()
-        screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
+        flags = 0
+        if getattr(settings, 'FULLSCREEN', False):
+            flags |= pygame.FULLSCREEN
+        screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT), flags)
         pygame.display.set_caption(settings.WINDOW_TITLE)
         clock = pygame.time.Clock()
         game = Game(screen)
@@ -62,6 +65,14 @@ def run():
                     elif event.key == pygame.K_ESCAPE:
                         running = False
                         break
+                    elif event.key == pygame.K_F1:
+                        # Toggle fullscreen
+                        current_flags = screen.get_flags()
+                        if current_flags & pygame.FULLSCREEN:
+                            screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
+                        else:
+                            screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT), pygame.FULLSCREEN)
+                        game.screen = screen
                 if event.type == MOVE_EVENT:
                     game.handle_move()
 

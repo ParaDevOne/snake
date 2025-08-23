@@ -24,7 +24,6 @@ pygame.init()
 pygame.font.init()
 
 WIDTH, HEIGHT = settings.WIDTH, settings.HEIGHT
-SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption(getattr(settings, "MENU_WINDOW_TITLE", "Snake Game"))
 CLOCK = pygame.time.Clock()
 
@@ -72,7 +71,7 @@ def run():
     opt_obs = getattr(settings, "USE_OBSTACLES", True)
     opt_speed = getattr(settings, "INIT_SPEED", None) or getattr(settings, "INIT_MOVE_DELAY", 120)
 
-    # Nuevas opciones avanzadas
+    # Opciones avanzadas
     opt_difficulty = getattr(settings, "DIFFICULTY", "normal")
     opt_theme = getattr(settings, "THEME", "default")
     opt_game_mode = getattr(settings, "GAME_MODE", "classic")
@@ -155,6 +154,9 @@ def run():
         x = (WIDTH - btn_w) // 2
         y = start_y + i * (btn_h + spacing)
         btns.append(Button((x, y, btn_w, btn_h), label, MENU_FONT))
+
+    # Inicializar SCREEN como variable local
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
     # main loop
     running = True
@@ -280,7 +282,7 @@ def run():
                         utils.log_info(
                             f"Configuraciones - Wrap: {opt_wrap}, Obstáculos: {opt_obs}, Velocidad: {opt_speed}ms"
                         )
-                        game = Game(SCREEN)
+                        game = Game(screen)
                         game.reset_all()
                         try:
                             game.logic.set_profile(profile_name)
@@ -464,14 +466,20 @@ def run():
                         elif visual_selected == 6:  # Efectos brillo
                             opt_glow_effects = not opt_glow_effects
                         elif visual_selected == 7:  # Pantalla completa
-                            opt_fullscreen = not opt_fullscreen
-                            # Aplicar cambio de pantalla completa inmediatamente
-                            #if opt_fullscreen:
-                            #    SCREEN = pygame.display.set_mode(
-                            #        (WIDTH, HEIGHT), pygame.FULLSCREEN
-                            #    )
-                            #else:
-                            #    SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+                            if event.key in (pygame.K_LEFT, pygame.K_RIGHT):
+                                opt_fullscreen = not opt_fullscreen
+                                # Guardar en configuración global
+                                settings.FULLSCREEN = opt_fullscreen
+                                utils.save_settings()
+                                # Aplicar cambio de pantalla completa inmediatamente
+                                if opt_fullscreen:
+                                    screen = pygame.display.set_mode(
+                                        (WIDTH, HEIGHT), pygame.FULLSCREEN
+                                    )
+                                else:
+                                    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+                                # Evitar que el evento continúe y cambie el estado
+                                continue
                         elif visual_selected == 8:  # Mostrar FPS
                             opt_show_fps = not opt_show_fps
                         elif visual_selected == 9:  # Volver
@@ -598,7 +606,7 @@ def run():
                     game.handle_move()
 
         # ---------- Drawing ----------
-        SCREEN.fill(DARK)
+        screen.fill(DARK)
 
         if state == STATE_MAIN:
             # Title centered
@@ -607,36 +615,36 @@ def run():
             # center them horizontally and position above buttons
             title_center = (WIDTH // 2, start_y - 80)
             subtitle_center = (WIDTH // 2, start_y - 40)
-            SCREEN.blit(title_surf, title_surf.get_rect(center=title_center))
-            SCREEN.blit(subtitle_surf, subtitle_surf.get_rect(center=subtitle_center))
+            screen.blit(title_surf, title_surf.get_rect(center=title_center))
+            screen.blit(subtitle_surf, subtitle_surf.get_rect(center=subtitle_center))
 
             # draw buttons
             for i, b in enumerate(btns):
                 hover = b.is_hover(mouse_pos)
                 selected = i == selected_main
-                b.draw(SCREEN, hover=hover, selected=selected)
+                b.draw(screen, hover=hover, selected=selected)
 
             # help text below buttons (guaranteed not to overlap)
             help_surf = UI_FONT.render(HELP_TEXT, True, GRAY)
             help_pos = (WIDTH//2 - help_surf.get_width()//2, start_y + total_h + 18)
-            SCREEN.blit(help_surf, help_pos)
+            screen.blit(help_surf, help_pos)
 
-            draw_text(SCREEN, "Q: salir", UI_FONT, GRAY, (16, HEIGHT - 36))
+            draw_text(screen, "Q: salir", UI_FONT, GRAY, (16, HEIGHT - 36))
 
         elif state == STATE_PLAY:
-            draw_text(SCREEN, "JUGAR", TITLE_FONT, ACCENT, (40, 28))
-            draw_text(SCREEN, "Perfil seleccionado:", UI_FONT, WHITE, (40, 100))
+            draw_text(screen, "JUGAR", TITLE_FONT, ACCENT, (40, 28))
+            draw_text(screen, "Perfil seleccionado:", UI_FONT, WHITE, (40, 100))
             profile_list = profiles.list_profiles()
             if not profile_list:
-                draw_text(SCREEN, "No hay perfiles. Crea uno en Perfiles.", UI_FONT, BAD, (40, 160))
+                draw_text(screen, "No hay perfiles. Crea uno en Perfiles.", UI_FONT, BAD, (40, 160))
             else:
                 prof_name = profile_list[play_profile_idx]
                 prof_box = center_rect(520, 72, 0, -20)
-                pygame.draw.rect(SCREEN, (20,20,28), prof_box)
-                pygame.draw.rect(SCREEN, (80,80,90), prof_box, 2)
-                draw_text(SCREEN, prof_name, MENU_FONT, WHITE, (prof_box.x+20, prof_box.y+12))
+                pygame.draw.rect(screen, (20,20,28), prof_box)
+                pygame.draw.rect(screen, (80,80,90), prof_box, 2)
+                draw_text(screen, prof_name, MENU_FONT, WHITE, (prof_box.x+20, prof_box.y+12))
                 draw_text(
-                    SCREEN,
+                    screen,
                     f"Highscore:{profiles.load_profile(prof_name).get('highscore',0)}",
                     UI_FONT,
                     GRAY,
@@ -645,7 +653,7 @@ def run():
 
                 start_btn = Button(center_rect(220, 56, 0, 160), "INICIAR (Enter)", MENU_FONT)
                 hover = start_btn.is_hover(mouse_pos)
-                start_btn.draw(SCREEN, hover=hover)
+                start_btn.draw(screen, hover=hover)
                 if mouse_clicked and hover:
                     # start game via click - apply all options
                     apply_all_settings(
@@ -676,7 +684,7 @@ def run():
                         profiles.create_profile(settings.DEFAULT_PROFILE)
                         profile_list = profiles.list_profiles()
                     profile_name = profile_list[play_profile_idx]
-                    game = Game(SCREEN)
+                    game = Game(screen)
                     game.reset_all()
                     try:
                         game.logic.set_profile(profile_name)
@@ -688,12 +696,12 @@ def run():
                     pygame.time.set_timer(MOVE_EVENT, game.logic.move_delay)
                     state = STATE_GAME
 
-            draw_text(SCREEN, "Esc: volver", UI_FONT, GRAY, (16, HEIGHT - 36))
+            draw_text(screen, "Esc: volver", UI_FONT, GRAY, (16, HEIGHT - 36))
 
         elif state == STATE_PROFILES:
-            draw_text(SCREEN, "PERFILES", TITLE_FONT, ACCENT, (40, 28))
+            draw_text(screen, "PERFILES", TITLE_FONT, ACCENT, (40, 28))
             draw_text(
-                SCREEN,
+                screen,
                 "N = Nuevo   "
                 "D = Borrar   "
                 "Y = Confirmar borrado   "
@@ -704,13 +712,13 @@ def run():
             )
             profile_list = profiles.list_profiles()
             box = center_rect(560, 320, 0, 20)
-            pygame.draw.rect(SCREEN, (20, 20, 28), box)
-            pygame.draw.rect(SCREEN, (80, 80, 90), box, 2)
+            pygame.draw.rect(screen, (20, 20, 28), box)
+            pygame.draw.rect(screen, (80, 80, 90), box, 2)
             y = box.y + 16
             for idx, name in enumerate(profile_list):
                 color = WHITE if idx == prof_selected else GRAY
                 prefix = "▶ " if idx == prof_selected else "   "
-                draw_text(SCREEN, prefix + name, UI_FONT, color, (box.x+16, y))
+                draw_text(screen, prefix + name, UI_FONT, color, (box.x+16, y))
                 y += 34
 
             if mouse_clicked and profile_list:
@@ -722,19 +730,19 @@ def run():
                         prof_selected = idx
 
             if input_overlay:
-                input_overlay.render(SCREEN)
+                input_overlay.render(screen)
 
             if prof_msg and now < prof_msg_until:
                 draw_text(
-                    SCREEN, prof_msg, UI_FONT, ACCENT, (box.x + 16, box.y + box.h + 8)
+                    screen, prof_msg, UI_FONT, ACCENT, (box.x + 16, box.y + box.h + 8)
                 )
 
-            draw_text(SCREEN, "Esc: volver", UI_FONT, GRAY, (16, HEIGHT - 36))
+            draw_text(screen, "Esc: volver", UI_FONT, GRAY, (16, HEIGHT - 36))
 
         elif state == STATE_OPTIONS:
-            draw_text(SCREEN, "OPCIONES - CATEGORÍAS", TITLE_FONT, ACCENT, (40, 28))
+            draw_text(screen, "OPCIONES - CATEGORÍAS", TITLE_FONT, ACCENT, (40, 28))
             draw_text(
-                SCREEN,
+                screen,
                 "Selecciona una categoría de opciones:",
                 UI_FONT,
                 WHITE,
@@ -746,11 +754,11 @@ def run():
                 color = ACCENT if i == options_selected else WHITE
                 prefix = "▶ " if i == options_selected else "  "
                 draw_text(
-                    SCREEN, prefix + item, MENU_FONT, color, (60, y_start + i * 40)
+                    screen, prefix + item, MENU_FONT, color, (60, y_start + i * 40)
                 )
 
             draw_text(
-                SCREEN,
+                screen,
                 "↑↓ navegar  " \
                 "Enter: seleccionar  " \
                 "Esc: volver",
@@ -758,12 +766,12 @@ def run():
                 GRAY,
                 (40, y_start + len(options_category_items) * 40 + 20),
             )
-            draw_text(SCREEN, "Esc: volver", UI_FONT, GRAY, (16, HEIGHT - 36))
+            draw_text(screen, "Esc: volver", UI_FONT, GRAY, (16, HEIGHT - 36))
 
         elif state == STATE_OPTIONS_GAMEPLAY:
-            draw_text(SCREEN, "OPCIONES - JUGABILIDAD", TITLE_FONT, ACCENT, (40, 28))
+            draw_text(screen, "OPCIONES - JUGABILIDAD", TITLE_FONT, ACCENT, (40, 28))
             draw_text(
-                SCREEN, "Configura las opciones de gameplay:", UI_FONT, WHITE, (40, 90)
+                screen, "Configura las opciones de gameplay:", UI_FONT, WHITE, (40, 90)
             )
 
             y_start = 130
@@ -782,11 +790,11 @@ def run():
                 color = ACCENT if i == gameplay_selected else WHITE
                 prefix = "▶ " if i == gameplay_selected else "  "
                 draw_text(
-                    SCREEN, prefix + value, MENU_FONT, color, (60, y_start + i * 32)
+                    screen, prefix + value, MENU_FONT, color, (60, y_start + i * 32)
                 )
 
             draw_text(
-                SCREEN,
+                screen,
                 "↑↓ navegar  " \
                 "←→ cambiar  Enter/Space: toggle  " \
                 "Esc: volver",
@@ -794,12 +802,12 @@ def run():
                 GRAY,
                 (40, y_start + len(gameplay_items) * 32 + 20),
             )
-            draw_text(SCREEN, "Esc: volver", UI_FONT, GRAY, (16, HEIGHT - 36))
+            draw_text(screen, "Esc: volver", UI_FONT, GRAY, (16, HEIGHT - 36))
 
         elif state == STATE_OPTIONS_VISUAL:
-            draw_text(SCREEN, "OPCIONES - VISUALES", TITLE_FONT, ACCENT, (40, 28))
+            draw_text(screen, "OPCIONES - VISUALES", TITLE_FONT, ACCENT, (40, 28))
             draw_text(
-                SCREEN, "Configura los efectos visuales:", UI_FONT, WHITE, (40, 90)
+                screen, "Configura los efectos visuales:", UI_FONT, WHITE, (40, 90)
             )
 
             y_start = 130
@@ -820,22 +828,22 @@ def run():
                 color = ACCENT if i == visual_selected else WHITE
                 prefix = "▶ " if i == visual_selected else "  "
                 draw_text(
-                    SCREEN, prefix + value, MENU_FONT, color, (60, y_start + i * 28)
+                    screen, prefix + value, MENU_FONT, color, (60, y_start + i * 28)
                 )
 
             draw_text(
-                SCREEN,
+                screen,
                 "↑↓ navegar  ←→ cambiar  Enter/Space: toggle  Esc: volver",
                 UI_FONT,
                 GRAY,
                 (40, y_start + len(visual_items) * 28 + 20),
             )
-            draw_text(SCREEN, "Esc: volver", UI_FONT, GRAY, (16, HEIGHT - 36))
+            draw_text(screen, "Esc: volver", UI_FONT, GRAY, (16, HEIGHT - 36))
 
         elif state == STATE_OPTIONS_CONTROLS:
-            draw_text(SCREEN, "OPCIONES - CONTROLES", TITLE_FONT, ACCENT, (40, 28))
+            draw_text(screen, "OPCIONES - CONTROLES", TITLE_FONT, ACCENT, (40, 28))
             draw_text(
-                SCREEN, "Configura los controles del juego:", UI_FONT, WHITE, (40, 90)
+                screen, "Configura los controles del juego:", UI_FONT, WHITE, (40, 90)
             )
 
             y_start = 140
@@ -849,24 +857,24 @@ def run():
                 color = ACCENT if i == controls_selected else WHITE
                 prefix = "▶ " if i == controls_selected else "  "
                 draw_text(
-                    SCREEN, prefix + value, MENU_FONT, color, (60, y_start + i * 40)
+                    screen, prefix + value, MENU_FONT, color, (60, y_start + i * 40)
                 )
 
             # Mostrar descripción del esquema seleccionado
             y_desc = y_start + len(controls_items) * 40 + 20
             if opt_control_scheme == "arrows":
                 draw_text(
-                    SCREEN, "Solo flechas del teclado", UI_FONT, GRAY, (60, y_desc)
+                    screen, "Solo flechas del teclado", UI_FONT, GRAY, (60, y_desc)
                 )
             elif opt_control_scheme == "wasd":
-                draw_text(SCREEN, "Solo teclas WASD", UI_FONT, GRAY, (60, y_desc))
+                draw_text(screen, "Solo teclas WASD", UI_FONT, GRAY, (60, y_desc))
             elif opt_control_scheme == "both":
                 draw_text(
-                    SCREEN, "Flechas y WASD funcionan", UI_FONT, GRAY, (60, y_desc)
+                    screen, "Flechas y WASD funcionan", UI_FONT, GRAY, (60, y_desc)
                 )
 
             draw_text(
-                SCREEN,
+                screen,
                 "↑↓ navegar  " \
                 "←→ cambiar  " \
                 "Enter/Space: toggle  " \
@@ -875,11 +883,11 @@ def run():
                 GRAY,
                 (40, y_desc + 30),
             )
-            draw_text(SCREEN, "Esc: volver", UI_FONT, GRAY, (16, HEIGHT - 36))
+            draw_text(screen, "Esc: volver", UI_FONT, GRAY, (16, HEIGHT - 36))
 
         elif state == STATE_OPTIONS_ADVANCED:
-            draw_text(SCREEN, "OPCIONES - AVANZADAS", TITLE_FONT, ACCENT, (40, 28))
-            draw_text(SCREEN, "Configuraciones avanzadas:", UI_FONT, WHITE, (40, 90))
+            draw_text(screen, "OPCIONES - AVANZADAS", TITLE_FONT, ACCENT, (40, 28))
+            draw_text(screen, "Configuraciones avanzadas:", UI_FONT, WHITE, (40, 90))
 
             y_start = 140
             advanced_values = [
@@ -897,19 +905,19 @@ def run():
                     color = ACCENT if i == advanced_selected else WHITE
                 prefix = "▶ " if i == advanced_selected else "  "
                 draw_text(
-                    SCREEN, prefix + value, MENU_FONT, color, (60, y_start + i * 40)
+                    screen, prefix + value, MENU_FONT, color, (60, y_start + i * 40)
                 )
 
             if advanced_selected == 3:
                 draw_text(
-                    SCREEN,
+                    screen,
                     "¡ADVERTENCIA! Esto restaurará TODAS las configuraciones",
                     UI_FONT,
                     BAD,
                     (60, y_start + len(advanced_items) * 40 + 10),
                 )
                 draw_text(
-                    SCREEN,
+                    screen,
                     "a los valores por defecto. Presiona Enter para confirmar.",
                     UI_FONT,
                     BAD,
@@ -917,7 +925,7 @@ def run():
                 )
 
             draw_text(
-                SCREEN,
+                screen,
                 "↑↓ navegar  " \
                 "Enter/Space: toggle/ejecutar  " \
                 "Esc: volver",
@@ -925,7 +933,7 @@ def run():
                 GRAY,
                 (40, y_start + len(advanced_items) * 40 + 60),
             )
-            draw_text(SCREEN, "Esc: volver", UI_FONT, GRAY, (16, HEIGHT - 36))
+            draw_text(screen, "Esc: volver", UI_FONT, GRAY, (16, HEIGHT - 36))
 
         # Controles del juego
         elif state == STATE_GAME and game:
@@ -950,7 +958,7 @@ def run():
 
         # overlay if needed
         if input_overlay and input_overlay.active and state != STATE_PROFILES:
-            input_overlay.render(SCREEN)
+            input_overlay.render(screen)
 
         pygame.display.flip()
         CLOCK.tick(60)
