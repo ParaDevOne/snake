@@ -66,7 +66,6 @@ STATE_OPTIONS_ADVANCED = "options_advanced"
 
 """A module for managing game settings."""
 
-
 # ===== OPCIONES MEJORADAS =====
 # --- Dificultad ---
 DIFFICULTY = os.environ.get("SNAKE_DIFFICULTY", "normal")  # "easy", "normal", "hard", "extreme"
@@ -105,7 +104,6 @@ def get_difficulty_settings(level=None):
     """Devuelve la configuración de dificultad actual o de un nivel dado."""
     lvl = level or DIFFICULTY
     return DIFFICULTY_SETTINGS.get(lvl, DIFFICULTY_SETTINGS["normal"])
-
 
 # --- Temas visuales ---
 THEME = os.environ.get("SNAKE_THEME", "default")  # "default", "neon", "retro", "forest", "ocean"
@@ -157,13 +155,25 @@ def get_theme_colors(theme=None):
     th = theme or THEME
     return THEMES.get(th, THEMES["default"])
 
-
 # --- Sonido ---
-SOUND_ENABLED = os.environ.get("SNAKE_SOUND_ENABLED", "False") == "True"
-MUSIC_ENABLED = os.environ.get("SNAKE_MUSIC_ENABLED", "False") == "True"
+
+# Audio y música habilitados por defecto
+SOUND_ENABLED = os.environ.get("SNAKE_SOUND_ENABLED", "True") == "True"
+MUSIC_ENABLED = os.environ.get("SNAKE_MUSIC_ENABLED", "True") == "True"
 SOUND_VOLUME = float(os.environ.get("SNAKE_SOUND_VOLUME", 0.7))
 MUSIC_VOLUME = float(os.environ.get("SNAKE_MUSIC_VOLUME", 0.5))
 
+# Configuración centralizada de audio
+AUDIO_CONFIG = {
+    'sounds': {
+        'food': './Data/assets/audio/food.mp3',
+        'gameover': './Data/assets/audio/gameover.mp3',
+    },
+    'music': {
+        'music_game': './Data/assets/audio/music_game.mp3',
+        'music_menu': './Data/assets/audio/music_menu.mp3',
+    }
+}
 
 # --- Efectos visuales ---
 VISUAL_EFFECTS = os.environ.get("SNAKE_VISUAL_EFFECTS", "True") == "True"
@@ -172,7 +182,6 @@ SCREEN_SHAKE = os.environ.get("SNAKE_SCREEN_SHAKE", "True") == "True"
 SMOOTH_MOVEMENT = os.environ.get("SNAKE_SMOOTH_MOVEMENT", "True") == "True"
 SHOW_GRID = os.environ.get("SNAKE_SHOW_GRID", "True") == "True"
 GLOW_EFFECTS = os.environ.get("SNAKE_GLOW_EFFECTS", "True") == "True"
-
 
 # --- Modos de juego especiales ---
 GAME_MODE = os.environ.get("SNAKE_GAME_MODE", "classic")  # "classic", "timed", "survival", "zen"
@@ -205,7 +214,7 @@ FULLSCREEN = os.environ.get("SNAKE_FULLSCREEN", "False") == "True"
 FPS_LIMIT = int(os.environ.get("SNAKE_FPS_LIMIT", 60))
 SHOW_FPS = os.environ.get("SNAKE_SHOW_FPS", "False") == "True"
 SHOW_SCORE_HISTORY = os.environ.get("SNAKE_SHOW_SCORE_HISTORY", "True") == "True"
-FONT = os.environ.get("SNAKE_FONT_NAME", "./Data/assets/f.ttf")
+FONT = os.environ.get("SNAKE_FONT_NAME", "./Data/assets/font.ttf")
 
 # ===== Paleta principal mejorada =====
 PALETTE = {

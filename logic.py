@@ -42,6 +42,7 @@ class GameLogic:
         utils.log_game_event("Reiniciando juego")
         mid = (settings.COLUMNS // 2, settings.ROWS // 2)
         init = [mid, (mid[0]-1, mid[1]), (mid[0]-2, mid[1])]
+        utils.log_info(f'[DEBUG] Snake inicial: {init}')
         self.snake = Snake(init)
         if settings.USE_OBSTACLES:
             self.obstacle_manager = ObstacleManager(
@@ -53,6 +54,7 @@ class GameLogic:
             # Generar obstáculos aleatorios evitando la serpiente y la comida inicial
             self.obstacle_manager.generate_obstacles(self.snake.body, None)
             self.obstacles = self.obstacle_manager.get_obstacles()
+            utils.log_info(f'[DEBUG] Obstáculos generados: {self.obstacles}')
         else:
             self.obstacles = []
             self.obstacle_manager = None
@@ -142,11 +144,13 @@ class GameLogic:
         events = {"status": status}
 
         if status in ("wall", "self"):
+            utils.log_info(f'[DEBUG] GameOver por status={status}, head={self.snake.head()}, snake={self.snake.body}')
             self.game_over = True
             self._on_game_over()
             return events
 
         if settings.USE_OBSTACLES and self.snake.head() in self.obstacles:
+            utils.log_info(f'[DEBUG] GameOver por obstáculo: head={self.snake.head()}, obstáculos={self.obstacles}')
             self.game_over = True
             self._on_game_over()
             events["status"] = "obstacle"

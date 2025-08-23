@@ -10,11 +10,12 @@ import profiles
 import settings
 import utils
 import video_config
+from audio_manager import AudioManager
 from game import MOVE_EVENT, Game
-from settings import (HELP_TEXT, STATE_GAME, STATE_MAIN, STATE_OPTIONS,
+from settings import (FONT, HELP_TEXT, STATE_GAME, STATE_MAIN, STATE_OPTIONS,
                       STATE_OPTIONS_ADVANCED, STATE_OPTIONS_CONTROLS,
                       STATE_OPTIONS_GAMEPLAY, STATE_OPTIONS_VISUAL, STATE_PLAY,
-                      STATE_PROFILES, FONT)
+                      STATE_PROFILES)
 from ui_components import (Button, InputOverlay, apply_all_settings,
                            center_rect, draw_text)
 
@@ -47,6 +48,9 @@ def run():
     """Iniciar el sistema de menús"""
 
     utils.log_info("Iniciando sistema de menús")
+    # Música de menú
+    audio = AudioManager()
+    audio.play_music(settings.AUDIO_CONFIG['music']['music_menu'], loop=True)
 
     # ensure default profile exists
     if not profiles.list_profiles():
@@ -277,6 +281,7 @@ def run():
                             f"Configuraciones - Wrap: {opt_wrap}, Obstáculos: {opt_obs}, Velocidad: {opt_speed}ms"
                         )
                         game = Game(SCREEN)
+                        game.reset_all()
                         try:
                             game.logic.set_profile(profile_name)
                         except (AttributeError, OSError):
@@ -672,6 +677,7 @@ def run():
                         profile_list = profiles.list_profiles()
                     profile_name = profile_list[play_profile_idx]
                     game = Game(SCREEN)
+                    game.reset_all()
                     try:
                         game.logic.set_profile(profile_name)
                     except (AttributeError, OSError):
@@ -923,6 +929,9 @@ def run():
 
         # Controles del juego
         elif state == STATE_GAME and game:
+            # Detener música de menú al iniciar el juego (solo si está sonando la música de menú)
+            if getattr(audio, 'current_music', None) == settings.AUDIO_CONFIG['music']['music_menu']:
+                audio.stop_music()
             # continuous key holds
             keys = pygame.key.get_pressed()
             if not game.logic.game_over:

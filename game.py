@@ -7,6 +7,8 @@ import time
 import pygame
 
 import settings
+import utils
+from audio_manager import AudioManager
 from logic import GameLogic
 from visual_effects import VisualEffects
 
@@ -17,6 +19,7 @@ class Game:
     """Main game class that handles the game loop and rendering."""
 
     def __init__(self, screen):
+        utils.log_info('[DEBUG] Game.__init__ llamado')
         self.screen = screen
         self.font = pygame.font.SysFont(settings.FONT, 20)
         self.bigfont = pygame.font.SysFont(settings.FONT, 48)
@@ -25,6 +28,10 @@ class Game:
 
         # Efectos visuales
         self.visual_effects = VisualEffects()
+
+        # Audio (solo una vez por instancia)
+        self.audio = AudioManager()
+        self.music_playing = False
 
         # Variables para animaciones suaves
         self.interpolation_progress = 0.0
@@ -41,6 +48,7 @@ class Game:
 
     def reset_all(self):
         """Reset all game variables and states."""
+        utils.log_info('[DEBUG] Game.reset_all llamado')
         self.logic.reset()
         self.visual_effects = VisualEffects()  # Reset efectos
         self.interpolation_progress = 0.0
@@ -48,20 +56,31 @@ class Game:
         self.pending_powerup_explosion = None
         self.pending_game_over_shake = False
         pygame.time.set_timer(MOVE_EVENT, self.logic.move_delay)
+        # Música de juego
+        self.audio.play_music(settings.AUDIO_CONFIG['music']['music_game'], loop=True)
+        self.music_playing = True
 
     def handle_move(self):
         """Handle player movement and related events."""
         events = self.logic.handle_move()
 
+
         # Manejar efectos basados en eventos
         if events.get('ate_food'):
             self.pending_food_explosion = True
+            self.audio.play_sound('food')
 
         if events.get('picked_powerup'):
             self.pending_powerup_explosion = events['picked_powerup']
 
-        if events['status'] in ('wall', 'self', 'obstacle'):
+        if events['status'] in ('wall', 'self', 'obstacle') and self.logic.game_over:
+            utils.log_info(f'[DEBUG] Evaluando stop_music: status={events["status"]}, game_over={self.logic.game_over}')
             self.pending_game_over_shake = True
+            self.audio.play_sound('gameover')
+            utils.log_info(f'[DEBUG] Deteniendo música: status={events["status"]}, game_over={self.logic.game_over}')
+            if self.music_playing:
+                self.audio.stop_music()
+                self.music_playing = False
 
         # Reset interpolation para movimiento suave
         self.interpolation_progress = 0.0
