@@ -5,8 +5,11 @@
 import math
 import random
 import time
+
 import pygame
+
 import settings
+
 
 class ParticleSystem:
     """Sistema de partículas para efectos visuales"""
@@ -123,6 +126,34 @@ class VisualEffects:
         self.screen_shake = 0
         self.flash_alpha = 0
         self.flash_color = (255, 255, 255)
+
+    def show_splash_screen(self, screen, logo_path, duration=2.5):
+        """Muestra una pantalla de presentación con logo y animación de carga"""
+        clock = pygame.time.Clock()
+        start_time = pygame.time.get_ticks()
+        logo = pygame.image.load(logo_path).convert_alpha()
+        logo_rect = logo.get_rect(center=(settings.WIDTH // 2, settings.HEIGHT // 2 - 40))
+        try:
+            font = pygame.font.Font(settings.FONT, 32)
+        except ImportError:
+            font = pygame.font.Font(settings.FONT, 32)
+        loading_text = font.render('Loading...', True, (255, 255, 255))
+        text_rect = loading_text.get_rect(center=(settings.WIDTH // 2, settings.HEIGHT // 2 + 80))
+        dot_count = 0
+        while (pygame.time.get_ticks() - start_time) < duration * 1000:
+            screen.fill((30, 40, 60))
+            screen.blit(logo, logo_rect)
+            # Animación de puntos
+            dots = '.' * ((dot_count // 20) % 4)
+            loading_anim = font.render(f'Loading{dots}', True, (255, 255, 255))
+            screen.blit(loading_anim, text_rect)
+            pygame.display.flip()
+            clock.tick(60)
+            dot_count += 1
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
 
     def add_screen_shake(self, intensity=5):
         """Añade efecto de temblor de pantalla"""

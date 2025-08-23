@@ -4,6 +4,8 @@
 # pylint: disable=no-member  # Desactivar warnings para atributos pygame dinámicos
 
 # Configurar video antes de cualquier importación o inicialización de pygame
+
+import os
 import sys
 
 import menu
@@ -11,6 +13,7 @@ import settings
 import utils
 import video_config
 from game import MOVE_EVENT, Game
+from visual_effects import VisualEffects
 
 video_config.configure_video_driver()
 
@@ -23,6 +26,18 @@ def run():
     """Inicializar logging"""
     utils.log_system_info("Iniciando Snake Game")
     utils.log_system_info(f"Python version: {sys.version}")
+
+    # Splash screen antes de menú o juego
+    if pygame:
+        pygame.init()
+        flags = 0
+        if getattr(settings, 'FULLSCREEN', False):
+            flags |= pygame.FULLSCREEN
+        screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT), flags)
+        ve = VisualEffects()
+        splash_path = os.path.join('Data', 'assets', 'splash.png')
+        ve.show_splash_screen(screen, splash_path, duration=2.5)
+        pygame.display.set_caption(settings.WINDOW_TITLE)
 
     try:
         # preferimos el menú en pygame
