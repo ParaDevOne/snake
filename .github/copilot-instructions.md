@@ -1,62 +1,65 @@
+
+
 # Copilot Instructions for Snake Game
 
 ## Overview
 
-Este proyecto es una versión avanzada y modular del clásico Snake en Python. El objetivo es mantener una arquitectura clara, extensible y fácil de mantener, con efectos visuales modernos y gestión persistente de datos.
+This project is an advanced and modular version of the classic Snake game in Python. The architecture is designed to be clear, extensible, and easy to maintain, featuring modern visual effects and persistent data management.
 
-## Estructura del Proyecto
+## Project Structure
 
-- `main.py`: Punto de entrada, loop principal y orquestación de componentes.
-- `game.py`: Controlador y gestión del estado del juego.
-- `snake.py`: Lógica de la serpiente y su movimiento.
-- `food.py`: Lógica de comida y powerups.
-- `menu.py`: Sistema de menús (si está presente).
-- `logic.py`: Funciones auxiliares y utilidades lógicas.
-- `settings.py`: Configuración centralizada (controles, visual, gameplay).
-- `profiles.py`: Gestión de perfiles y puntajes.
-- `utils.py`: Utilidades, sistema de logging, helpers JSON.
-- `visual_effects.py`: Efectos visuales, partículas, gradientes.
-- `requirements.txt` / `pyproject.toml`: Todas las dependencias.
-- `Data/`: Datos persistentes (perfiles, logs, puntajes).
+- `main.py`: Entry point, main loop, and component orchestration.
+- `game.py`: Game controller and state management.
+- `snake.py`: Snake logic and movement.
+- `food.py`: Food and powerups logic.
+- `menu.py`: Menu system (if present).
+- `logic.py`: Helper logic functions and utilities.
+- `settings.py`: Centralized configuration (controls, visuals, gameplay).
+- `profiles.py`: Profile and score management.
+- `utils.py`: Utilities, logging system, JSON helpers.
+- `visual_effects.py`: Visual effects, particles, gradients.
+- `requirements.txt` / `pyproject.toml`: All dependencies.
+- `Data/`: Persistent data (profiles, logs, scores).
 
-## Dependencias
+## Dependencies
 
-- Núcleo: `pygame`, `tomlkit`, `platformdirs`, `mccabe`, `dill`, `colorama`, `astroid`
-- Desarrollo: `isort`, `pyinstaller`, `flake8`, `pyflakes`, `pycodestyle`, `pygments`
-- Consulta `requirements.txt` y `[tool.poetry.dependencies]` en `pyproject.toml` para la lista completa.
+- Core: `pygame`, `tomlkit`, `platformdirs`, `mccabe`, `dill`, `colorama`, `astroid`
+- Development: `isort`, `pyinstaller`, `flake8`, `pyflakes`, `pycodestyle`, `pygments`
+- See `requirements.txt` and `[tool.poetry.dependencies]` in `pyproject.toml` for the full list.
 
-## Workflows de Desarrollo
+## Development Workflows
 
-- **Ejecutar el juego:**
-  - `python -m main` (desde la raíz del proyecto)
-- **Instalar dependencias:**
-  - `pip install -r requirements.txt` o `poetry install`
-- **Compilar ejecutable:**
-  - `pyinstaller setup.py` o el script `build` de `pyproject.toml`
+- **Run the game:**
+  `python -m main` (from the project root)
+- **Install dependencies:**
+  `pip install -r requirements.txt` or `poetry install`
+- **Build executable:**
+  `pyinstaller setup.py` or the `build` script in `pyproject.toml`
 - **Logging:**
-  - Todos los logs van a `Data/logs.txt` y consola (ver `utils.py`)
-- **Perfiles y puntajes:**
-  - En `Data/profiles.json` y `Data/score/highscore.json`
+  All logs go to `Data/logs.txt` and console (see `utils.py`)
+- **Profiles and scores:**
+  Stored in `Data/profiles.json` and `Data/score/highscore.json`
 
-## Convenciones y Patrones
+## Conventions and Patterns
 
-- Toda la configuración está en `settings.py`.
-- Logging centralizado vía singleton en `utils.py` (`_logger_instance`).
-- Acceso a datos siempre mediante helpers de `utils.py`.
-- Efectos visuales modulares y extensibles en `visual_effects.py`.
-- El estado del juego se gestiona en `game.py` y se comunica por objetos compartidos y llamadas a funciones.
-- Compatibilidad total con Python 3.13.5+.
+- All configuration is in `settings.py`.
+- Centralized logging via singleton in `utils.py` (`_logger_instance`).
+- Data access always through helpers in `utils.py`.
+- Modular and extensible visual effects in `visual_effects.py`.
+- Game state managed in `game.py` and communicated via objects and functions.
+- Full compatibility with Python 3.13.5+.
 
-## Integración y Extensibilidad
+## Integration and Extensibility
 
-- Para nuevas features (powerups, menús), crea un módulo y enlaza desde `main.py` y/o `game.py`.
-- Para nuevas configuraciones, añade en `settings.py` y documenta en el README.
-- Para nuevas dependencias, actualiza `requirements.txt` y `pyproject.toml`.
+- For new features (powerups, menus), create a module and link it from `main.py` and/or `game.py`.
+- For new configurations, add them to `settings.py` and document in the README.
+- For new dependencies, update both `requirements.txt` and `pyproject.toml`.
 
-## Licencia
+## License
 
-El proyecto usa la Simplified Open License (SOL). Consulta `LICENSE.txt` para detalles.
+This project uses the Simplified Open License (SOL). See `LICENSE.txt` for details.
 
 ---
 
-Si eres un agente AI, sigue estas convenciones y consulta los archivos clave para ejemplos de patrones específicos del proyecto. Ante la duda, prioriza configuración explícita y diseño modular.
+**Nota para agentes AI:**
+Sigue estas convenciones y consulta los archivos clave para ejemplos de patrones específicos. Prioriza configuración explícita y diseño modular. Ante cualquier duda, revisa la documentación y los módulos principales.
