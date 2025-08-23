@@ -112,13 +112,16 @@ class GameLogic:
         self.active_power = ptype
         self.power_end_time_ms = self.now_ms() + getattr(settings, "POWERUP_DURATION_MS", 7000)
         if ptype == "slow":
+            self.score += 1  # Slow Powerup: +1
             self.move_delay = min(999, self.move_delay + 80)
         elif ptype == "speed":
+            self.score += 1   # Speed Powerup: +1
             self.move_delay = max(settings.MIN_MOVE_DELAY, self.move_delay - 60)
         elif ptype == "grow":
+            self.score += 5   # Grow Powerup: +5
             self.snake.grow(3)
         elif ptype == "score":
-            self.score += 3
+            self.score += 20  # Score Powerup: +20
 
     def clear_power_effects(self):
         """Limpiar los efectos del power-up activo."""
@@ -157,7 +160,7 @@ class GameLogic:
             return events
 
         if self.food.pos and self.snake.head() == self.food.pos:
-            self.score += 1
+            self.score += 1  # Food: +1
             self.snake.grow(1)
             if self.move_delay > settings.MIN_MOVE_DELAY:
                 self.move_delay = max(settings.MIN_MOVE_DELAY,
