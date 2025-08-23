@@ -69,6 +69,7 @@ class Game:
 
         if events.get('picked_powerup'):
             self.pending_powerup_explosion = events['picked_powerup']
+            self.audio.play_sound('powerup')
 
         if events['status'] in ('wall', 'self', 'obstacle') and self.logic.game_over:
             self.pending_game_over_shake = True

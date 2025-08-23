@@ -3,6 +3,9 @@ audio_manager.py
 Gestor centralizado para audio y música en el juego Snake.
 Utiliza helpers de utils.py y configuración de settings.py.
 """
+
+import os
+
 import pygame
 
 from settings import (AUDIO_CONFIG, MUSIC_ENABLED, MUSIC_VOLUME, SOUND_ENABLED,
@@ -11,6 +14,7 @@ from utils import log_error, log_info, log_warning
 
 
 class AudioManager:
+    """Gestor de audio para el juego."""
     def __init__(self):
         try:
             pygame.mixer.init(frequency=44100, size=-16, channels=2)
@@ -25,6 +29,7 @@ class AudioManager:
             sound.set_volume(SOUND_VOLUME)
 
     def load_sounds(self):
+        """Cargar los sonidos del juego."""
         for key, path in AUDIO_CONFIG['sounds'].items():
             if key == 'move':
                 continue
@@ -37,6 +42,7 @@ class AudioManager:
                 log_error(f"Error cargando audio {key}: {e}")
 
     def play_sound(self, key):
+        """Reproducir un sonido dado por su clave."""
         if not SOUND_ENABLED:
             return
         sound = self.sounds.get(key)
@@ -46,7 +52,7 @@ class AudioManager:
             log_warning(f"Sonido no encontrado: {key}")
 
     def play_music(self, path, loop=True):
-        import os
+        """Reproducir música desde el archivo dado."""
         if not MUSIC_ENABLED:
             log_info(f"[AUDIO] Música no habilitada. No se reproduce: {path}")
             return
@@ -61,15 +67,17 @@ class AudioManager:
             pygame.mixer.music.play(-1 if loop else 0)
             self.music_loaded = True
             log_info(f"Música reproducida: {path}")
-        except Exception as e:
+        except ImportError as e:
             log_error(f"Error reproduciendo música: {e}")
 
     def stop_music(self):
+        """Detener la música en reproducción."""
         if self.music_loaded and pygame.mixer.music.get_busy():
             pygame.mixer.music.stop()
             log_info("Música detenida (stop_music llamado)")
 
     def set_volume(self, volume):
+        """Ajustar el volumen de audio y música."""
         pygame.mixer.music.set_volume(volume)
         for sound in self.sounds.values():
             sound.set_volume(volume)

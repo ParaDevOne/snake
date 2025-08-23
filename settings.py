@@ -160,18 +160,19 @@ def get_theme_colors(theme=None):
 # Audio y música habilitados por defecto
 SOUND_ENABLED = os.environ.get("SNAKE_SOUND_ENABLED", "True") == "True"
 MUSIC_ENABLED = os.environ.get("SNAKE_MUSIC_ENABLED", "True") == "True"
-SOUND_VOLUME = float(os.environ.get("SNAKE_SOUND_VOLUME", 0.7))
-MUSIC_VOLUME = float(os.environ.get("SNAKE_MUSIC_VOLUME", 0.5))
+SOUND_VOLUME = float(os.environ.get("SNAKE_SOUND_VOLUME", 0.8))
+MUSIC_VOLUME = float(os.environ.get("SNAKE_MUSIC_VOLUME", 0.6))
 
 # Configuración centralizada de audio
 AUDIO_CONFIG = {
     'sounds': {
-        'food': './Data/assets/audio/food.mp3',
-        'gameover': './Data/assets/audio/gameover.mp3',
+        'food': './Data/assets/audio/food.ogg',
+        'gameover': './Data/assets/audio/gameover.ogg',
+        'powerup': './Data/assets/audio/powerup.ogg',
     },
     'music': {
-        'music_game': './Data/assets/audio/music_game.mp3',
-        'music_menu': './Data/assets/audio/music_menu.mp3',
+        'music_game': './Data/assets/audio/music_game.ogg',
+        'music_menu': './Data/assets/audio/music_menu.ogg',
     }
 }
 
