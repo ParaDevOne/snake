@@ -6,10 +6,10 @@ import time
 
 import pygame
 
+from visual_effects import VisualEffects
+from logic import GameLogic
 import settings
 from audio_manager import AudioManager
-from logic import GameLogic
-from visual_effects import VisualEffects
 
 MOVE_EVENT = pygame.USEREVENT + 1  # pylint: disable=no-member
 
@@ -19,9 +19,9 @@ class Game:
 
     def __init__(self, screen):
         self.screen = screen
-        self.font = pygame.font.SysFont(settings.FONT, 20)
-        self.bigfont = pygame.font.SysFont(settings.FONT, 48)
-        self.title_font = pygame.font.SysFont(settings.FONT, 32)
+        self.font = pygame.font.Font(settings.FONT, 20)
+        self.bigfont = pygame.font.Font(settings.FONT, 48)
+        self.title_font = pygame.font.Font(settings.FONT, 32)
         self.logic = GameLogic(load_highscore=True)
 
         # Efectos visuales

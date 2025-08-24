@@ -1,6 +1,6 @@
 [project]
 name = "snake"
-version = "1.5.0"
+version = "1.8.0"
 description = "A classic snake game with profile management and settings."
 authors = [
     {name = "ParaDevOne"}

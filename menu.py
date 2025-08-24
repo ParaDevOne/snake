@@ -470,7 +470,7 @@ def run():
                                 opt_fullscreen = not opt_fullscreen
                                 # Guardar en configuración global
                                 settings.FULLSCREEN = opt_fullscreen
-                                utils.save_settings()
+                                snake.utils.save_settings()
                                 # Aplicar cambio de pantalla completa inmediatamente
                                 if opt_fullscreen:
                                     screen = pygame.display.set_mode(

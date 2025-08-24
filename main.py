@@ -9,11 +9,11 @@ import os
 import sys
 
 import menu
-import settings
-import utils
-import video_config
 from game import MOVE_EVENT, Game
 from visual_effects import VisualEffects
+import utils
+import settings
+import video_config
 
 video_config.configure_video_driver()
 

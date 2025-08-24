@@ -110,7 +110,9 @@ class GameLogic:
     def apply_powerup(self, ptype):
         """Aplicar un power-up al jugador."""
         self.active_power = ptype
-        self.power_end_time_ms = self.now_ms() + getattr(settings, "POWERUP_DURATION_MS", 7000)
+        self.power_end_time_ms = self.now_ms() + getattr(settings,
+                                                        "POWERUP_DURATION_MS",
+                                                        7000)
         if ptype == "slow":
             self.score += 1  # Slow Powerup: +1
             self.move_delay = min(999, self.move_delay + 80)
@@ -153,7 +155,7 @@ class GameLogic:
             return events
 
         if settings.USE_OBSTACLES and self.snake.head() in self.obstacles:
-            utils.log_info(f'[DEBUG] GGameOver by obstacle: head={self.snake.head()}, obstacles={self.obstacles}')
+            utils.log_info(f'[DEBUG] GameOver by obstacle: head={self.snake.head()}, obstacles={self.obstacles}')
             self.game_over = True
             self._on_game_over()
             events["status"] = "obstacle"

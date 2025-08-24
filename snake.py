@@ -3,6 +3,7 @@
 
 import settings
 
+
 class Snake:
 
     """Snake class representing the player snake in the game."""

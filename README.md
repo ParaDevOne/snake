@@ -281,36 +281,26 @@ Contributions are welcome! This project follows an open development model.
 
 ## 📞 Future Improvements
 
-### Version - 1.8
-- Fixes & Improvements
-  - Fix fullscreen and menu
-  - Add splash screen support
-  - Add a splash screen with the game logo and loading animation
-
 ### Planned Version - 1.9
-
-- 🔧 **Global Translation**
-  - Translation of comments, logs, game menus ...
-  - JSON files with translations under `./Data/lang`
-  - Multi-language support
+- 🛠️ **Configuration**
+  - Add support for external config files
+  - Allow loading configs from `./Data/configuration.json`
+  - Validate and apply configs at runtime
+  - Document available configuration options
+  - Add an external app for config management
 
 ### Concept Version
-- 👥 **Multiplayer Mode**
-  - Local split-screen
+- 🔧 **Global Translation**
+  - Translation of comments, logs, game menus...
+  - JSON files with translations under `./Data/lang`
+  - Multi-language support
 
 - 🎆 **Additional Game Modes**
   - Time trial
   - Arcade mode
 
-- 🛠️ **Configuration**
-  - Add support for external config files
-  - Allow loading configs from `./Data/config.json`
-  - Validate and apply configs at runtime
-  - Document available configuration options
-  - Add an external app for config management
-
-- Add splash screen support
-  - Add a splash screen with the game logo and loading animation
+- 👥 **Multiplayer Mode**
+  - Local split-screen
 
 ## 🛠️ Development
 
