@@ -99,11 +99,5 @@ Este archivo reúne todas las licencias de terceros incluidas en el proyecto **S
 >DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 >FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
 >OTHER DEALINGS IN THE FONT SOFTWARE.
-
----
-
-## 2. Flaticon
-
-> <a href="https://www.flaticon.com/free-icons/snake" title="snake icons">Snake icons created by apien - Flaticon</a>
-
+>
 ---
