@@ -283,24 +283,32 @@ Contributions are welcome! This project follows an open development model.
 
 ### Planned Version - 1.9
 - 🛠️ **Configuration**
-  - Add support for external config files
+  - Add support for external configuration files
   - Allow loading configs from `./Data/configuration.json`
   - Validate and apply configs at runtime
   - Document available configuration options
   - Add an external app for config management
+  - Automatic recorder that spits out GIFs upon breaking a record.
+  "Seed codes": Share a level seed + compact replay (list of inputs) for asynchronous challenges.
 
 ### Concept Version
+- 🎆 **Additional Game Modes**
+  - Time trial
+  - Arcade mode
+  - & update actual game modes
+  - Survival Elements: Transform the game into a survival experience. The snake has an energy bar that depletes over time and can only be recharged by eating. Different types of "food" will be introduced, some nutritious and others poisonous.
+
+
 - 🔧 **Global Translation**
   - Translation of comments, logs, game menus...
   - JSON files with translations under `./Data/lang`
   - Multi-language support
 
-- 🎆 **Additional Game Modes**
-  - Time trial
-  - Arcade mode
 
 - 👥 **Multiplayer Mode**
   - Local split-screen
+
+
 
 ## 🛠️ Development
 
