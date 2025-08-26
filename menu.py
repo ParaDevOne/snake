@@ -6,12 +6,13 @@ import sys
 
 import pygame
 
+from game import MOVE_EVENT, Game
+
 import profiles
 import settings
 import utils
 import video_config
 from audio_manager import AudioManager
-from game import MOVE_EVENT, Game
 from settings import (FONT, HELP_TEXT, STATE_GAME, STATE_MAIN, STATE_OPTIONS,
                       STATE_OPTIONS_ADVANCED, STATE_OPTIONS_CONTROLS,
                       STATE_OPTIONS_GAMEPLAY, STATE_OPTIONS_VISUAL, STATE_PLAY,
@@ -470,7 +471,7 @@ def run():
                                 opt_fullscreen = not opt_fullscreen
                                 # Guardar en configuración global
                                 settings.FULLSCREEN = opt_fullscreen
-                                snake.utils.save_settings()
+                                utils.save_settings()
                                 # Aplicar cambio de pantalla completa inmediatamente
                                 if opt_fullscreen:
                                     screen = pygame.display.set_mode(
