@@ -2,7 +2,7 @@
 """
 Setup script para construir el ejecutable del juego Snake
 y la aplicacion externa para la gestion de configuraciones.
-Desarrollado por ParaDevOne - Snake Game v1.8
+Desarrollado por ParaDevOne - Snake Game v1.8.1
 """
 
 import ctypes
@@ -414,7 +414,7 @@ def build_executable(upx_path=None, config=None):
         print_colored("ℹ️  No se encontraron carpetas de datos adicionales", Colors.OKCYAN)
 
     # Agregar archivo principal
-    cmd.append("main.py")
+    cmd.append("__main__.py")
 
     print_colored("\n🚀 Comando PyInstaller:", Colors.OKBLUE)
     print_colored(f"   {' '.join(cmd[:8])} ...", Colors.OKCYAN)  # Mostrar solo parte del comando
@@ -537,7 +537,7 @@ def show_build_info(upx_used=False, config=None):
 
 def main():
     """Función principal del script de setup."""
-    print_colored("\n🐍 Snake Game - Build Script v1.8", Colors.HEADER)
+    print_colored("\n🐍 Snake Game - Build Script v1.8.1", Colors.HEADER)
     print_colored("🔧 Desarrollado por ParaDevOne", Colors.HEADER)
     print_colored("=" * 50, Colors.HEADER)
 
