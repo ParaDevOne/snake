@@ -8,12 +8,12 @@
 import os
 import sys
 
-import menu
-from game import MOVE_EVENT, Game
-from visual_effects import VisualEffects
-import utils
-import settings
-import video_config
+from .modules import menu
+from .core.game import MOVE_EVENT, Game
+from .modules.visual_effects import VisualEffects
+from .system import utils
+from .system import settings
+from .system import video_config
 
 video_config.configure_video_driver()
 

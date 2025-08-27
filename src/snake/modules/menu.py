@@ -6,18 +6,18 @@ import sys
 
 import pygame
 
-from game import MOVE_EVENT, Game
+from ..core.game import MOVE_EVENT, Game
 
-import profiles
-import settings
-import utils
-import video_config
-from audio_manager import AudioManager
-from settings import (FONT, HELP_TEXT, STATE_GAME, STATE_MAIN, STATE_OPTIONS,
+from . import profiles
+from ..system import settings
+from ..system import utils
+from ..system import video_config
+from ..system.audio_manager import AudioManager
+from ..system.settings import (FONT, HELP_TEXT, STATE_GAME, STATE_MAIN, STATE_OPTIONS,
                       STATE_OPTIONS_ADVANCED, STATE_OPTIONS_CONTROLS,
                       STATE_OPTIONS_GAMEPLAY, STATE_OPTIONS_VISUAL, STATE_PLAY,
                       STATE_PROFILES)
-from ui_components import (Button, InputOverlay, apply_all_settings,
+from .ui_components import (Button, InputOverlay, apply_all_settings,
                            center_rect, draw_text)
 
 video_config.configure_video_driver()

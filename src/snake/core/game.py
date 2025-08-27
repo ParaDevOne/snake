@@ -6,10 +6,10 @@ import time
 
 import pygame
 
-from visual_effects import VisualEffects
-from logic import GameLogic
-import settings
-from audio_manager import AudioManager
+from ..modules.visual_effects import VisualEffects
+from .logic import GameLogic
+from ..system import settings
+from ..system.audio_manager import AudioManager
 
 MOVE_EVENT = pygame.USEREVENT + 1  # pylint: disable=no-member
 

@@ -5,8 +5,8 @@ import random
 
 import pygame
 
-import settings
-import utils
+from ..system import settings
+from ..system import utils
 
 
 # --- Lógica de opciones avanzadas ---

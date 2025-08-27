@@ -3,12 +3,12 @@
 import random
 import time
 
-import profiles
-import settings
-import utils
-from food import Food, PowerUp
-from obstacles import ObstacleManager
-from snake import Snake
+from ..modules import profiles
+from ..system import settings
+from ..system import utils
+from .food import Food, PowerUp
+from ..modules.obstacles import ObstacleManager
+from .snake import Snake
 
 
 class GameLogic:

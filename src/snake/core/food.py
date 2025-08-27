@@ -2,7 +2,7 @@
 # food.py
 
 import random
-import utils
+from ..system import utils
 
 class Food:
 
