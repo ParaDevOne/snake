@@ -1,7 +1,7 @@
 """"A module for managing the snake in the game."""
 # snake.py
 
-from ..system import settings
+from src.snake.system import settings
 
 
 class Snake:

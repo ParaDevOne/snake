@@ -8,10 +8,9 @@ import os
 
 import pygame
 
-from settings import (AUDIO_CONFIG, MUSIC_ENABLED, MUSIC_VOLUME, SOUND_ENABLED,
+from src.snake.system.settings import (AUDIO_CONFIG, MUSIC_ENABLED, MUSIC_VOLUME, SOUND_ENABLED,
                       SOUND_VOLUME)
-from utils import log_error, log_info, log_warning
-
+from src.snake.system.utils import log_error, log_info, log_warning
 
 class AudioManager:
     """Gestor de audio para el juego."""

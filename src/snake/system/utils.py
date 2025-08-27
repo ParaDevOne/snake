@@ -8,14 +8,14 @@ import random
 import sys
 import threading
 from enum import Enum
-import settings
+from src.snake.system import settings
 
 # Configurar encoding UTF-8 para Windows
 if hasattr(sys.stdout, 'reconfigure'):
     try:
-        sys.stdout.reconfigure(encoding='utf-8')
-        sys.stderr.reconfigure(encoding='utf-8')
-    except ImportError:
+        sys.stdout.reconfigure(encoding='utf-8')  # type: ignore
+        sys.stderr.reconfigure(encoding='utf-8')  # type: ignore
+    except (ImportError, AttributeError):
         pass  # Si falla, continuar sin UTF-8
 
 def random_free_cell(occupied, extra_forbidden=None):
@@ -49,6 +49,28 @@ def save_json(path, obj):
     except (OSError, TypeError, ValueError, UnicodeEncodeError) as e:
         # no queremos que falle el juego por un save fallido
         print("No se pudo salvar:", e)
+
+def save_settings():
+    """Guarda la configuración actual del juego."""
+    try:
+        config = {
+            'COLUMNS': settings.COLUMNS,
+            'ROWS': settings.ROWS,
+            'CELL_SIZE': settings.CELL_SIZE,
+            'SPEED': settings.SPEED,
+            'SOUND_VOLUME': settings.SOUND_VOLUME,
+            'MUSIC_VOLUME': settings.MUSIC_VOLUME,
+            'FULLSCREEN': settings.FULLSCREEN,
+            'VSYNC': settings.VSYNC,
+            'SHOW_FPS': settings.SHOW_FPS,
+            'SHOW_GRID': settings.SHOW_GRID,
+            'OBSTACLES_ENABLED': getattr(settings, 'OBSTACLES_ENABLED', False),
+            'DIFFICULTY': getattr(settings, 'DIFFICULTY', 'normal')
+        }
+        save_json(settings.SETTINGS_FILE, config)
+        log_info("Configuración guardada correctamente")
+    except Exception as e:
+        log_error(f"Error guardando configuración: {e}")
 
 # ===== SISTEMA DE LOGGING =====
 

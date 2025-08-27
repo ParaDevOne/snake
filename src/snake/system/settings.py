@@ -14,6 +14,7 @@ import os
 WIDTH = int(os.environ.get("SNAKE_WIDTH", 800))
 HEIGHT = int(os.environ.get("SNAKE_HEIGHT", 600))
 GRID_SIZE = int(os.environ.get("SNAKE_GRID_SIZE", 20))
+CELL_SIZE = GRID_SIZE  # Alias for compatibility
 COLUMNS = WIDTH // GRID_SIZE
 ROWS = HEIGHT // GRID_SIZE
 
@@ -23,6 +24,7 @@ ROWS = HEIGHT // GRID_SIZE
 INIT_MOVE_DELAY = int(os.environ.get("SNAKE_INIT_MOVE_DELAY", 135))
 MIN_MOVE_DELAY = int(os.environ.get("SNAKE_MIN_MOVE_DELAY", 35))
 SPEED_STEP = int(os.environ.get("SNAKE_SPEED_STEP", 4))  # cuánto reduce el delay al comer
+SPEED = INIT_MOVE_DELAY  # Default speed setting
 
 # ===================
 # --- DIRECTORIOS Y ARCHIVOS ---
@@ -32,6 +34,7 @@ AUDIO_DIR = os.path.join(DATA_DIR, "assets", "audio")
 PROFILES_DIR = os.path.join(DATA_DIR, "profiles")
 DEFAULT_PROFILE = "default"
 PROFILE_FILENAME = "profile.json"  # dentro de la carpeta del perfil
+SETTINGS_FILE = os.path.join(DATA_DIR, "settings.json")  # Configuration file
 
 # ===================
 # --- OPCIONES GENERALES DEL JUEGO ---
@@ -40,8 +43,19 @@ WINDOW_TITLE = os.environ.get("SNAKE_WINDOW_TITLE", "Snake Game - Fallback")
 MENU_WINDOW_TITLE = os.environ.get("SNAKE_MENU_WINDOW_TITLE", "Snake Game")
 WRAP_AROUND = os.environ.get("SNAKE_WRAP_AROUND", "True") == "True"
 USE_OBSTACLES = os.environ.get("SNAKE_USE_OBSTACLES", "True") == "True"
+OBSTACLES = USE_OBSTACLES  # Alias for compatibility
 OBSTACLE_COUNT = int(os.environ.get("SNAKE_OBSTACLE_COUNT", 12))
 OBSTACLE_COLOR = (120, 120, 120)  # Color de los obstáculos (usar paleta o RGB)
+
+# Video settings
+FULLSCREEN = os.environ.get("SNAKE_FULLSCREEN", "False") == "True"
+VSYNC = os.environ.get("SNAKE_VSYNC", "True") == "True"
+SHOW_FPS = os.environ.get("SNAKE_SHOW_FPS", "False") == "True"
+SHOW_GRID = os.environ.get("SNAKE_SHOW_GRID", "False") == "True"
+
+# Audio settings
+SOUND_VOLUME = float(os.environ.get("SNAKE_SOUND_VOLUME", "0.7"))
+MUSIC_VOLUME = float(os.environ.get("SNAKE_MUSIC_VOLUME", "0.5"))
 
 # ===================
 # --- POWERUPS ---

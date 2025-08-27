@@ -5,8 +5,8 @@ import random
 
 import pygame
 
-from ..system import settings
-from ..system import utils
+from src.snake.system import settings
+from src.snake.system import utils
 
 
 # --- Lógica de opciones avanzadas ---

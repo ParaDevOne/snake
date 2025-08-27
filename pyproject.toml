@@ -9,6 +9,12 @@ license = {text = "SOL"}
 readme = "README.md"
 requires-python = "3.13.5"
 
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [project.urls]
 repository = "https://github.com/ParaDevOne/snake"
 
@@ -17,9 +23,13 @@ repository = "https://github.com/ParaDevOne/snake"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.poetry]
+packages = [{include = "snake", from = "src"}]
+
 [tool.poetry.scripts]
-start = 'main:run'
+start = 'src.snake.main:run'
 build = 'scripts.build:main'
+
 
 # algunas subdependencias adicionales no hay que eliminarlas
 # porque no sabes que subdependencias pueden ser necesarias para las dependencias en si

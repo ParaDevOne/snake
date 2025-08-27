@@ -6,10 +6,10 @@ import time
 
 import pygame
 
-from ..modules.visual_effects import VisualEffects
-from .logic import GameLogic
-from ..system import settings
-from ..system.audio_manager import AudioManager
+from src.snake.modules.visual_effects import VisualEffects
+from src.snake.core.logic import GameLogic
+from src.snake.system import settings
+from src.snake.system.audio_manager import AudioManager
 
 MOVE_EVENT = pygame.USEREVENT + 1  # pylint: disable=no-member
 

@@ -8,12 +8,12 @@
 import os
 import sys
 
-from .modules import menu
-from .core.game import MOVE_EVENT, Game
-from .modules.visual_effects import VisualEffects
-from .system import utils
-from .system import settings
-from .system import video_config
+import src.snake.modules.menu as menu
+import src.snake.system.settings as settings
+import src.snake.system.utils as utils
+import src.snake.system.video_config as video_config
+from src.snake.core.game import MOVE_EVENT, Game
+from src.snake.modules.visual_effects import VisualEffects
 
 video_config.configure_video_driver()
 
@@ -119,7 +119,8 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         utils.log_info("Juego interrumpido por el usuario (Ctrl+C)")
         utils.close_logging_session()
-        pygame.quit()
+        if pygame:
+            pygame.quit()
         sys.exit(0)
     except (ImportError, ModuleNotFoundError, OSError, RuntimeError) as e:
         # Manejar errores críticos específicos
@@ -133,5 +134,6 @@ if __name__ == "__main__":
         else:
             utils.log_critical(f"Error crítico ({error_type}): {e}")
         utils.close_logging_session()
-        pygame.quit()
+        if pygame:
+            pygame.quit()
         sys.exit(1)

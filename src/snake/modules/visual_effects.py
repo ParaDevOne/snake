@@ -8,7 +8,7 @@ import time
 
 import pygame
 
-from ..system import settings
+from src.snake.system import settings
 
 
 class ParticleSystem:
