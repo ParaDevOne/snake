@@ -122,13 +122,12 @@ Eat as much food as possible without colliding with yourself or obstacles (or th
 
 ### Minimum Requirements
 - **Python**: 3.10 or higher
-- **Operating System**: Windows 10+, Linux (Ubuntu 18.04+), macOS 10.14+
+- **Operating System**: Windows 10+, Linux (Ubuntu 20.04+), macOS 10.14+
 - **RAM**: 512 MB available
-- **Disk Space**: 64 MB
+- **Disk Space**: 124 MB
 
 > [!NOTE]
-> These requirements refer to the currently published release.
->
+> These requirements refer to the currently published release or in your already compiled version.
 >
 > This README lists **Python 3.10**, but the [`pyproject.toml`](./pyproject.toml) file specifies **3.13.5**, that is because `PyInstaller` requires version **3.13.5** to build correctly.
 
@@ -200,12 +199,6 @@ To produce a standalone executable:
 
 ### Run the build script
 
-#### With bash
-```bash
-python setup.py
-```
-
-#### With Poetry (bash)
 ```bash
 poetry run build
 ```
@@ -216,15 +209,13 @@ poetry run build
 #   dist/Snake Game        (Linux/macOS)
 ```
 
+> [!NOTE]
+> If you need runtime options that exist only in the script (and aren’t packaged into the executable), run the script directly. If you want those options available in the built executable, add them to your build process or pass them through your packaging tool.
+
 > [!WARNING]
 > If you want to reduce the executable size, use UPX. Install it globally or place it in `lib/upx.exe`. (UPX may not work reliably on some Linux/macOS environments; it is recommended for Windows builds.)
 
-## 🎮 Running
-
-### Normal mode
-```bash
-python -m main
-```
+---
 
 ### 🔍 Troubleshooting
 
@@ -234,21 +225,11 @@ If you run into issues:
 2. **Force driver:** `export SDL_VIDEODRIVER=<driver>`
 3. **Verify pygame:** Logs indicate whether pygame is available
 4. **Try fallbacks:** The system will attempt multiple drivers automatically
+5. **Update dependencies:** Ensure all packages are up to date
+6. **Check system requirements:** Verify that your system meets the minimum requirements
+7. **Seek help:** If you're still having issues, consider reaching out for help
 
-## 🛠️ Development & Architecture
-
-### Technologies Used
-- **Python 3.10+**: Primary language
-- **Pygame 2.6.1**: Game engine and rendering
-- **SDL**: Low-level system for graphics and audio
-- **JSON**: Profile data storage
-- **Logging**: Python native logging system
-
-### Architectural Pattern
-- **MVC (Model-View-Controller)**: Clear separation of concerns
-- **Component System**: Modular visual effects
-- **Event-Driven**: Pygame event-based handling
-- **Configuration-First**: Centralized configuration
+---
 
 ## 👥 Contributions
 
@@ -279,9 +260,19 @@ Contributions are welcome! This project follows an open development model.
 - 📁 **Documentation**: Guides and tutorials
 - 🧪 **Testing**: More automated tests
 
+---
+
 ## 📞 Future Improvements
 
-### Planned Version - 1.9
+### Planned Version - 1.8.1
+-  Improvement & Bug Fixes
+- Fix bugs related to fullscreen and menu navigation.
+- Bug relation from music and audio playback.
+- Improve input handling for smoother gameplay.
+- Enhance overall game performance.
+
+### Concept Version
+
 - 🛠️ **Configuration**
   - Add support for external configuration files
   - Allow loading configs from `./Data/configuration.json`
@@ -291,26 +282,19 @@ Contributions are welcome! This project follows an open development model.
   - Automatic recorder that spits out GIFs upon breaking a record.
   "Seed codes": Share a level seed + compact replay (list of inputs) for asynchronous challenges.
 
-### Concept Version
 - 🎆 **Additional Game Modes**
   - Time trial
   - Arcade mode
   - & update actual game modes
   - Survival Elements: Transform the game into a survival experience. The snake has an energy bar that depletes over time and can only be recharged by eating. Different types of "food" will be introduced, some nutritious and others poisonous.
 
+- 👥 **Multiplayer Mode**
+  - Local split-screen
 
 - 🔧 **Global Translation**
   - Translation of comments, logs, game menus...
   - JSON files with translations under `./Data/lang`
   - Multi-language support
-
-
-- 👥 **Multiplayer Mode**
-  - Local split-screen
-
-
-
-## 🛠️ Development
 
 ---
 
@@ -338,6 +322,8 @@ See the [`LICENSE.txt`](LICENSE.txt) file for full details.
 
 This project uses third-party components.
 To view third-party licenses, check the [`THIRD-PARTY-LICENSES.md`](./docs/THIRD-PARTY-LICENSES.md) file.
+
+---
 
 **🐍 Made with ❤️ by [ParaDevOne](https://github.com/ParaDevOne)**
 
