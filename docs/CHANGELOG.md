@@ -1,6 +1,8 @@
 # CHANGELOG
 
-All modifications, improvements and fixes for the Snake Game project are documented here following semantic versioning.
+---
+
+> These release notes document the changes, improvements and fixes made to the Snake Game project. Each version follows a semantic scheme to make it easier to understand the changes and their impact on the project. It is recommended to review the notes before updating or contributing to the code to ensure compatibility and follow established best practices.
 
 ---
 
@@ -96,9 +98,3 @@ All modifications, improvements and fixes for the Snake Game project are documen
 	Basic game implementation.
 	Snake movement and collision detection.
 	Food generation and snake growth.
-
----
-
-> These release notes document the changes, improvements and fixes made to the Snake Game project. Each version follows a semantic scheme to make it easier to understand the changes and their impact on the project. It is recommended to review the notes before updating or contributing to the code to ensure compatibility and follow established best practices.
-
----

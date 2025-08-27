@@ -1,6 +1,6 @@
-# Licencias de terceros usadas en este proyecto
+# Third-party licenses used in this project
 
-Este archivo reúne todas las licencias de terceros incluidas en el proyecto **Snake en Python**, en formato legible y bien organizado.
+This file collects all third-party licenses included in the **Snake en Python** project, in a readable and well-organized format.
 
 ---
 
