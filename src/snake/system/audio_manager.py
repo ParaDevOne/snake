@@ -8,8 +8,7 @@ import os
 
 import pygame
 
-from src.snake.system.settings import (AUDIO_CONFIG, MUSIC_ENABLED, MUSIC_VOLUME, SOUND_ENABLED,
-                      SOUND_VOLUME)
+from src.snake.system import settings
 from src.snake.system.utils import log_error, log_info, log_warning
 
 class AudioManager:
@@ -23,26 +22,26 @@ class AudioManager:
         self.music_loaded = False
         self.load_sounds()
         # Volumen global
-        pygame.mixer.music.set_volume(MUSIC_VOLUME)
+        pygame.mixer.music.set_volume(settings.MUSIC_VOLUME)
         for sound in self.sounds.values():
-            sound.set_volume(SOUND_VOLUME)
+            sound.set_volume(settings.SOUND_VOLUME)
 
     def load_sounds(self):
         """Cargar los sonidos del juego."""
-        for key, path in AUDIO_CONFIG['sounds'].items():
+        for key, path in settings.AUDIO_CONFIG['sounds'].items():
             if key == 'move':
                 continue
             try:
-                if SOUND_ENABLED:
-                    self.sounds[key] = pygame.mixer.Sound(path)
-                    self.sounds[key].set_volume(SOUND_VOLUME)
-                    log_info(f"Audio cargado: {key} -> {path}")
+                # La carga se realiza siempre, la reproducción se condiciona
+                self.sounds[key] = pygame.mixer.Sound(path)
+                self.sounds[key].set_volume(settings.SOUND_VOLUME)
+                log_info(f"Audio cargado: {key} -> {path}")
             except ImportError as e:
                 log_error(f"Error cargando audio {key}: {e}")
 
     def play_sound(self, key):
         """Reproducir un sonido dado por su clave."""
-        if not SOUND_ENABLED:
+        if not settings.SOUND_ENABLED:
             return
         sound = self.sounds.get(key)
         if sound:
@@ -52,7 +51,7 @@ class AudioManager:
 
     def play_music(self, path, loop=True):
         """Reproducir música desde el archivo dado."""
-        if not MUSIC_ENABLED:
+        if not settings.MUSIC_ENABLED:
             log_info(f"[AUDIO] Música no habilitada. No se reproduce: {path}")
             return
         log_info(f"[AUDIO] Intentando cargar música: {path}")
@@ -62,7 +61,7 @@ class AudioManager:
         try:
             pygame.mixer.music.load(path)
             log_info(f"[AUDIO] Música cargada correctamente: {path}")
-            pygame.mixer.music.set_volume(MUSIC_VOLUME)
+            pygame.mixer.music.set_volume(settings.MUSIC_VOLUME)
             pygame.mixer.music.play(-1 if loop else 0)
             self.music_loaded = True
             log_info(f"Música reproducida: {path}")

@@ -544,8 +544,18 @@ def run():
                     ):
                         if advanced_selected == 0:  # Sonido
                             opt_sound_enabled = not opt_sound_enabled
+                            # Aplicar cambio inmediatamente
+                            settings.SOUND_ENABLED = opt_sound_enabled
                         elif advanced_selected == 1:  # Música
                             opt_music_enabled = not opt_music_enabled
+                            # Aplicar cambio inmediatamente
+                            settings.MUSIC_ENABLED = opt_music_enabled
+                            # Detener música si se desactiva
+                            if not opt_music_enabled:
+                                audio.stop_music()
+                            else:
+                                # Reanudar música del menú si se activa
+                                audio.play_music(settings.AUDIO_CONFIG['music']['music_menu'], loop=True)
                         elif advanced_selected == 2:  # Multi-comida
                             opt_multi_food = not opt_multi_food
                         elif advanced_selected == 3:  # Resetear todo
