@@ -76,3 +76,7 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 .DS_Store
+
+# Ejecutables y librerías compiladas (PyInstaller / builds)
+*.exe
+*.dll
