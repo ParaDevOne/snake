@@ -31,7 +31,7 @@ def run():
     if pygame:
         pygame.init()
         flags = 0
-        if getattr(settings, 'FULLSCREEN', False):
+        if getattr(settings, 'FULLSCREEN', True):
             flags |= pygame.FULLSCREEN
         screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT), flags)
         ve = VisualEffects()

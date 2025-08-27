@@ -30,6 +30,8 @@ packages = [{include = "snake", from = "src"}]
 start = 'src.snake.main:run'
 build = 'scripts.build:main'
 
+[tool.setuptools.package-data]
+"snake" = ["Data/**/*"]
 
 # algunas subdependencias adicionales no hay que eliminarlas
 # porque no sabes que subdependencias pueden ser necesarias para las dependencias en si
