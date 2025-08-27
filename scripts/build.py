@@ -6,12 +6,18 @@ Desarrollado por ParaDevOne - Snake Game v1.8.1
 """
 
 import ctypes
+import hashlib
+import json
 import os
 import platform
 import shutil
 import subprocess
 import sys
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
 class Colors:
     """Colores para output en consola."""
@@ -25,6 +31,106 @@ class Colors:
     ENDC = "\033[0m"
     BOLD = "\033[1m"
     UNDERLINE = "\033[4m"
+
+class BuildCache:
+    """Sistema de caché para builds incrementales."""
+    
+    def __init__(self, cache_file: str = ".build_cache.json"):
+        self.cache_file = Path(cache_file)
+        self.cache_data = self._load_cache()
+    
+    def _load_cache(self) -> Dict:
+        """Carga el caché desde archivo."""
+        if self.cache_file.exists():
+            try:
+                with open(self.cache_file, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except (json.JSONDecodeError, OSError):
+                pass
+        return {"files": {}, "last_build": None, "config_hash": None}
+    
+    def _save_cache(self) -> None:
+        """Guarda el caché a archivo."""
+        try:
+            with open(self.cache_file, 'w', encoding='utf-8') as f:
+                json.dump(self.cache_data, f, indent=2)
+        except OSError:
+            pass
+    
+    def get_file_hash(self, file_path: Path) -> str:
+        """Calcula hash MD5 de un archivo."""
+        try:
+            with open(file_path, 'rb') as f:
+                return hashlib.md5(f.read()).hexdigest()
+        except OSError:
+            return ""
+    
+    def has_changed(self, file_path: Path) -> bool:
+        """Verifica si un archivo ha cambiado desde el último build."""
+        current_hash = self.get_file_hash(file_path)
+        cached_hash = self.cache_data["files"].get(str(file_path), "")
+        return current_hash != cached_hash
+    
+    def update_file(self, file_path: Path) -> None:
+        """Actualiza el hash de un archivo en el caché."""
+        self.cache_data["files"][str(file_path)] = self.get_file_hash(file_path)
+    
+    def get_config_hash(self, config: Dict) -> str:
+        """Calcula hash de la configuración del build."""
+        config_str = json.dumps(config, sort_keys=True)
+        return hashlib.md5(config_str.encode()).hexdigest()
+    
+    def config_changed(self, config: Dict) -> bool:
+        """Verifica si la configuración ha cambiado."""
+        current_hash = self.get_config_hash(config)
+        return current_hash != self.cache_data.get("config_hash")
+    
+    def update_build(self, config: Dict) -> None:
+        """Actualiza información del último build."""
+        self.cache_data["last_build"] = time.time()
+        self.cache_data["config_hash"] = self.get_config_hash(config)
+        self._save_cache()
+
+class BuildProfile:
+    """Perfiles de configuración para diferentes tipos de build."""
+    
+    PROFILES = {
+        "debug": {
+            "optimize": "0",
+            "debug": True,
+            "console": True,
+            "upx": False,
+            "strip": False,
+            "description": "Build de desarrollo con debug habilitado"
+        },
+        "release": {
+            "optimize": "2",
+            "debug": False,
+            "console": False,
+            "upx": True,
+            "strip": True,
+            "description": "Build optimizado para distribución"
+        },
+        "portable": {
+            "optimize": "1",
+            "debug": False,
+            "console": False,
+            "upx": True,
+            "strip": False,
+            "onedir": True,
+            "description": "Build portable con dependencias incluidas"
+        }
+    }
+    
+    @classmethod
+    def get_profile(cls, name: str) -> Dict:
+        """Obtiene configuración de un perfil."""
+        return cls.PROFILES.get(name, cls.PROFILES["release"])
+    
+    @classmethod
+    def list_profiles(cls) -> List[str]:
+        """Lista perfiles disponibles."""
+        return list(cls.PROFILES.keys())
 
 class IconSelector:
     """Manejador para la selección de iconos."""
@@ -133,6 +239,54 @@ def print_colored(message, color=Colors.ENDC, end='\n'):
             # No fallar si no se puede cambiar modo de consola
             pass
     print(f"{color}{message}{Colors.ENDC}", end=end)
+
+class BuildValidator:
+    """Validador para verificar la integridad del build."""
+    
+    @staticmethod
+    def test_executable(exe_path: Path) -> bool:
+        """Prueba básica del ejecutable."""
+        if not exe_path.exists():
+            return False
+        
+        try:
+            # Verificar que el archivo es ejecutable
+            if platform.system() != "Windows":
+                if not os.access(exe_path, os.X_OK):
+                    return False
+            
+            # Intentar ejecutar con --help o --version (timeout rápido)
+            result = subprocess.run(
+                [str(exe_path), "--help"],
+                capture_output=True,
+                timeout=5,
+                text=True
+            )
+            return result.returncode == 0
+        except (subprocess.TimeoutExpired, subprocess.CalledProcessError, OSError):
+            return False
+    
+    @staticmethod
+    def validate_dependencies(exe_path: Path) -> List[str]:
+        """Valida dependencias del ejecutable."""
+        issues = []
+        
+        if platform.system() == "Windows":
+            # Verificar DLLs comunes en Windows
+            common_dlls = ["vcruntime140.dll", "msvcp140.dll"]
+            for dll in common_dlls:
+                try:
+                    result = subprocess.run(
+                        ["where", dll],
+                        capture_output=True,
+                        timeout=5
+                    )
+                    if result.returncode != 0:
+                        issues.append(f"DLL faltante: {dll}")
+                except (subprocess.TimeoutExpired, subprocess.CalledProcessError):
+                    issues.append(f"No se pudo verificar: {dll}")
+        
+        return issues
 
 def clean_build_files():
     """Limpia archivos y carpetas de builds anteriores."""
@@ -294,27 +448,52 @@ def get_build_configuration():
     print_colored("\n⚙️  Configuración del Build:", Colors.HEADER)
     print_colored("-" * 30, Colors.OKCYAN)
 
+    # Selección de perfil de build
+    profiles = BuildProfile.list_profiles()
+    print_colored("📋 Perfiles disponibles:", Colors.OKBLUE)
+    for i, profile in enumerate(profiles, 1):
+        profile_info = BuildProfile.get_profile(profile)
+        print_colored(f"   {i}. {profile.capitalize()}: {profile_info['description']}", Colors.OKCYAN)
+    
+    print_colored("\n🎯 Seleccionar perfil (1-3) o Enter para 'release': ", Colors.OKCYAN, end="")
+    try:
+        choice = input().strip()
+        if choice and choice.isdigit():
+            profile_idx = int(choice) - 1
+            if 0 <= profile_idx < len(profiles):
+                selected_profile = profiles[profile_idx]
+            else:
+                selected_profile = "release"
+        else:
+            selected_profile = "release"
+    except (ValueError, KeyboardInterrupt):
+        selected_profile = "release"
+    
+    profile_config = BuildProfile.get_profile(selected_profile)
+    print_colored(f"✅ Perfil seleccionado: {selected_profile.capitalize()}", Colors.OKGREEN)
+
     # Selección de icono (normal por defecto, opción de cambiar a retro)
     icon_selector = IconSelector()
     if icon_selector.available_icons:
         icon_selector.show_available_icons()
     selected_icon = icon_selector.select_icon()
 
-    # Configuración de compresión UPX (solo Windows)
-    use_upx = True
+    # Configuración de compresión UPX (basada en perfil pero modificable)
+    use_upx = profile_config.get('upx', True)
     if platform.system() == "Windows":
-        print_colored("🗜️  ¿Usar compresión UPX si está disponible? (Y/n): ", Colors.OKCYAN, end="")
+        upx_status = "habilitado" if use_upx else "deshabilitado"
+        print_colored(f"🗜️  UPX {upx_status} por perfil. ¿Cambiar? (y/N): ", Colors.OKCYAN, end="")
         upx_choice = input().strip().lower()
-        use_upx = upx_choice not in ['n', 'no', 'false']
-
-        if use_upx:
-            print_colored("✅ UPX habilitado (si está disponible)", Colors.OKGREEN)
-        else:
-            print_colored("❌ UPX deshabilitado", Colors.WARNING)
+        if upx_choice in ['y', 'yes', 'si', 's']:
+            use_upx = not use_upx
+            status = "habilitado" if use_upx else "deshabilitado"
+            print_colored(f"✅ UPX {status}", Colors.OKGREEN)
 
     return {
         'icon_path': selected_icon,
-        'use_upx': use_upx
+        'use_upx': use_upx,
+        'profile': selected_profile,
+        'profile_config': profile_config
     }
 
 def build_executable(upx_path=None, config=None):
@@ -324,23 +503,34 @@ def build_executable(upx_path=None, config=None):
     if config is None:
         config = {}
 
+    profile_config = config.get('profile_config', {})
+    
     # Configuración específica por sistema operativo
     system = platform.system()
     exe_name = "Snake Game.exe" if system == "Windows" else "Snake Game"
     separator = ";" if system == "Windows" else ":"
 
-    # Configuración base de PyInstaller
+    # Configuración base de PyInstaller con perfil
+    build_mode = "--onedir" if profile_config.get('onedir') else "--onefile"
+    window_mode = "--console" if profile_config.get('console') else "--windowed"
+    optimize_level = profile_config.get('optimize', '2')
+    
     cmd = [
         "pyinstaller",
-        "--onefile",
-        "--windowed",
+        build_mode,
+        window_mode,
         "--name", exe_name,
         "--clean",
         "--noconfirm",
         "--distpath", "dist",
         "--workpath", "build",
-        "--optimize", "2",
+        "--optimize", optimize_level,
     ]
+    
+    # Agregar debug info si es perfil debug
+    if profile_config.get('debug'):
+        cmd.extend(["--debug", "all"])
+        print_colored("🐛 Modo debug habilitado", Colors.WARNING)
 
     # Configurar UPX solo en Windows si está disponible y habilitado
     upx_enabled = False
@@ -485,6 +675,11 @@ def show_build_info(upx_used=False, config=None):
     system_icon = "🪟" if system == "Windows" else "🍎" if system == "Darwin" else "🐧"
     print_colored(f"{system_icon} Sistema: {system} ({platform.release()})", Colors.OKBLUE)
     print_colored(f"🏗️ Arquitectura: {platform.machine()}", Colors.OKBLUE)
+    
+    # Mostrar perfil usado
+    if config and config.get('profile'):
+        profile = config['profile']
+        print_colored(f"📋 Perfil: {profile.capitalize()}", Colors.OKBLUE)
 
     # Mostrar información del icono usado
     if config and config.get('icon_path'):
@@ -511,6 +706,24 @@ def show_build_info(upx_used=False, config=None):
         print_colored(f"📏 Tamaño: {size_mb:.2f} MB ({size_bytes:,} bytes)", Colors.OKBLUE)
         print_colored(f"📍 Ubicación: {exe_file.absolute()}", Colors.OKBLUE)
 
+        # Validar ejecutable
+        print_colored("🔍 Validando ejecutable...", Colors.OKCYAN)
+        validator = BuildValidator()
+        
+        if validator.test_executable(exe_file):
+            print_colored("✅ Ejecutable válido y funcional", Colors.OKGREEN)
+        else:
+            print_colored("⚠️  Ejecutable puede tener problemas", Colors.WARNING)
+        
+        # Verificar dependencias
+        issues = validator.validate_dependencies(exe_file)
+        if issues:
+            print_colored("⚠️  Posibles problemas de dependencias:", Colors.WARNING)
+            for issue in issues[:3]:  # Mostrar solo los primeros 3
+                print_colored(f"   • {issue}", Colors.OKCYAN)
+        else:
+            print_colored("✅ Dependencias verificadas", Colors.OKGREEN)
+
         # Verificar si es ejecutable
         try:
             executable_ready = system == "Windows" or (system != "Windows" and os.access(exe_file, os.X_OK))
@@ -518,7 +731,6 @@ def show_build_info(upx_used=False, config=None):
             executable_ready = False
 
         if executable_ready:
-            print_colored("✅ Ejecutable listo para usar", Colors.OKGREEN)
             run_command = f"./{exe_file.name}" if system != "Windows" else f"{exe_file.name}"
             print_colored(f"💡 Ejecutar con: cd dist && {run_command}", Colors.OKCYAN)
 
@@ -537,15 +749,19 @@ def show_build_info(upx_used=False, config=None):
 
 def main():
     """Función principal del script de setup."""
-    print_colored("\n🐍 Snake Game - Build Script v1.8.1", Colors.HEADER)
-    print_colored("🔧 Desarrollado por ParaDevOne", Colors.HEADER)
+    print_colored("\n🐍 Snake Game - Build Script v2.0.0", Colors.HEADER)
+    print_colored("🔧 Desarrollado por ParaDevOne - Mejorado", Colors.HEADER)
     print_colored("=" * 50, Colors.HEADER)
 
     system = platform.system()
     print_colored(f"💻 Sistema detectado: {system}", Colors.OKBLUE)
+    
+    # Inicializar caché de build
+    cache = BuildCache()
+    print_colored("📦 Sistema de caché inicializado", Colors.OKCYAN)
 
     if system == "Windows":
-        print_colored("💡 UPX se puede usar para compresión en Windows", Colors.OKCYAN)
+        print_colored("💡 UPX disponible para compresión en Windows", Colors.OKCYAN)
         print_colored("   - Se buscará en lib/, Data/lib/ y ubicaciones comunes", Colors.OKCYAN)
     else:
         print_colored("💡 UPX no se usará (solo disponible para Windows)", Colors.OKCYAN)
@@ -565,6 +781,18 @@ def main():
     # Configuración del build
     try:
         config = get_build_configuration()
+        
+        # Verificar si necesita rebuild basado en caché
+        if not cache.config_changed(config):
+            main_file = Path("__main__.py")
+            if main_file.exists() and not cache.has_changed(main_file):
+                print_colored("📦 No se detectaron cambios desde el último build", Colors.OKCYAN)
+                print_colored("🔄 ¿Forzar rebuild? (y/N): ", Colors.OKCYAN, end="")
+                force_choice = input().strip().lower()
+                if force_choice not in ['y', 'yes', 'si', 's']:
+                    print_colored("✅ Usando build existente", Colors.OKGREEN)
+                    show_build_info(config=config)
+                    return
 
         if config['icon_path'] is None:
             print_colored("⚠️  No se encontraron iconos. ¿Continuar sin icono? (Y/n): ", Colors.WARNING, end="")
@@ -590,9 +818,17 @@ def main():
         success = build_executable(upx_path=final_upx_path, config=config)
 
         if success:
+            # Actualizar caché después del build exitoso
+            cache.update_build(config)
+            if Path("__main__.py").exists():
+                cache.update_file(Path("__main__.py"))
+            
             show_build_info(upx_used=bool(final_upx_path), config=config)
             print_colored("\n🎉 ¡Build completado exitosamente!", Colors.OKGREEN)
             print_colored("🚀 Tu ejecutable está listo en la carpeta 'dist/'", Colors.OKGREEN)
+            
+            profile = config.get('profile', 'release')
+            print_colored(f"📋 Perfil usado: {profile.capitalize()}", Colors.OKBLUE)
 
             if config.get('icon_path'):
                 icon_type = "retro" if "retro" in str(config['icon_path']).lower() else "normal"

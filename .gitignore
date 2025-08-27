@@ -29,6 +29,7 @@ var/
 # PyInstaller
 *.manifest
 *.spec
+*.build_cache.json
 
 # Installer logs
 pip-log.txt
