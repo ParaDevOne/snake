@@ -3,8 +3,8 @@
 import datetime
 import os
 import shutil
-import settings
-import utils
+from src.snake.system import settings
+from src.snake.system import utils
 
 
 def _profile_folder(name):

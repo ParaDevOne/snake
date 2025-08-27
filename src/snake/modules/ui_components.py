@@ -5,8 +5,7 @@ import random
 
 import pygame
 
-import settings
-import utils
+from src.snake.system import settings, utils
 
 
 # --- Lógica de opciones avanzadas ---
@@ -135,8 +134,18 @@ class InputOverlay:
         self.text = ""
         self.active = True
         self.result = None
-        self.menu_font = menu_font
-        self.ui_font = ui_font
+        # Inicializar fuentes con valores por defecto si no se proporcionan
+        if menu_font is None:
+            font_path = getattr(settings, 'FONT', None)
+            self.menu_font = pygame.font.Font(font_path, 34)
+        else:
+            self.menu_font = menu_font
+
+        if ui_font is None:
+            font_path = getattr(settings, 'FONT', None)
+            self.ui_font = pygame.font.Font(font_path, 20)
+        else:
+            self.ui_font = ui_font
 
     def handle_event(self, event):
         """Maneja eventos de entrada."""

@@ -6,7 +6,7 @@ import random
 
 import pygame
 
-from settings import COLUMNS, GRID_SIZE, OBSTACLE_COLOR, OBSTACLE_COUNT, ROWS
+from src.snake.system.settings import COLUMNS, GRID_SIZE, OBSTACLE_COLOR, OBSTACLE_COUNT, ROWS
 
 
 class ObstacleManager:

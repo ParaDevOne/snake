@@ -6,10 +6,10 @@ import time
 
 import pygame
 
-from visual_effects import VisualEffects
-from logic import GameLogic
-import settings
-from audio_manager import AudioManager
+from src.snake.modules.visual_effects import VisualEffects
+from src.snake.core.logic import GameLogic
+from src.snake.system import settings
+from src.snake.system.audio_manager import AudioManager
 
 MOVE_EVENT = pygame.USEREVENT + 1  # pylint: disable=no-member
 
@@ -53,9 +53,12 @@ class Game:
         self.pending_powerup_explosion = None
         self.pending_game_over_shake = False
         pygame.time.set_timer(MOVE_EVENT, self.logic.move_delay)
-        # Música de juego
-        self.audio.play_music(settings.AUDIO_CONFIG['music']['music_game'], loop=True)
-        self.music_playing = True
+        # Música de juego (solo si está habilitada)
+        if settings.MUSIC_ENABLED:
+            self.audio.play_music(settings.AUDIO_CONFIG['music']['music_game'], loop=True)
+            self.music_playing = True
+        else:
+            self.music_playing = False
 
     def handle_move(self):
         """Handle player movement and related events."""
@@ -184,6 +187,7 @@ class Game:
         shake_offset = self.visual_effects.get_screen_offset()
 
         # Crear superficie temporal para el shake effect
+        temp_surface = None
         if shake_offset != (0, 0):
             temp_surface = pygame.Surface((settings.WIDTH, settings.HEIGHT))
             render_surface = temp_surface
@@ -212,7 +216,7 @@ class Game:
         if state["powerup"]:
             ptype, ppos = state["powerup"]
             self.visual_effects.draw_enhanced_powerup(
-                render_surface, ppos, ptype, self.powerup_rotation
+                render_surface, ppos, ptype, int(self.powerup_rotation)
             )
 
         # Serpiente con interpolación suave y efectos
@@ -234,7 +238,7 @@ class Game:
 
                     # Si la distancia es muy grande, probablemente hubo wrap
                     if dx > settings.COLUMNS / 2 or dy > settings.ROWS / 2:
-                        # No interpolar cuando hay wrap-around
+                        # No interpolar en caso de wrap-around
                         interpolated_pos = current_pos
                     else:
                         interpolated_pos = self.visual_effects.animation_manager.smooth_interpolate(
@@ -250,14 +254,14 @@ class Game:
             # Escala animada para la cabeza
             if is_head:
                 head_scale = self.visual_effects.animation_manager.pulse_scale(4.0, 0.08, 1.0)
-                direction = self.logic.snake.direction
+                direction = getattr(self.logic.snake, 'direction', None)
             else:
                 head_scale = 1.0
                 direction = None
 
             # Dibujar segmento mejorado
             self.visual_effects.draw_enhanced_snake_segment(
-                render_surface, interpolated_pos, is_head, direction, head_scale
+                render_surface, interpolated_pos, is_head, direction if direction else None, head_scale
             )
 
             # Añadir efecto de rastro ocasional para la cabeza
@@ -327,7 +331,7 @@ class Game:
             render_surface.blit(main_sub, main_sub_rect)
 
         # Aplicar screen shake si es necesario
-        if shake_offset != (0, 0) and render_surface != self.screen:
+        if shake_offset != (0, 0) and render_surface != self.screen and temp_surface:
             self.screen.fill((0, 0, 0))
             self.screen.blit(temp_surface, shake_offset)
 

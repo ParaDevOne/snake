@@ -6,19 +6,20 @@ import sys
 
 import pygame
 
-from game import MOVE_EVENT, Game
-
-import profiles
-import settings
-import utils
-import video_config
-from audio_manager import AudioManager
-from settings import (FONT, HELP_TEXT, STATE_GAME, STATE_MAIN, STATE_OPTIONS,
-                      STATE_OPTIONS_ADVANCED, STATE_OPTIONS_CONTROLS,
-                      STATE_OPTIONS_GAMEPLAY, STATE_OPTIONS_VISUAL, STATE_PLAY,
-                      STATE_PROFILES)
-from ui_components import (Button, InputOverlay, apply_all_settings,
-                           center_rect, draw_text)
+from src.snake.core.game import MOVE_EVENT, Game
+from src.snake.modules import profiles
+from src.snake.system import settings, utils, video_config
+from src.snake.system.audio_manager import AudioManager
+from src.snake.system.settings import (
+    FONT, HELP_TEXT, STATE_GAME, STATE_MAIN, STATE_OPTIONS,
+    STATE_OPTIONS_ADVANCED, STATE_OPTIONS_CONTROLS,
+    STATE_OPTIONS_GAMEPLAY, STATE_OPTIONS_VISUAL, STATE_PLAY,
+    STATE_PROFILES
+)
+from src.snake.modules.ui_components import (
+    Button, InputOverlay, apply_all_settings,
+    center_rect, draw_text
+)
 
 video_config.configure_video_driver()
 pygame.init()
@@ -42,6 +43,25 @@ ACCENT = _menu_colors["accent"]
 BAD = _menu_colors["bad"]
 OK = _menu_colors["ok"]
 OVERLAY = _menu_colors["overlay"]
+
+# ----- Helper functions -----
+def handle_menu_navigation(event, selected, items_count):
+    """Maneja la navegación común de menús con teclas arriba/abajo."""
+    if event.key in (pygame.K_UP, pygame.K_w):
+        return (selected - 1) % items_count
+    elif event.key in (pygame.K_DOWN, pygame.K_s):
+        return (selected + 1) % items_count
+    return selected
+
+def toggle_option_with_keys(event, current_value, left_right_only=False):
+    """Toggle booleano con teclas izquierda/derecha o Enter/Space."""
+    keys = [pygame.K_LEFT, pygame.K_RIGHT]
+    if not left_right_only:
+        keys.extend([pygame.K_RETURN, pygame.K_SPACE])
+    
+    if event.key in keys:
+        return not current_value
+    return current_value
 
 # ----- run() -----
 def run():
@@ -156,7 +176,7 @@ def run():
         y = start_y + i * (btn_h + spacing)
         btns.append(Button((x, y, btn_w, btn_h), label, MENU_FONT))
 
-    # Inicializar SCREEN como variable local
+    # Inicializar pantalla
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
     # main loop
@@ -201,10 +221,8 @@ def run():
             # state-specific event handling
             if state == STATE_MAIN:
                 if event.type == pygame.KEYDOWN:
-                    if event.key in (pygame.K_UP, pygame.K_w):
-                        selected_main = (selected_main - 1) % len(main_items)
-                    elif event.key in (pygame.K_DOWN, pygame.K_s):
-                        selected_main = (selected_main + 1) % len(main_items)
+                    if event.key in (pygame.K_UP, pygame.K_w, pygame.K_DOWN, pygame.K_s):
+                        selected_main = handle_menu_navigation(event, selected_main, len(main_items))
                     elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
                         if selected_main == 0:
                             utils.log_user_action("Navegó a sección JUGAR")
@@ -306,7 +324,7 @@ def run():
                     elif event.key == pygame.K_DOWN:
                         prof_selected = min(max(0, len(profile_list)-1), prof_selected + 1)
                     elif event.key == pygame.K_n:
-                        input_overlay = InputOverlay("Nuevo perfil - escribe nombre")
+                        input_overlay = InputOverlay("Nuevo perfil - escribe nombre", MENU_FONT, UI_FONT)
                     elif event.key == pygame.K_d:
                         if profile_list:
                             cur = profile_list[prof_selected]
@@ -341,14 +359,8 @@ def run():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         state = STATE_MAIN
-                    elif event.key in (pygame.K_UP, pygame.K_w):
-                        options_selected = (options_selected - 1) % len(
-                            options_category_items
-                        )
-                    elif event.key in (pygame.K_DOWN, pygame.K_s):
-                        options_selected = (options_selected + 1) % len(
-                            options_category_items
-                        )
+                    elif event.key in (pygame.K_UP, pygame.K_w, pygame.K_DOWN, pygame.K_s):
+                        options_selected = handle_menu_navigation(event, options_selected, len(options_category_items))
                     elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
                         if options_selected == 0:
                             state = STATE_OPTIONS_GAMEPLAY
@@ -367,14 +379,8 @@ def run():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         state = STATE_OPTIONS
-                    elif event.key in (pygame.K_UP, pygame.K_w):
-                        gameplay_selected = (gameplay_selected - 1) % len(
-                            gameplay_items
-                        )
-                    elif event.key in (pygame.K_DOWN, pygame.K_s):
-                        gameplay_selected = (gameplay_selected + 1) % len(
-                            gameplay_items
-                        )
+                    elif event.key in (pygame.K_UP, pygame.K_w, pygame.K_DOWN, pygame.K_s):
+                        gameplay_selected = handle_menu_navigation(event, gameplay_selected, len(gameplay_items))
                     elif event.key in (
                         pygame.K_LEFT,
                         pygame.K_RIGHT,
@@ -410,18 +416,18 @@ def run():
                                 current_idx = (current_idx + 1) % len(modes)
                             opt_game_mode = modes[current_idx]
                         elif gameplay_selected == 2:  # Wrap-around
-                            opt_wrap = not opt_wrap
+                            opt_wrap = toggle_option_with_keys(event, opt_wrap)
                         elif gameplay_selected == 3:  # Obstáculos
-                            opt_obs = not opt_obs
+                            opt_obs = toggle_option_with_keys(event, opt_obs)
                         elif gameplay_selected == 4:  # Velocidad
                             if event.key == pygame.K_LEFT:
                                 opt_speed = min(400, opt_speed + 10)
                             elif event.key == pygame.K_RIGHT:
                                 opt_speed = max(40, opt_speed - 10)
                         elif gameplay_selected == 5:  # PowerUps
-                            opt_powerup_enabled = not opt_powerup_enabled
+                            opt_powerup_enabled = toggle_option_with_keys(event, opt_powerup_enabled)
                         elif gameplay_selected == 6:  # Comida especial
-                            opt_food_types = not opt_food_types
+                            opt_food_types = toggle_option_with_keys(event, opt_food_types)
                         elif gameplay_selected == 7:  # Volver
                             state = STATE_OPTIONS
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -431,10 +437,8 @@ def run():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         state = STATE_OPTIONS
-                    elif event.key in (pygame.K_UP, pygame.K_w):
-                        visual_selected = (visual_selected - 1) % len(visual_items)
-                    elif event.key in (pygame.K_DOWN, pygame.K_s):
-                        visual_selected = (visual_selected + 1) % len(visual_items)
+                    elif event.key in (pygame.K_UP, pygame.K_w, pygame.K_DOWN, pygame.K_s):
+                        visual_selected = handle_menu_navigation(event, visual_selected, len(visual_items))
                     elif event.key in (
                         pygame.K_LEFT,
                         pygame.K_RIGHT,
@@ -455,34 +459,28 @@ def run():
                             if opt_theme in settings.THEMES:
                                 settings.PALETTE.update(settings.THEMES[opt_theme])
                         elif visual_selected == 1:  # Efectos visuales
-                            opt_visual_effects = not opt_visual_effects
+                            opt_visual_effects = toggle_option_with_keys(event, opt_visual_effects)
                         elif visual_selected == 2:  # Partículas
-                            opt_particle_effects = not opt_particle_effects
+                            opt_particle_effects = toggle_option_with_keys(event, opt_particle_effects)
                         elif visual_selected == 3:  # Temblor pantalla
-                            opt_screen_shake = not opt_screen_shake
+                            opt_screen_shake = toggle_option_with_keys(event, opt_screen_shake)
                         elif visual_selected == 4:  # Movimiento suave
-                            opt_smooth_movement = not opt_smooth_movement
+                            opt_smooth_movement = toggle_option_with_keys(event, opt_smooth_movement)
                         elif visual_selected == 5:  # Mostrar grid
-                            opt_show_grid = not opt_show_grid
+                            opt_show_grid = toggle_option_with_keys(event, opt_show_grid)
                         elif visual_selected == 6:  # Efectos brillo
-                            opt_glow_effects = not opt_glow_effects
+                            opt_glow_effects = toggle_option_with_keys(event, opt_glow_effects)
                         elif visual_selected == 7:  # Pantalla completa
-                            if event.key in (pygame.K_LEFT, pygame.K_RIGHT):
+                            if event.key in (pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RETURN, pygame.K_KP_ENTER, pygame.K_SPACE):
                                 opt_fullscreen = not opt_fullscreen
-                                # Guardar en configuración global
                                 settings.FULLSCREEN = opt_fullscreen
                                 utils.save_settings()
-                                # Aplicar cambio de pantalla completa inmediatamente
-                                if opt_fullscreen:
-                                    screen = pygame.display.set_mode(
-                                        (WIDTH, HEIGHT), pygame.FULLSCREEN
-                                    )
-                                else:
-                                    screen = pygame.display.set_mode((WIDTH, HEIGHT))
-                                # Evitar que el evento continúe y cambie el estado
+                                # Aplicar cambio inmediatamente
+                                flags = pygame.FULLSCREEN if opt_fullscreen else 0
+                                screen = pygame.display.set_mode((WIDTH, HEIGHT), flags)
                                 continue
                         elif visual_selected == 8:  # Mostrar FPS
-                            opt_show_fps = not opt_show_fps
+                            opt_show_fps = toggle_option_with_keys(event, opt_show_fps)
                         elif visual_selected == 9:  # Volver
                             state = STATE_OPTIONS
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -492,14 +490,8 @@ def run():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         state = STATE_OPTIONS
-                    elif event.key in (pygame.K_UP, pygame.K_w):
-                        controls_selected = (controls_selected - 1) % len(
-                            controls_items
-                        )
-                    elif event.key in (pygame.K_DOWN, pygame.K_s):
-                        controls_selected = (controls_selected + 1) % len(
-                            controls_items
-                        )
+                    elif event.key in (pygame.K_UP, pygame.K_w, pygame.K_DOWN, pygame.K_s):
+                        controls_selected = handle_menu_navigation(event, controls_selected, len(controls_items))
                     elif event.key in (
                         pygame.K_LEFT,
                         pygame.K_RIGHT,
@@ -519,7 +511,7 @@ def run():
                                 current_idx = (current_idx + 1) % len(schemes)
                             opt_control_scheme = schemes[current_idx]
                         elif controls_selected == 1:  # Permitir reversa
-                            opt_allow_reverse = not opt_allow_reverse
+                            opt_allow_reverse = toggle_option_with_keys(event, opt_allow_reverse)
                         elif controls_selected == 2:  # Volver
                             state = STATE_OPTIONS
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -529,14 +521,8 @@ def run():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         state = STATE_OPTIONS
-                    elif event.key in (pygame.K_UP, pygame.K_w):
-                        advanced_selected = (advanced_selected - 1) % len(
-                            advanced_items
-                        )
-                    elif event.key in (pygame.K_DOWN, pygame.K_s):
-                        advanced_selected = (advanced_selected + 1) % len(
-                            advanced_items
-                        )
+                    elif event.key in (pygame.K_UP, pygame.K_w, pygame.K_DOWN, pygame.K_s):
+                        advanced_selected = handle_menu_navigation(event, advanced_selected, len(advanced_items))
                     elif event.key in (
                         pygame.K_LEFT,
                         pygame.K_RIGHT,
@@ -544,11 +530,19 @@ def run():
                         pygame.K_SPACE,
                     ):
                         if advanced_selected == 0:  # Sonido
-                            opt_sound_enabled = not opt_sound_enabled
+                            opt_sound_enabled = toggle_option_with_keys(event, opt_sound_enabled)
+                            settings.SOUND_ENABLED = opt_sound_enabled
                         elif advanced_selected == 1:  # Música
-                            opt_music_enabled = not opt_music_enabled
+                            opt_music_enabled = toggle_option_with_keys(event, opt_music_enabled)
+                            settings.MUSIC_ENABLED = opt_music_enabled
+                            # Detener música si se desactiva
+                            if not opt_music_enabled:
+                                audio.stop_music()
+                            else:
+                                # Reanudar música del menú si se activa
+                                audio.play_music(settings.AUDIO_CONFIG['music']['music_menu'], loop=True)
                         elif advanced_selected == 2:  # Multi-comida
-                            opt_multi_food = not opt_multi_food
+                            opt_multi_food = toggle_option_with_keys(event, opt_multi_food)
                         elif advanced_selected == 3:  # Resetear todo
                             if event.key in (pygame.K_RETURN, pygame.K_SPACE):
                                 # Resetear todas las configuraciones a valores por defecto
