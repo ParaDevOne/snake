@@ -13,11 +13,11 @@ import platform
 import shutil
 import subprocess
 import sys
-import threading
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
+# from concurrent.futures import ThreadPoolExecutor  # Reserved for future parallel operations
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List
+
 
 class Colors:
     """Colores para output en consola."""
@@ -34,11 +34,11 @@ class Colors:
 
 class BuildCache:
     """Sistema de caché para builds incrementales."""
-    
+
     def __init__(self, cache_file: str = ".build_cache.json"):
         self.cache_file = Path(cache_file)
         self.cache_data = self._load_cache()
-    
+
     def _load_cache(self) -> Dict:
         """Carga el caché desde archivo."""
         if self.cache_file.exists():
@@ -48,7 +48,7 @@ class BuildCache:
             except (json.JSONDecodeError, OSError):
                 pass
         return {"files": {}, "last_build": None, "config_hash": None}
-    
+
     def _save_cache(self) -> None:
         """Guarda el caché a archivo."""
         try:
@@ -56,7 +56,7 @@ class BuildCache:
                 json.dump(self.cache_data, f, indent=2)
         except OSError:
             pass
-    
+
     def get_file_hash(self, file_path: Path) -> str:
         """Calcula hash MD5 de un archivo."""
         try:
@@ -64,27 +64,27 @@ class BuildCache:
                 return hashlib.md5(f.read()).hexdigest()
         except OSError:
             return ""
-    
+
     def has_changed(self, file_path: Path) -> bool:
         """Verifica si un archivo ha cambiado desde el último build."""
         current_hash = self.get_file_hash(file_path)
         cached_hash = self.cache_data["files"].get(str(file_path), "")
         return current_hash != cached_hash
-    
+
     def update_file(self, file_path: Path) -> None:
         """Actualiza el hash de un archivo en el caché."""
         self.cache_data["files"][str(file_path)] = self.get_file_hash(file_path)
-    
+
     def get_config_hash(self, config: Dict) -> str:
         """Calcula hash de la configuración del build."""
         config_str = json.dumps(config, sort_keys=True)
         return hashlib.md5(config_str.encode()).hexdigest()
-    
+
     def config_changed(self, config: Dict) -> bool:
         """Verifica si la configuración ha cambiado."""
         current_hash = self.get_config_hash(config)
         return current_hash != self.cache_data.get("config_hash")
-    
+
     def update_build(self, config: Dict) -> None:
         """Actualiza información del último build."""
         self.cache_data["last_build"] = time.time()
@@ -93,7 +93,7 @@ class BuildCache:
 
 class BuildProfile:
     """Perfiles de configuración para diferentes tipos de build."""
-    
+
     PROFILES = {
         "debug": {
             "optimize": "0",
@@ -121,12 +121,12 @@ class BuildProfile:
             "description": "Build portable con dependencias incluidas"
         }
     }
-    
+
     @classmethod
     def get_profile(cls, name: str) -> Dict:
         """Obtiene configuración de un perfil."""
         return cls.PROFILES.get(name, cls.PROFILES["release"])
-    
+
     @classmethod
     def list_profiles(cls) -> List[str]:
         """Lista perfiles disponibles."""
@@ -242,35 +242,36 @@ def print_colored(message, color=Colors.ENDC, end='\n'):
 
 class BuildValidator:
     """Validador para verificar la integridad del build."""
-    
+
     @staticmethod
     def test_executable(exe_path: Path) -> bool:
         """Prueba básica del ejecutable."""
         if not exe_path.exists():
             return False
-        
+
         try:
             # Verificar que el archivo es ejecutable
             if platform.system() != "Windows":
                 if not os.access(exe_path, os.X_OK):
                     return False
-            
+
             # Intentar ejecutar con --help o --version (timeout rápido)
             result = subprocess.run(
                 [str(exe_path), "--help"],
                 capture_output=True,
                 timeout=5,
-                text=True
+                text=True,
+                check=False
             )
             return result.returncode == 0
         except (subprocess.TimeoutExpired, subprocess.CalledProcessError, OSError):
             return False
-    
+
     @staticmethod
     def validate_dependencies(exe_path: Path) -> List[str]:
         """Valida dependencias del ejecutable."""
         issues = []
-        
+
         if platform.system() == "Windows":
             # Verificar DLLs comunes en Windows
             common_dlls = ["vcruntime140.dll", "msvcp140.dll"]
@@ -279,13 +280,18 @@ class BuildValidator:
                     result = subprocess.run(
                         ["where", dll],
                         capture_output=True,
-                        timeout=5
+                        timeout=5,
+                        check=False
                     )
                     if result.returncode != 0:
                         issues.append(f"DLL faltante: {dll}")
                 except (subprocess.TimeoutExpired, subprocess.CalledProcessError):
                     issues.append(f"No se pudo verificar: {dll}")
-        
+
+        # Verificar que el ejecutable existe (usar exe_path para evitar warning)
+        if not exe_path.exists():
+            issues.append(f"Ejecutable no encontrado: {exe_path}")
+
         return issues
 
 def clean_build_files():
@@ -437,12 +443,6 @@ def check_main_file():
     print_colored("✅ Archivo __main__.py encontrado y válido.", Colors.OKGREEN)
     return True
 
-def create_lib_directory():
-    """Crea el directorio lib/ si no existe."""
-    lib_dir = Path("lib")
-    lib_dir.mkdir(exist_ok=True)
-    return lib_dir
-
 def get_build_configuration():
     """Permite al usuario configurar opciones del build."""
     print_colored("\n⚙️  Configuración del Build:", Colors.HEADER)
@@ -454,7 +454,7 @@ def get_build_configuration():
     for i, profile in enumerate(profiles, 1):
         profile_info = BuildProfile.get_profile(profile)
         print_colored(f"   {i}. {profile.capitalize()}: {profile_info['description']}", Colors.OKCYAN)
-    
+
     print_colored("\n🎯 Seleccionar perfil (1-3) o Enter para 'release': ", Colors.OKCYAN, end="")
     try:
         choice = input().strip()
@@ -468,7 +468,7 @@ def get_build_configuration():
             selected_profile = "release"
     except (ValueError, KeyboardInterrupt):
         selected_profile = "release"
-    
+
     profile_config = BuildProfile.get_profile(selected_profile)
     print_colored(f"✅ Perfil seleccionado: {selected_profile.capitalize()}", Colors.OKGREEN)
 
@@ -504,7 +504,7 @@ def build_executable(upx_path=None, config=None):
         config = {}
 
     profile_config = config.get('profile_config', {})
-    
+
     # Configuración específica por sistema operativo
     system = platform.system()
     exe_name = "Snake Game.exe" if system == "Windows" else "Snake Game"
@@ -514,7 +514,7 @@ def build_executable(upx_path=None, config=None):
     build_mode = "--onedir" if profile_config.get('onedir') else "--onefile"
     window_mode = "--console" if profile_config.get('console') else "--windowed"
     optimize_level = profile_config.get('optimize', '2')
-    
+
     cmd = [
         "pyinstaller",
         build_mode,
@@ -526,7 +526,7 @@ def build_executable(upx_path=None, config=None):
         "--workpath", "build",
         "--optimize", optimize_level,
     ]
-    
+
     # Agregar debug info si es perfil debug
     if profile_config.get('debug'):
         cmd.extend(["--debug", "all"])
@@ -675,7 +675,7 @@ def show_build_info(upx_used=False, config=None):
     system_icon = "🪟" if system == "Windows" else "🍎" if system == "Darwin" else "🐧"
     print_colored(f"{system_icon} Sistema: {system} ({platform.release()})", Colors.OKBLUE)
     print_colored(f"🏗️ Arquitectura: {platform.machine()}", Colors.OKBLUE)
-    
+
     # Mostrar perfil usado
     if config and config.get('profile'):
         profile = config['profile']
@@ -709,12 +709,12 @@ def show_build_info(upx_used=False, config=None):
         # Validar ejecutable
         print_colored("🔍 Validando ejecutable...", Colors.OKCYAN)
         validator = BuildValidator()
-        
+
         if validator.test_executable(exe_file):
             print_colored("✅ Ejecutable válido y funcional", Colors.OKGREEN)
         else:
             print_colored("⚠️  Ejecutable puede tener problemas", Colors.WARNING)
-        
+
         # Verificar dependencias
         issues = validator.validate_dependencies(exe_file)
         if issues:
@@ -755,7 +755,7 @@ def main():
 
     system = platform.system()
     print_colored(f"💻 Sistema detectado: {system}", Colors.OKBLUE)
-    
+
     # Inicializar caché de build
     cache = BuildCache()
     print_colored("📦 Sistema de caché inicializado", Colors.OKCYAN)
@@ -781,7 +781,7 @@ def main():
     # Configuración del build
     try:
         config = get_build_configuration()
-        
+
         # Verificar si necesita rebuild basado en caché
         if not cache.config_changed(config):
             main_file = Path("__main__.py")
@@ -810,7 +810,6 @@ def main():
     # Proceso de construcción
     try:
         clean_build_files()
-        create_lib_directory()
 
         # Ajustar UPX según configuración
         final_upx_path = upx_path if config.get('use_upx', True) else None
@@ -822,11 +821,11 @@ def main():
             cache.update_build(config)
             if Path("__main__.py").exists():
                 cache.update_file(Path("__main__.py"))
-            
+
             show_build_info(upx_used=bool(final_upx_path), config=config)
             print_colored("\n🎉 ¡Build completado exitosamente!", Colors.OKGREEN)
             print_colored("🚀 Tu ejecutable está listo en la carpeta 'dist/'", Colors.OKGREEN)
-            
+
             profile = config.get('profile', 'release')
             print_colored(f"📋 Perfil usado: {profile.capitalize()}", Colors.OKBLUE)
 
