@@ -8,10 +8,10 @@
 import os
 import sys
 
-import src.snake.modules.menu as menu
-import src.snake.system.settings as settings
-import src.snake.system.utils as utils
-import src.snake.system.video_config as video_config
+from src.snake.modules import menu
+from src.snake.system import settings
+from src.snake.system import utils
+from src.snake.system import video_config
 from src.snake.core.game import MOVE_EVENT, Game
 from src.snake.modules.visual_effects import VisualEffects
 
@@ -109,7 +109,7 @@ def run():
             clock.tick(60)
 
         pygame.quit()
-        utils.log_info("Juego terminado por el usuario")
+        utils.log_info("Game terminated for user")
         utils.close_logging_session()
         sys.exit(0)
 
@@ -117,7 +117,7 @@ if __name__ == "__main__":
     try:
         run()
     except KeyboardInterrupt:
-        utils.log_info("Juego interrumpido por el usuario (Ctrl+C)")
+        utils.log_info("Game terminated for user")
         utils.close_logging_session()
         if pygame:
             pygame.quit()
@@ -126,13 +126,13 @@ if __name__ == "__main__":
         # Manejar errores críticos específicos
         error_type = type(e).__name__
         if isinstance(e, (ImportError, ModuleNotFoundError)):
-            utils.log_critical(f"Error de módulo: {e}")
+            utils.log_critical(f"Module error: {e}")
         elif isinstance(e, OSError):
-            utils.log_critical(f"Error de sistema/archivo: {e}")
+            utils.log_critical(f"System/file error: {e}")
         elif isinstance(e, RuntimeError):
-            utils.log_critical(f"Error de ejecución: {e}")
+            utils.log_critical(f"Runtime error: {e}")
         else:
-            utils.log_critical(f"Error crítico ({error_type}): {e}")
+            utils.log_critical(f"Critical error ({error_type}): {e}")
         utils.close_logging_session()
         if pygame:
             pygame.quit()
