@@ -16,6 +16,5 @@ pyinstaller==6.15.0
 pyinstaller-hooks-contrib==2025.8
 pywin32-ctypes==0.2.3
 setuptools==80.9.0
--e git+https://github.com/ParaDevOne/snake.git@d2d54e1f2f063430826fe2cd42e3fbe16f94859d#egg=snake
 tomlkit==0.13.3
 wheel==0.45.1
