@@ -208,7 +208,7 @@ def find_upx_windows():
                     return str(path), f"ubicación: {path}"
             except (FileNotFoundError, subprocess.CalledProcessError, PermissionError, subprocess.TimeoutExpired):
                 continue
-            except Exception:
+            except ImportError:
                 continue
 
     return None, None
@@ -240,7 +240,7 @@ def check_dependencies():
     except subprocess.TimeoutExpired:
         print_colored("❌ Timeout verificando PyInstaller", Colors.FAIL)
         dependencies_ok = False
-    except Exception as e:
+    except ImportError as e:
         print_colored(f"❌ Error inesperado comprobando PyInstaller: {e}", Colors.FAIL)
         dependencies_ok = False
 
@@ -266,21 +266,21 @@ def check_dependencies():
 
 def check_main_file():
     """Verifica que el archivo main.py exista."""
-    main_file = Path("main.py")
+    main_file = Path("__main__.py")
     if not main_file.exists():
-        print_colored("❌ Archivo main.py no encontrado.", Colors.FAIL)
+        print_colored("❌ Archivo __main__.py no encontrado.", Colors.FAIL)
         print_colored("💡 Asegúrate de estar en el directorio correcto del proyecto.", Colors.WARNING)
         return False
 
     # Verificar que el archivo no esté vacío
     try:
         if main_file.stat().st_size == 0:
-            print_colored("⚠️  El archivo main.py está vacío.", Colors.WARNING)
+            print_colored("⚠️  El archivo __main__.py está vacío.", Colors.WARNING)
             return False
     except OSError as e:
-        print_colored(f"⚠️  Error verificando main.py: {e}", Colors.WARNING)
+        print_colored(f"⚠️  Error verificando __main__.py: {e}", Colors.WARNING)
 
-    print_colored("✅ Archivo main.py encontrado y válido.", Colors.OKGREEN)
+    print_colored("✅ Archivo __main__.py encontrado y válido.", Colors.OKGREEN)
     return True
 
 def create_lib_directory():
@@ -467,7 +467,7 @@ def build_executable(upx_path=None, config=None):
                     print_colored(f"  {line}", Colors.OKCYAN)
 
         return False
-    except Exception as e:
+    except ImportError as e:
         print_colored(f"❌ Error inesperado: {str(e)}", Colors.FAIL)
         return False
 
@@ -528,7 +528,7 @@ def show_build_info(upx_used=False, config=None):
                     print_colored("🗜️  Comprimido con UPX", Colors.OKGREEN)
                     print_colored(f"📈 Tamaño estimado sin UPX: ~{estimated_original:.1f} MB", Colors.OKCYAN)
                     print_colored(f"💾 Espacio ahorrado: ~{estimated_original - size_mb:.1f} MB", Colors.OKGREEN)
-                except Exception:
+                except ImportError:
                     pass
         else:
             print_colored("⚠️  Permisos de ejecución faltantes", Colors.WARNING)
@@ -606,7 +606,7 @@ def main():
     except KeyboardInterrupt:
         print_colored("\n⏹️  Build cancelado por el usuario.", Colors.WARNING)
         sys.exit(1)
-    except Exception as e:
+    except ImportError as e:
         print_colored(f"\n❌ Error inesperado: {str(e)}", Colors.FAIL)
         print_colored("💡 Si el problema persiste, verifica tu instalación de Python y PyInstaller.", Colors.WARNING)
         sys.exit(1)

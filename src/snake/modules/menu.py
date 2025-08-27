@@ -466,7 +466,7 @@ def run():
                         elif visual_selected == 6:  # Efectos brillo
                             opt_glow_effects = not opt_glow_effects
                         elif visual_selected == 7:  # Pantalla completa
-                            if event.key in (pygame.K_LEFT, pygame.K_RIGHT):
+                            if event.key in (pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RETURN, pygame.K_KP_ENTER, pygame.K_SPACE):
                                 opt_fullscreen = not opt_fullscreen
                                 # Guardar en configuración global
                                 settings.FULLSCREEN = opt_fullscreen
