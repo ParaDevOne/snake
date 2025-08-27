@@ -111,6 +111,8 @@ LOG_TO_CONSOLE = True
 	- Fixed bugs related to music and audio playback
 	- Improved input handling for smoother gameplay
 	- Enhanced overall game performance
+	- Fixed splash screen background color issue.
+	- Changed splash screen background from blue-gray to black for better visual consistency.
 	- And new structure for the project.
 
 > [!NOTE]

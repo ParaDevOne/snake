@@ -141,7 +141,7 @@ class VisualEffects:
         text_rect = loading_text.get_rect(center=(settings.WIDTH // 2, settings.HEIGHT // 2 + 80))
         dot_count = 0
         while (pygame.time.get_ticks() - start_time) < duration * 1000:
-            screen.fill((30, 40, 60))
+            screen.fill((0, 0, 0))
             screen.blit(logo, logo_rect)
             # Animación de puntos
             dots = '.' * ((dot_count // 20) % 4)
