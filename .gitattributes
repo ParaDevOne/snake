@@ -1,5 +1,7 @@
 # --- Normalización de saltos de línea ---
 * text=auto eol=lf
+*.py text eol=lf
+*.md text eol=lf
 
 # Código Python -> LF siempre (compatibilidad Linux/macOS)
 *.py text eol=lf

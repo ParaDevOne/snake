@@ -1,10 +1,10 @@
-# 🐍 Snake Game Version 1.8.0
+# 🐍 Snake Game Version 1.8.1
 
 ![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)
 ![Pygame](https://img.shields.io/badge/pygame-2.6.1-green)
 ![License](https://img.shields.io/badge/license-SOL%203.0-orange)
 ![Status](https://img.shields.io/badge/status-stable-success)
-![Version](https://img.shields.io/badge/version-1.8.0-brightgreen)
+![Version](https://img.shields.io/badge/version-1.8.1-brightgreen)
 
 > **Snake — modular, cross-platform with advanced visual effects, persistent profiles and developer workflows.**
 
@@ -34,6 +34,7 @@
 - Logs: `Data/logs.txt`
 - Profiles: `Data/profiles/`
 - Audio: `Data/assets/audio/`
+- Assets & Icons: `Data/assets/`
 
 ---
 
@@ -41,24 +42,40 @@
 
 ```
 snake/
-├── main.py           # Main loop and orchestration
-├── game.py           # Game controller and state
-├── snake.py          # Snake logic
-├── food.py           # Food and powerups
-├── menu.py           # Menus and navigation
-├── logic.py          # Helper functions
-├── settings.py       # Centralized configuration
-├── profiles.py       # Profile and score management
-├── utils.py          # Utilities and logging
-├── visual_effects.py # Visual effects and particle system
-├── video_config.py   # Automatic SDL configuration
-├── requirements.txt  # Dependencies
-├── pyproject.toml    # Poetry / build config
-├── setup.py          # PyInstaller build script
-├── obstacles.py      # Obstacle logic and rendering
-├── ui_components.py  # UI components and widgets
-├── Data/             # Profiles, logs, persisted data
-└── docs/             # Technical documentation
+├── __main__.py                    # Entry point
+├── src/                           # Source code
+│   └── snake/                     # Main package
+│       ├── __init__.py
+│       ├── main.py                # Main loop and orchestration
+│       ├── core/                  # Core game logic
+│       │   ├── __init__.py
+│       │   ├── game.py            # Game controller and state
+│       │   ├── snake.py           # Snake logic
+│       │   ├── food.py            # Food and powerups
+│       │   └── logic.py           # Helper functions
+│       ├── modules/               # Game modules
+│       │   ├── __init__.py
+│       │   ├── menu.py            # Menus and navigation
+│       │   ├── profiles.py        # Profile and score management
+│       │   ├── visual_effects.py  # Visual effects and particle system
+│       │   ├── obstacles.py       # Obstacle logic and rendering
+│       │   └── ui_components.py   # UI components and widgets
+│       └── system/                # System utilities
+│           ├── __init__.py
+│           ├── settings.py        # Centralized configuration
+│           ├── utils.py           # Utilities and logging
+│           ├── video_config.py    # Automatic SDL configuration
+│           └── audio_manager.py   # Audio system management
+├── scripts/                       # Build and utility scripts
+│   └── build.py                   # Build script
+├── Data/                          # Profiles, logs, persisted data
+│   ├── assets/                    # Game assets
+│   ├── profiles/                  # User profiles
+│   └── logs.txt                   # Game logs
+├── docs/                          # Technical documentation
+├── requirements.txt               # Dependencies
+├── pyproject.toml                 # Poetry / build config
+└── pyrightconfig.json             # Type checking config
 ```
 
 ---
@@ -69,6 +86,8 @@ snake/
 - Drivers and SDL optimizations in `video_config.py`
 - Profiles and scores: `Data/profiles/` (one profile name per user)
 - Logging configurable: levels, file, console, warnings, errors
+- Assets & Icons: `Data/assets/`
+- Audio: `Data/assets/audio/`
 
 Example configuration:
 
@@ -86,12 +105,13 @@ LOG_TO_CONSOLE = True
 
 ## 📝 Versions & Changes
 
-## [1.8.0] - 23-08-2025
-- New features and improvements.
-	- Full audio system: dynamic background music and sound effects for most actions.
-  - Added splash screen with game logo and loading animation.
-	- Fixed fullscreen and menu.
-	- Preparation for multiplayer and new game modes.
+## [1.8.1] - 27-08-2025
+- Improvement & Bug Fixes
+	- Fixed bugs related to fullscreen and menu navigation
+	- Fixed bugs related to music and audio playback
+	- Improved input handling for smoother gameplay
+	- Enhanced overall game performance
+	- And new structure for the project.
 
 > [!NOTE]
 > **Previous releases can be found in the [`CHANGELOG.md`](./docs/CHANGELOG.md) file.**
@@ -146,7 +166,7 @@ cd snake
 pip install -r requirements.txt
 
 # 3. Run the game
-python -m main
+python -m __main__
 ```
 
 ### Step-by-step Installation
@@ -264,12 +284,12 @@ Contributions are welcome! This project follows an open development model.
 
 ## 📞 Future Improvements
 
-### Planned Version - 1.8.1
--  Improvement & Bug Fixes
-- Fix bugs related to fullscreen and menu navigation.
-- Bug relation from music and audio playback.
-- Improve input handling for smoother gameplay.
-- Enhance overall game performance.
+### Version 1.8.1 - Released
+- Improvement & Bug Fixes
+- Fixed bugs related to fullscreen and menu navigation
+- Fixed bugs related to music and audio playback
+- Improved input handling for smoother gameplay
+- Enhanced overall game performance
 
 ### Concept Version
 

@@ -6,6 +6,13 @@
 
 ---
 
+## [1.8.1] - 27-08-2025
+	Fixed bugs related to fullscreen and menu navigation.
+	Fixed bugs related to music and audio playback.
+	Improved input handling for smoother gameplay.
+	Enhanced overall game performance.
+	And new structure for the project.
+
 ## [1.8.0] - 23-08-2025
 	Full audio system: dynamic background music and sound effects for most actions.
 	Added splash screen with game logo and loading animation.
