@@ -56,8 +56,8 @@ jobs:
       shell: bash
       run: |
         # Verificar solo el archivo principal
-        if [[ ! -f "main.py" ]]; then
-          echo "::error::❌ main.py not found in repository root"
+        if [[ ! -f "__main__.py" ]]; then
+          echo "::error::❌ __main__.py not found in repository root"
           echo "Directory contents:"
           ls -la
           exit 1
@@ -95,7 +95,7 @@ jobs:
           --distpath dist \
           --workpath build/pyinstaller \
           --specpath build \
-          main.py
+          __main__.py
 
         # Verificar resultado
         if [[ ! -f "dist/$OUTPUT_NAME" ]]; then
@@ -132,6 +132,5 @@ jobs:
         name: snake-artifacts-${{ matrix.os }}-${{ matrix.python-version }}
         path: |
           dist/
-          artifacts/
         retention-days: 7
         if-no-files-found: error
