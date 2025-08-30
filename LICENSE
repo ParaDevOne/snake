@@ -1,0 +1,153 @@
+SPDX-License-Identifier: LicenseRef-ParaDevOne-SOL-3.0
+
+SIMPLIFIED OPEN LICENSE (SOL)
+Version 3.0, August 2025
+
+Copyright (c) 2025 ParaDevOne
+
+================================================================================
+
+PREAMBLE
+
+The Simplified Open License ensures that software remains accessible to all users while protecting the rights of original creators. This license grants comprehensive freedoms to use, study, modify, and distribute software while maintaining clear attribution requirements. The terms below establish a balanced framework that promotes innovation while respecting intellectual property rights.
+
+================================================================================
+
+SECTION 1: FUNDAMENTAL DEFINITIONS
+
+1.1 License Scope
+    This License refers to version 3.0 of the Simplified Open License and governs all use of the accompanying software.
+
+1.2 Software Definition
+    "The Program" means any copyrightable work distributed under this License, including source code, documentation, and associated materials.
+
+1.3 User Categories
+    "Licensee" refers to any individual or organization exercising rights under this License. "Contributor" means any party who modifies or enhances the Program.
+
+1.4 Distribution Activities
+    "Distribution" encompasses any method of making the Program available to third parties, including electronic transmission, physical media, or online hosting services.
+
+1.5 Modification Standards
+    "Modified Version" means any derivative work containing the original Program or portions thereof, whether altered, enhanced, or translated.
+
+================================================================================
+
+SECTION 2: GRANTED PERMISSIONS
+
+2.1 Usage Rights
+    You may execute the Program for any purpose without restriction, including commercial applications, research activities, and personal use.
+
+2.2 Distribution Rights
+    You may copy and distribute unmodified versions of the Program through any medium, subject to the attribution requirements specified herein.
+
+2.3 Modification Rights
+    You may create derivative works based on the Program and distribute these modifications under the terms of this License.
+
+2.4 Sublicensing (limited)
+    You may grant sublicenses only to the extent that such sublicenses do not impose additional restrictions beyond the rights granted by this License. Any sublicense must reproduce this License (or a copy of it) and must comply with the attribution requirements set out in Section 3.
+
+================================================================================
+
+SECTION 3: MANDATORY REQUIREMENTS
+
+3.1 Attribution Standards
+    Every distribution, whether original or modified, must include copyright and attribution information in the following locations: a top-level README file and in the header of each modified source file. The attribution must contain the name or names of the original author or authors, the Program name, the license identifier "LicenseRef-ParaDevOne-SOL-3.0", and where available, a link to the source repository or project homepage. When no specific attribution text is provided by the licensor, distributors shall use the following standard text: "Copyright (c) [year] ParaDevOne. Licensed under LicenseRef-ParaDevOne-SOL-3.0."
+
+3.2 License Preservation
+    Every copy or Modified Version must include the complete text of this License and all existing copyright notices without modification or omission.
+
+3.3 Modification Disclosure
+    When distributing Modified Versions, you must clearly identify all changes made and provide appropriate version information, including but not limited to a changelog and version number that distinguishes the modified work from the original.
+
+3.4 Interactive Notice Requirements (revised)
+    For interactive programs, the attribution and license information must be accessible from a visible "About" dialog or equivalent and displayed on first-run only if the licensor provides a short attribution text to be shown at first run. Distributors must not be required to implement promotional splash-screens or similar behaviors that materially alter the user experience. A README at the top level and an "About" entry satisfy the accessibility requirement.
+
+================================================================================
+
+SECTION 4: PATENT AND LEGAL PROTECTIONS
+
+4.1 Patent Grant (expanded)
+    Each Contributor hereby grants to Licensees a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable patent license to any patent claims that are necessarily infringed by their contribution to the Program, to the extent such patents are valid and in force.
+
+4.2 Anti-Circumvention Protection
+    This License does not authorize the use of the Program as part of technological protection measures that restrict user access or modification rights in a manner contrary to this License, including but not limited to applying digital rights management systems to the Program in ways that would limit the rights granted herein.
+
+4.3 Defensive Patent Termination
+    If a party initiates patent litigation alleging that the Program infringes such party's patents, the patent license granted to that litigant under Section 4.1 shall terminate automatically as to the litigant. This termination is distinct from termination for other breaches under Section 6.1 and does not affect the application of Section 6.1 to non-patent breaches.
+
+================================================================================
+
+SECTION 5: SOURCE CODE OBLIGATIONS
+
+5.1 Source Availability (defined)
+    When distributing object (compiled) forms, the distributor must provide access to the complete corresponding source code by one of the following means: (a) include the complete source code in the same distribution medium; or (b) provide a machine-readable written offer, valid for at least three (3) years, to supply the source code at no charge via a publicly accessible network location (HTTP/HTTPS) maintained for that period. "Complete corresponding source" means source sufficient to build the object form and includes build scripts and instructions necessary for compilation.
+
+5.2 Compilation Information
+    Source distributions must include comprehensive installation instructions and any compilation scripts necessary for building executable versions of the Program.
+
+5.3 Third-Party Dependencies
+    Source packages must identify all external libraries and dependencies required for proper functionality, including references or links to the licenses governing those dependencies.
+
+================================================================================
+
+SECTION 6: LICENSE COMPLIANCE AND ENFORCEMENT
+
+6.1 Termination for breach; notice and cure
+    Violation of any term of this License will result in termination of the violator's rights 30 days after receiving written notice from a copyright holder, unless the violation is cured within that 30-day period. If the violation is cured within that period, rights are reinstated retroactively. Repeat or willful violations may result in permanent termination.
+
+6.2 Restoration of rights
+    If rights have been terminated under Section 6.1, restoration of those rights may occur only by written agreement of the copyright holder.
+
+6.3 Downstream Protection
+    Recipients obtain licenses directly from the original copyright holders to the extent of the rights granted by this License. Intermediary distributors may not revoke rights that have already been granted to compliant recipients.
+
+================================================================================
+
+SECTION 7: WARRANTY DISCLAIMERS AND LIABILITY LIMITATIONS
+
+7.1 Warranty Disclaimer
+    THE PROGRAM IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+
+7.2 Liability Limitation
+    IN NO EVENT SHALL COPYRIGHT HOLDERS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, PUNITIVE, OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+7.3 Risk Assumption
+    Users assume all risks associated with Program operation, including but not limited to data loss, system damage, or business interruption.
+
+================================================================================
+
+SECTION 8: GENERAL PROVISIONS
+
+8.1 License Evolution
+    The copyright holder may publish revised versions of this License. Programs may specify version requirements; if no version requirement is specified, the work is understood to accept this version or any later published version.
+
+8.2 Severability
+    If any provision of this License is held invalid or unenforceable by a court of competent jurisdiction, the remaining provisions will remain in full force and effect.
+
+8.3 Governing Law and Jurisdiction
+    This License shall be interpreted according to the laws of Spain. For any dispute arising under this License, the parties submit to the exclusive jurisdiction of the competent courts of Madrid, Spain, unless otherwise agreed in writing by all parties.
+
+================================================================================
+
+SECTION 9: ADDITIONAL PROVISIONS
+
+9.1 No Additional Restrictions
+    No Licensee may impose further legal or technical terms that limit the rights granted by this License (including, but not limited to, imposing digital rights management that restricts rights established by this License).
+
+9.2 Trademark and Endorsement Limitations
+    This License does not grant rights in any trademarks, trade names, or logos of the copyright holder. Use of such marks requires separate written permission. Use of the Program does not imply endorsement, sponsorship, or affiliation with the authors except by explicit written agreement.
+
+9.3 Notification Procedure
+    For purposes of notices under Section 6.1, notices should be sent via email to the project contact listed in the repository and also created as a public issue in the repository, unless the copyright holder specifies another method in the copyright notice.
+
+9.4 Contributor Agreements
+    Project maintainers may require contributors to execute a Developer Certificate of Origin or Contributor License Agreement to clarify the legal basis of rights granted for contributions to the Program.
+
+9.5 Network Distribution and Software as a Service
+    If the copyright holder wishes to impose code-sharing obligations for modifications used exclusively over a network without binary distribution, such requirements must be specified explicitly in the project documentation. By default, this License does not impose additional obligations for network-only use or Software as a Service deployments.
+
+================================================================================
+
+NOTICE: This license has not undergone formal legal review. Legal consultation with qualified intellectual property or open source counsel is strongly recommended before implementation in production environments.
+
+END OF LICENSE TERMS
