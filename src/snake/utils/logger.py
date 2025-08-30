@@ -22,59 +22,86 @@ def setup_logger(name):
     """Configura y devuelve un logger con el nombre dado."""
     logger = logging.getLogger(name)
     logger.setLevel(LOG_LEVEL)
-    
+
     # Evitar múltiples handlers
     if logger.handlers:
         return logger
-    
+
     # Formato
     formatter = logging.Formatter(LOG_FORMAT)
-    
+
     # Handler para consola
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
-    
+
     # Handler para archivo
     file_handler = logging.FileHandler(LOG_FILE)
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
-    
+
     return logger
 
-def log_system_info(message):
+def _get_logger(name):
+    return setup_logger(name)
+
+def log_system_info(msg, *args, context='', **kwargs):
     """Registra información del sistema."""
-    logger = setup_logger('system')
-    logger.info(f"[SYSTEM] {message}")
+    try:
+        logger = _get_logger('system')
+        if logger.isEnabledFor(logging.INFO):
+            if context:
+                logger.info('[%s] %s', context, msg, *args, **kwargs)
+            else:
+                logger.info(msg, *args, **kwargs)
+    except Exception as e:
+        print(f"Error en log_system_info: {e}", file=sys.stderr)
 
-def log_debug(message, context=''):
+def log_debug(msg, *args, context='', **kwargs):
     """Registra un mensaje de depuración."""
-    logger = setup_logger('debug')
-    if context:
-        logger.debug(f"[{context}] {message}")
-    else:
-        logger.debug(message)
+    try:
+        logger = _get_logger('debug')
+        if logger.isEnabledFor(logging.DEBUG):
+            if context:
+                logger.debug('[%s] %s', context, msg, *args, **kwargs)
+            else:
+                logger.debug(msg, *args, **kwargs)
+    except Exception as e:
+        print(f"Error en log_debug: {e}", file=sys.stderr)
 
-def log_info(message, context=''):
+def log_info(msg, *args, context='', **kwargs):
     """Registra un mensaje informativo."""
-    logger = setup_logger('info')
-    if context:
-        logger.info(f"[{context}] {message}")
-    else:
-        logger.info(message)
+    try:
+        logger = _get_logger('info')
+        if logger.isEnabledFor(logging.INFO):
+            if context:
+                logger.info('[%s] %s', context, msg, *args, **kwargs)
+            else:
+                logger.info(msg, *args, **kwargs)
+    except Exception as e:
+        print(f"Error en log_info: {e}", file=sys.stderr)
 
-def log_warning(message, context=''):
+def log_warning(msg, *args, context='', **kwargs):
     """Registra una advertencia."""
-    logger = setup_logger('warning')
-    if context:
-        logger.warning(f"[{context}] {message}")
-    else:
-        logger.warning(message)
+    try:
+        logger = _get_logger('warning')
+        if logger.isEnabledFor(logging.WARNING):
+            if context:
+                logger.warning('[%s] %s', context, msg, *args, **kwargs)
+            else:
+                logger.warning(msg, *args, **kwargs)
+    except Exception as e:
+        print(f"Error en log_warning: {e}", file=sys.stderr)
 
-def log_error(message, context=''):
+def log_error(msg, *args, context='', **kwargs):
     """Registra un error."""
-    logger = setup_logger('error')
-    if context:
-        logger.error(f"[{context}] {message}", exc_info=True)
-    else:
-        logger.error(message, exc_info=True)
+    try:
+        logger = _get_logger('error')
+        if logger.isEnabledFor(logging.ERROR):
+            log_kwargs = {'exc_info': True, **kwargs}
+            if context:
+                logger.error('[%s] %s', context, msg, *args, **log_kwargs)
+            else:
+                logger.error(msg, *args, **log_kwargs)
+    except Exception as e:
+        print(f"Error en log_error: {e}", file=sys.stderr)

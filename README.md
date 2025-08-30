@@ -106,7 +106,7 @@ LOG_TO_CONSOLE = True
 
 ## 📝 Versions & Changes
 
-## [1.8.1] - 27-08-2025
+### [1.8.1] - 27-08-2025
 
 - Fixed bugs related to fullscreen and menu navigation
 - Fixed bugs related to music and audio playback
