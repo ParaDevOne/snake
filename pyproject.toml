@@ -1,13 +1,13 @@
 [project]
 name = "snake"
 version = "1.8.0"
-description = "A classic snake game with profile management and settings."
+description = "A snake game."
 authors = [
     {name = "ParaDevOne"}
 ]
 license = {text = "SOL"}
 readme = "README.md"
-requires-python = "3.13.5"
+requires-python = ">= 3.13.5"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
@@ -32,6 +32,25 @@ packages = [{include = "snake", from = "src"}]
 start = 'src.snake.main:run'
 build = 'scripts.build:main'
 
+[tool.pyright]
+# Modo intermedio: ni flojo ni demente
+typeCheckingMode = "standard"
+
+autoImportCompletions = true
+useLibraryCodeForTypes = true
+# Ajusta según tu proyecto
+include = ["src"]
+exclude = ["tests", ".venv", "build", "dist", "scripts"]
+
+# Entorno virtual de Poetry dentro del proyecto
+venvPath = "."
+venv = ".venv"
+
+# Reglas adicionales finas
+reportMissingParameterType = false
+reportUnknownMemberType = false
+reportUnknownParameterType = false
+reportMissingReturnType = false
 
 # algunas subdependencias adicionales no hay que eliminarlas
 # porque no sabes que subdependencias pueden ser necesarias para las dependencias en si

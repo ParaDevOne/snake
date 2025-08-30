@@ -71,6 +71,7 @@ profiler-results/
 # Data and logs
 Data/profiles/
 Data/logs.txt
+Data/logs/
 
 # System files
 Thumbs.db

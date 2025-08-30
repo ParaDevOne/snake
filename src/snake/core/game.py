@@ -6,8 +6,8 @@ import time
 
 import pygame
 
-from src.snake.modules.visual_effects import VisualEffects
 from src.snake.core.logic import GameLogic
+from src.snake.modules.visual_effects import VisualEffects
 from src.snake.system import settings
 from src.snake.system.audio_manager import AudioManager
 

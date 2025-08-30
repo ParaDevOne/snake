@@ -46,62 +46,108 @@ def _get_logger(name):
     return setup_logger(name)
 
 def log_system_info(msg, *args, context='', **kwargs):
-    """Registra información del sistema."""
+    """Registra información del sistema.
+    
+    Args:
+        msg: El mensaje a registrar
+        *args: Argumentos para formatear en el mensaje
+        context: Contexto opcional para el mensaje
+        **kwargs: Argumentos adicionales para el logger
+    """
     try:
         logger = _get_logger('system')
         if logger.isEnabledFor(logging.INFO):
             if context:
-                logger.info('[%s] %s', context, msg, *args, **kwargs)
+                # Si hay contexto, lo añadimos al mensaje
+                formatted_msg = f'[{context}] {msg}'
+                logger.info(formatted_msg, *args, **kwargs)
             else:
                 logger.info(msg, *args, **kwargs)
     except Exception as e:
-        print(f"Error en log_system_info: {e}", file=sys.stderr)
+        print(f"Error on log_system_info: {e}", file=sys.stderr)
 
 def log_debug(msg, *args, context='', **kwargs):
-    """Registra un mensaje de depuración."""
+    """Registra un mensaje de depuración.
+    
+    Args:
+        msg: El mensaje a registrar
+        *args: Argumentos para formatear en el mensaje
+        context: Contexto opcional para el mensaje
+        **kwargs: Argumentos adicionales para el logger
+    """
     try:
         logger = _get_logger('debug')
         if logger.isEnabledFor(logging.DEBUG):
             if context:
-                logger.debug('[%s] %s', context, msg, *args, **kwargs)
+                # Si hay contexto, lo añadimos al mensaje
+                formatted_msg = f'[{context}] {msg}'
+                logger.debug(formatted_msg, *args, **kwargs)
             else:
                 logger.debug(msg, *args, **kwargs)
     except Exception as e:
-        print(f"Error en log_debug: {e}", file=sys.stderr)
+        print(f"Error on log_debug: {e}", file=sys.stderr)
 
 def log_info(msg, *args, context='', **kwargs):
-    """Registra un mensaje informativo."""
+    """Registra un mensaje informativo.
+    
+    Args:
+        msg: El mensaje a registrar
+        *args: Argumentos para formatear en el mensaje
+        context: Contexto opcional para el mensaje
+        **kwargs: Argumentos adicionales para el logger
+    """
     try:
         logger = _get_logger('info')
         if logger.isEnabledFor(logging.INFO):
             if context:
-                logger.info('[%s] %s', context, msg, *args, **kwargs)
+                # Si hay contexto, lo añadimos al mensaje
+                formatted_msg = f'[{context}] {msg}'
+                logger.info(formatted_msg, *args, **kwargs)
             else:
                 logger.info(msg, *args, **kwargs)
     except Exception as e:
-        print(f"Error en log_info: {e}", file=sys.stderr)
+        print(f"Error on log_info: {e}", file=sys.stderr)
 
 def log_warning(msg, *args, context='', **kwargs):
-    """Registra una advertencia."""
+    """Registra una advertencia.
+    
+    Args:
+        msg: El mensaje a registrar
+        *args: Argumentos para formatear en el mensaje
+        context: Contexto opcional para el mensaje
+        **kwargs: Argumentos adicionales para el logger
+    """
     try:
         logger = _get_logger('warning')
         if logger.isEnabledFor(logging.WARNING):
             if context:
-                logger.warning('[%s] %s', context, msg, *args, **kwargs)
+                # Si hay contexto, lo añadimos al mensaje
+                formatted_msg = f'[{context}] {msg}'
+                logger.warning(formatted_msg, *args, **kwargs)
             else:
                 logger.warning(msg, *args, **kwargs)
     except Exception as e:
-        print(f"Error en log_warning: {e}", file=sys.stderr)
+        print(f"Error on log_warning: {e}", file=sys.stderr)
 
 def log_error(msg, *args, context='', **kwargs):
-    """Registra un error."""
+    """Registra un error.
+    
+    Args:
+        msg: El mensaje de error a registrar
+        *args: Argumentos para formatear en el mensaje
+        context: Contexto opcional para el mensaje
+        **kwargs: Argumentos adicionales para el logger
+    """
     try:
         logger = _get_logger('error')
         if logger.isEnabledFor(logging.ERROR):
+            # Asegurarse de que no sobrescribimos exc_info si ya está en kwargs
             log_kwargs = {'exc_info': True, **kwargs}
             if context:
-                logger.error('[%s] %s', context, msg, *args, **log_kwargs)
+                # Si hay contexto, lo añadimos al mensaje
+                formatted_msg = f'[{context}] {msg}'
+                logger.error(formatted_msg, *args, **log_kwargs)
             else:
                 logger.error(msg, *args, **log_kwargs)
     except Exception as e:
-        print(f"Error en log_error: {e}", file=sys.stderr)
+        print(f"Error on log_error: {e}", file=sys.stderr)

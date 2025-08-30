@@ -11,6 +11,7 @@ import pygame
 from src.snake.system import settings
 from src.snake.system.utils import log_error, log_info, log_warning
 
+
 class AudioManager:
     """Gestor de audio para el juego."""
     def __init__(self):
@@ -79,4 +80,5 @@ class AudioManager:
         pygame.mixer.music.set_volume(volume)
         for sound in self.sounds.values():
             sound.set_volume(volume)
+        log_info(f"Volumen de audio/música ajustado: {volume}")
         log_info(f"Volumen de audio/música ajustado: {volume}")

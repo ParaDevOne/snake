@@ -11,12 +11,23 @@ import platform
 from src.snake.system import utils
 
 # Importación opcional de pygame para pruebas de inicialización
+PYGAME_AVAILABLE = False
+
+# Try to import pygame first
 try:
     import pygame
     PYGAME_AVAILABLE = True
-except ImportError:
-    PYGAME_AVAILABLE = False
+except ImportError as e:
+    utils.log_warning(f"Pygame no está instalado: {e}", "VIDEO")
+    pygame = None
 
+# If pygame was imported successfully, try to initialize it
+if PYGAME_AVAILABLE and pygame is not None:
+    try:
+        pygame.display.init()  # Test initialization
+    except (pygame.error, RuntimeError, AttributeError) as e: # pylint: disable=no-member
+        utils.log_warning(f"Error al inicializar Pygame: {e}", "VIDEO")
+        PYGAME_AVAILABLE = False
 
 def configure_additional_env_vars():
     """
@@ -131,9 +142,8 @@ def configure_video_driver():
             utils.log_info(f"Intentando driver de video: {driver}", "VIDEO")
 
             # Si pygame está disponible, probar la inicialización
-            if PYGAME_AVAILABLE:
+            if PYGAME_AVAILABLE and pygame is not None:
                 try:
-                    pygame.display.init()
                     # Si llegamos aquí, la inicialización fue exitosa
                     selected_driver = driver
                     video_config['driver'] = driver

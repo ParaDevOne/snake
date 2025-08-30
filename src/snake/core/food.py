@@ -2,7 +2,9 @@
 # food.py
 
 import random
+
 from src.snake.system import utils
+
 
 class Food:
 

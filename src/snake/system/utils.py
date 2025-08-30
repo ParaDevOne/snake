@@ -69,7 +69,7 @@ def save_settings():
         }
         save_json(settings.SETTINGS_FILE, config)
         log_info("Configuración guardada correctamente")
-    except Exception as e:
+    except ImportError as e:
         log_error(f"Error guardando configuración: {e}")
 
 # ===== SISTEMA DE LOGGING =====
