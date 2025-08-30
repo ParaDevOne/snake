@@ -339,6 +339,9 @@ Contributions are welcome! This project follows an open development model.
 ### 📄 License
 
 **Simplified Open License (SOL)**
+Copyright (c) 2025 ParaDevOne
+SPDX-License-Identifier: SOL-3.0
+Licensed under the Simplified Open License 3.0 (SOL-3.0).
 
 Free to use for any purpose (personal, educational, commercial). Modification and distribution allowed with attribution. Commercial use permitted. Trademark and patent protections apply. No warranty — use at your own risk. Indemnification required by the user.
 

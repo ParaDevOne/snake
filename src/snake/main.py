@@ -1,139 +1,115 @@
-"""Punto de entrada principal del juego Snake."""
-# main.py
-# Punto de entrada único: intenta usar menu.py (pygame). Si no está, cae al modo directo.
-# pylint: disable=no-member  # Desactivar warnings para atributos pygame dinámicos
+"""
+Punto de entrada principal del juego Snake.
 
-# Configurar video antes de cualquier importación o inicialización de pygame
+Este módulo inicializa el juego y maneja el bucle principal.
+"""
 
 import os
 import sys
+import traceback
+import pygame
 
-from src.snake.modules import menu
-from src.snake.system import settings
-from src.snake.system import utils
-from src.snake.system import video_config
-from src.snake.core.game import MOVE_EVENT, Game
-from src.snake.modules.visual_effects import VisualEffects
+# Añadir el directorio src al path para importaciones absolutas
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
-video_config.configure_video_driver()
+from src.snake.ui.menu import MainMenu
+from src.snake.utils.config import config
+from src.snake.utils.logger import setup_logger, log_info, log_error
 
-try:
-    import pygame
-except ImportError:
-    pygame = None  # pygame no disponible
+class SnakeGame:
+    """Clase principal del juego Snake."""
+    
+    def __init__(self):
+        """Inicializa el juego."""
+        self.running = True
+        self.screen = None
+        self.clock = None
+        self.current_state = None
+        
+        # Inicializar pygame
+        pygame.init()
+        pygame.mixer.init()
+        
+        # Configurar la pantalla
+        self._setup_screen()
+        
+        # Configurar el reloj
+        self.clock = pygame.time.Clock()
+        
+        # Establecer el estado inicial
+        self.change_state(MainMenu)
+    
+    def _setup_screen(self):
+        """Configura la ventana del juego."""
+        width = config.get("WINDOW", "WIDTH", 800)
+        height = config.get("WINDOW", "HEIGHT", 600)
+        fullscreen = config.get("WINDOW", "FULLSCREEN", False)
+        
+        flags = pygame.RESIZABLE
+        if fullscreen:
+            flags |= pygame.FULLSCREEN
+            
+        self.screen = pygame.display.set_mode((width, height), flags)
+        pygame.display.set_caption(config.get("WINDOW", "TITLE", "Snake Game"))
+    
+    def change_state(self, new_state):
+        """Cambia el estado actual del juego."""
+        if self.current_state is not None:
+            self.current_state.cleanup()
+            
+        self.current_state = new_state(self)
+        log_info(f"Cambiando a estado: {new_state.__name__}")
+    
+    def run(self):
+        """Bucle principal del juego."""
+        try:
+            while self.running and self.current_state is not None:
+                # Manejar eventos
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        self.running = False
+                    if hasattr(self.current_state, 'handle_event'):
+                        self.current_state.handle_event(event)
+                
+                # Actualizar lógica
+                if self.clock:
+                    dt = self.clock.tick(60) / 1000.0  # Delta time en segundos
+                    if hasattr(self.current_state, 'update'):
+                        self.current_state.update(dt)
+                
+                    # Renderizar
+                    if hasattr(self.current_state, 'render'):
+                        self.current_state.render(self.screen)
+                        pygame.display.flip()
+                
+        except Exception as e:
+            log_error(f"Error en el bucle principal: {e}")
+            log_error(traceback.format_exc())
+            raise
+        finally:
+            self.cleanup()
+    
+    def cleanup(self):
+        """Limpia los recursos del juego."""
+        if self.current_state is not None:
+            self.current_state.cleanup()
+        pygame.quit()
 
 def run():
-    """Inicializar logging"""
-    utils.log_system_info("Iniciando Snake Game")
-    utils.log_system_info(f"Python version: {sys.version}")
-
-    # Splash screen antes de menú o juego
-    if pygame:
-        pygame.init()
-        flags = 0
-        if getattr(settings, 'FULLSCREEN', True):
-            flags |= pygame.FULLSCREEN
-        screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT), flags)
-        ve = VisualEffects()
-        splash_path = os.path.join('Data', 'assets', 'splash.png')
-        ve.show_splash_screen(screen, splash_path, duration=2.5)
-        pygame.display.set_caption(settings.WINDOW_TITLE)
-
+    """Función principal para iniciar el juego."""
+    # Configurar logging
+    setup_logger()
+    log_info("Iniciando Snake Game")
+    log_info(f"Python version: {sys.version}")
+    
     try:
-        # preferimos el menú en pygame
-        utils.log_debug("Intentando cargar menu.py", "MAIN")
-        if hasattr(menu, "run"):
-            utils.log_info("Iniciando juego con menú principal")
-            # Cambiar el nombre de la ventana para el menú
-            if pygame:
-                pygame.display.set_caption(settings.MENU_WINDOW_TITLE)
-            menu.run()
-            return
-        else:
-            utils.log_warning("menu.py encontrado pero no tiene 'run()'.")
-            raise ImportError("menu.run missing")
-    except (ImportError, ModuleNotFoundError, AttributeError):
-        # fallback: iniciar el juego directo
-        if pygame is None:
-            print("No se pudo arrancar el menú ni el juego directamente. Error: pygame no disponible")
-            sys.exit(1)
-        pygame.init()
-        flags = 0
-        if getattr(settings, 'FULLSCREEN', False):
-            flags |= pygame.FULLSCREEN
-        screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT), flags)
-        pygame.display.set_caption(settings.WINDOW_TITLE)
-        clock = pygame.time.Clock()
-        game = Game(screen)
-
-        running = True
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    break
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_r:
-                        game.reset_all()
-                    elif event.key == pygame.K_SPACE:
-                        game.logic.toggle_pause()
-                    elif event.key == pygame.K_ESCAPE:
-                        running = False
-                        break
-                    elif event.key == pygame.K_F1:
-                        # Toggle fullscreen
-                        current_flags = screen.get_flags()
-                        if current_flags & pygame.FULLSCREEN:
-                            screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
-                        else:
-                            screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT), pygame.FULLSCREEN)
-                        game.screen = screen
-                if event.type == MOVE_EVENT:
-                    game.handle_move()
-
-            # keyboard continuous input for direction
-            keys = pygame.key.get_pressed()
-            if not game.logic.game_over:
-                if keys[pygame.K_UP] or keys[pygame.K_w]:
-                    game.logic.set_direction((0, -1))
-                elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
-                    game.logic.set_direction((0, 1))
-                elif keys[pygame.K_LEFT] or keys[pygame.K_a]:
-                    game.logic.set_direction((-1, 0))
-                elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-                    game.logic.set_direction((1, 0))
-
-            game.update()
-            game.render()
-            pygame.display.flip()
-            clock.tick(60)
-
-        pygame.quit()
-        utils.log_info("Game terminated for user")
-        utils.close_logging_session()
-        sys.exit(0)
+        # Crear e iniciar el juego
+        game = SnakeGame()
+        game.run()
+    except Exception as e:
+        log_error(f"Error al iniciar el juego: {e}")
+        log_error(traceback.format_exc())
+        raise
 
 if __name__ == "__main__":
-    try:
-        run()
-    except KeyboardInterrupt:
-        utils.log_info("Game terminated for user")
-        utils.close_logging_session()
-        if pygame:
-            pygame.quit()
-        sys.exit(0)
-    except (ImportError, ModuleNotFoundError, OSError, RuntimeError) as e:
-        # Manejar errores críticos específicos
-        error_type = type(e).__name__
-        if isinstance(e, (ImportError, ModuleNotFoundError)):
-            utils.log_critical(f"Module error: {e}")
-        elif isinstance(e, OSError):
-            utils.log_critical(f"System/file error: {e}")
-        elif isinstance(e, RuntimeError):
-            utils.log_critical(f"Runtime error: {e}")
-        else:
-            utils.log_critical(f"Critical error ({error_type}): {e}")
-        utils.close_logging_session()
-        if pygame:
-            pygame.quit()
-        sys.exit(1)
+    run()
