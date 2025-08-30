@@ -16,7 +16,7 @@ A **complete logging system** has been implemented in the Snake game that record
 
 ## 📁 **Log File Location**
 
-```
+```text
 ./Data/logs.txt
 ```
 
@@ -25,6 +25,7 @@ The file is created automatically the first time the game runs.
 ## 🛠️ **Technical Implementation**
 
 ### **Main File: `utils.py`**
+
 `utils.py` has been expanded with a full logging system that includes:
 
 ```python
@@ -37,6 +38,7 @@ CRITICAL # Errores críticos que pueden afectar el juego
 ```
 
 ### **Automatic Configuration**
+
 - **Console**: Shows only INFO and above (with colors)
 - **File**: Records EVERYTHING (DEBUG and above)
 - **Thread-safe**: Safe for concurrent use
@@ -45,16 +47,19 @@ CRITICAL # Errores críticos que pueden afectar el juego
 ## 🎮 **Automatically Logged Events**
 
 ### **🚀 System & Startup**
+
 - Game start and Python version
 - Loading of menus and screen configuration
 - Profile initialization
 
 ### **👤 User Actions**
+
 - Navigation between menus (Play, Profiles, Options)
 - Starting new games
 - Applied settings
 
 ### **🎯 Game Events**
+
 - Game resets
 - Food consumed (with points and new speed)
 - Powerups collected (specific type)
@@ -64,7 +69,7 @@ CRITICAL # Errores críticos que pueden afectar el juego
 
 ### **📊 Real Log Examples**
 
-```
+```text
 ============================================================
 🐍 SNAKE GAME - NEW SESSION STARTED
 📅 2025-08-13 12:29:58
@@ -92,6 +97,7 @@ CRITICAL # Errores críticos que pueden afectar el juego
 ## 📈 **Specific Functions Implemented**
 
 ### **Convenience Functions**
+
 ```python
 utils.log_info("Mensaje general")
 utils.log_warning("Advertencia")
@@ -106,6 +112,7 @@ utils.log_performance("Acción", duracion_ms)
 ```
 
 ### **Session Control**
+
 ```python
 utils.close_logging_session()  # Cierra la sesión correctamente
 ```
@@ -113,6 +120,7 @@ utils.close_logging_session()  # Cierra la sesión correctamente
 ## 🔧 **Available Configurations**
 
 ### **Log Levels per Destination**
+
 ```python
 # En utils.py - Logger class
 min_console_level = LogLevel.INFO    # Solo INFO y superiores en consola
@@ -120,6 +128,7 @@ min_file_level = LogLevel.DEBUG      # Todo en archivo
 ```
 
 ### **Enable/Disable Destinations**
+
 ```python
 console_enabled = True   # Mostrar en consola
 file_enabled = True      # Escribir en archivo
@@ -128,28 +137,33 @@ file_enabled = True      # Escribir en archivo
 ## 🎯 **Code Integration**
 
 ### **main.py**
+
 - System startup logging
 - Python version info
 - Critical error handling
 - Clean session shutdown
 
 ### **menu.py**
+
 - Menu navigation logging
 - Game start logging
 - Applied configurations
 
 ### **logic.py**
+
 - Game events (food, powerups, records)
 - Game resets
 - Profile statistics
 
 ### **game.py**
+
 - Visual effects (optional)
 - Performance information
 
 ## 📊 **Recorded Information**
 
 ### **For each event we log:**
+
 - ⏰ **Exact timestamp** (HH:MM:SS)
 - 🏷️ **Log level** (INFO, WARNING, etc.)
 - 📂 **Module** where it occurred ([GAME], [USER], [SYS])
@@ -157,11 +171,13 @@ file_enabled = True      # Escribir en archivo
 - 📝 **Specific details** when relevant
 
 ### **System Information:**
+
 - Python version used
 - Configured screen resolution
 - Applied game settings
 
 ### **Game Statistics:**
+
 - Current score and records
 - Game speed (delay in ms)
 - Types of powerups collected
@@ -170,16 +186,19 @@ file_enabled = True      # Escribir en archivo
 ## 🚀 **Benefits of the System**
 
 ### **For Development:**
+
 - **Easy debugging**: All needed information in one place
 - **Event tracking**: Full session history
 - **Issue detection**: Automatic error logging
 
 ### **For the Player:**
+
 - **Non-intrusive**: Only relevant info in console
 - **Complete history**: File with full activity log
 - **Performance**: Optimized system with no FPS impact
 
 ### **For Maintenance:**
+
 - **Usage analysis**: Recorded gameplay patterns
 - **Statistics**: Performance information
 - **Troubleshooting**: Complete history to resolve issues

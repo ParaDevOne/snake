@@ -6,7 +6,7 @@
 ![Status](https://img.shields.io/badge/status-stable-success)
 ![Version](https://img.shields.io/badge/version-1.8.1-brightgreen)
 
-> **Snake — modular, cross-platform with advanced visual effects, persistent profiles and developer workflows.**
+> **Snake, modular, cross-platform with advanced visual effects, persistent profiles and developer workflows.**
 
 ---
 
@@ -31,6 +31,7 @@
 ---
 
 ### Logs & data
+
 - Logs: `Data/logs.txt`
 - Profiles: `Data/profiles/`
 - Audio: `Data/assets/audio/`
@@ -40,7 +41,7 @@
 
 ## 🗂️ Project Structure
 
-```
+```text
 snake/
 ├── __main__.py                    # Entry point
 ├── src/                           # Source code
@@ -106,14 +107,14 @@ LOG_TO_CONSOLE = True
 ## 📝 Versions & Changes
 
 ## [1.8.1] - 27-08-2025
-- Improvement & Bug Fixes
-	- Fixed bugs related to fullscreen and menu navigation
-	- Fixed bugs related to music and audio playback
-	- Improved input handling for smoother gameplay
-	- Enhanced overall game performance
-	- Fixed splash screen background color issue.
-	- Changed splash screen background from blue-gray to black for better visual consistency.
-	- And new structure for the project.
+
+- Fixed bugs related to fullscreen and menu navigation
+- Fixed bugs related to music and audio playback
+- Improved input handling for smoother gameplay
+- Enhanced overall game performance
+- Fixed splash screen background color issue.
+- Changed splash screen background from blue-gray to black for better visual consistency.
+- And new structure for the project.
 
 > [!NOTE]
 > **Previous releases can be found in the [`CHANGELOG.md`](./docs/CHANGELOG.md) file.**
@@ -129,9 +130,11 @@ LOG_TO_CONSOLE = True
 - **Fullscreen:** F11
 
 ### Objective
+
 Eat as much food as possible without colliding with yourself or obstacles (or the walls if wrap-around mode is disabled).
 
 ### Scoring
+
 - 🍎 Food: +1
 - ⚡ Speed Powerup: +1 and increases speed
 - 🔷 Grow Powerup: +5 and increases length
@@ -143,6 +146,7 @@ Eat as much food as possible without colliding with yourself or obstacles (or th
 ## 📋 System Requirements
 
 ### Minimum Requirements
+
 - **Python**: 3.10 or higher
 - **Operating System**: Windows 10+, Linux (Ubuntu 20.04+), macOS 10.14+
 - **RAM**: 512 MB available
@@ -174,12 +178,14 @@ python -m __main__
 ### Step-by-step Installation
 
 #### 1. **Clone the repository**
+
 ```bash
 git clone https://github.com/ParaDevOne/snake.git
 cd snake
 ```
 
 #### 2. **Create a virtual environment (recommended)**
+
 ```bash
 # Windows PowerShell
 python -m venv .venv
@@ -191,6 +197,7 @@ source .venv/bin/activate
 ```
 
 #### 3. **Install dependencies**
+
 ```bash
 pip install --upgrade pip
 pip install -r requirements.txt
@@ -215,7 +222,7 @@ poetry install
 poetry run start
 ```
 
-# Build to Executable (Optional)
+## Build to Executable (Optional)
 
 To produce a standalone executable:
 
@@ -233,7 +240,6 @@ poetry run build
 
 > [!NOTE]
 > If you need runtime options that exist only in the script (and aren’t packaged into the executable), run the script directly. If you want those options available in the built executable, add them to your build process or pass them through your packaging tool.
-
 > [!WARNING]
 > If you want to reduce the executable size, use UPX. Install it globally or place it in `lib/upx.exe`. (UPX may not work reliably on some Linux/macOS environments; it is recommended for Windows builds.)
 
@@ -268,6 +274,7 @@ Contributions are welcome! This project follows an open development model.
 ### Contribution Types
 
 #### Types of contributions
+
 - 🐛 **Bug Fixes**: Fix bugs
 - ✨ **Features**: New features
 - 🎨 **Graphics**: Visual improvements
@@ -276,6 +283,7 @@ Contributions are welcome! This project follows an open development model.
 - 🔧 **Refactoring**: Code structure improvements
 
 ### Areas That Need Contributions
+
 - 🌍 **Localization**: Translations to other languages
 - 🚀 **Optimization**: Performance improvements
 - 🎨 **Art**: Better sprites and textures
@@ -286,14 +294,9 @@ Contributions are welcome! This project follows an open development model.
 
 ## 📞 Future Improvements
 
-### Version 1.8.1 - Released
-- Improvement & Bug Fixes
-- Fixed bugs related to fullscreen and menu navigation
-- Fixed bugs related to music and audio playback
-- Improved input handling for smoother gameplay
-- Enhanced overall game performance
+### Version 1.8.2 - Released
 
-### Concept Version
+- Add MVC
 
 - 🛠️ **Configuration**
   - Add support for external configuration files
@@ -302,7 +305,9 @@ Contributions are welcome! This project follows an open development model.
   - Document available configuration options
   - Add an external app for config management
   - Automatic recorder that spits out GIFs upon breaking a record.
-  "Seed codes": Share a level seed + compact replay (list of inputs) for asynchronous challenges.
+  - "Seed codes": Share a level seed + compact replay (list of inputs) for asynchronous challenges.
+
+### Concept Version
 
 - 🎆 **Additional Game Modes**
   - Time trial
@@ -325,14 +330,15 @@ Contributions are welcome! This project follows an open development model.
 - Does it work offline? **Yes**
 - Where are my scores? `Data/profiles/`
 - Can I modify graphics? Yes — see `settings.py` and `visual_effects.py`
-- Compile for distribution? Yes — use `setup.py` or `poetry run build`
+- Compile for distribution? Yes — use `build.py` or `poetry run build`
 - Logs? In `Data/logs.txt`
+- How to run the game? `python __main__.py` or `poetry run start`
 
 ---
 
 ### 📄 License
 
-**Simplified Open License (SOL) v3.0**
+**Simplified Open License (SOL)**
 
 Free to use for any purpose (personal, educational, commercial). Modification and distribution allowed with attribution. Commercial use permitted. Trademark and patent protections apply. No warranty — use at your own risk. Indemnification required by the user.
 
