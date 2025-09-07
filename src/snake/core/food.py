@@ -1,35 +1,67 @@
-"""A module for the food and power-up items in the game."""
-# food.py
+"""Food module - Handles food and power-up spawning."""
 
 import random
-
-from src.snake.system import utils
+from typing import List, Optional, Tuple
 
 
 class Food:
+    """Represents food items in the game."""
 
-    """Food class for the game, which can respawn at random positions."""
+    def __init__(
+        self,
+        occupied_positions: List[Tuple[int, int]],
+        obstacles: List[Tuple[int, int]],
+        pos: Optional[Tuple[int, int]] = None,
+    ):
+        """Initialize a food item.
 
-    def __init__(self, occupied, obstacles=None):
-        self.obstacles = obstacles or []
-        self.pos = None
-        self.respawn(occupied)
-
-    def respawn(self, occupied):
-        """Respawn the food at a random free cell."""
-        pos = utils.random_free_cell(occupied, extra_forbidden=self.obstacles)
+        Args:
+            occupied_positions: List of positions that are occupied (snake body, etc.)
+            obstacles: List of obstacle positions
+            pos: Optional specific position for the food
+        """
         self.pos = pos
-        return pos
+        self.obstacles = obstacles
+        if not pos:
+            self.respawn(occupied_positions)
 
-class PowerUp:
+    def respawn(self, occupied_positions: List[Tuple[int, int]]):
+        """Move food to a new random position.
 
-    """PowerUp class for the game, which can have different types."""
+        Args:
+            occupied_positions: List of positions that are occupied
+        """
+        from src.snake.system.settings import COLUMNS, ROWS
 
-    TYPES = ("slow",
-            "speed",
-            "grow",
-            "score")  # slow = reduce speed (slower), speed = faster, grow = +growth, score = bonus
-    def __init__(self, occupied, obstacles=None):
-        self.obstacles = obstacles or []
-        self.type = random.choice(self.TYPES)
-        self.pos = utils.random_free_cell(occupied, extra_forbidden=self.obstacles)
+        # Find all available positions
+        available = []
+        for x in range(COLUMNS):
+            for y in range(ROWS):
+                pos = (x, y)
+                if pos not in occupied_positions and pos not in self.obstacles:
+                    available.append(pos)
+
+        if available:
+            self.pos = random.choice(available)
+        else:
+            self.pos = None  # No available positions
+
+
+class PowerUp(Food):
+    """Represents a power-up item in the game."""
+
+    def __init__(
+        self,
+        occupied_positions: List[Tuple[int, int]],
+        obstacles: List[Tuple[int, int]],
+        power_type: str,
+    ):
+        """Initialize a power-up.
+
+        Args:
+            occupied_positions: List of positions that are occupied
+            obstacles: List of obstacle positions
+            power_type: Type of power-up ('speed', 'grow', etc.)
+        """
+        super().__init__(occupied_positions, obstacles)
+        self.type = power_type

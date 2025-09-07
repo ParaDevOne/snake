@@ -1,18 +1,20 @@
-""""A module for the game logic and mechanics."""
+"""A module for the game logic and mechanics."""
+
 # logic.py
 import random
 import time
 
-import src.snake.modules.profiles as profiles
+import src.snake.system.profiles as profiles
 import src.snake.system.settings as settings
 import src.snake.system.utils as utils
 from src.snake.core.food import Food, PowerUp
 from src.snake.core.snake import Snake
-from src.snake.modules.obstacles import ObstacleManager
+from src.snake.core.obstacles import ObstacleManager
 
 
 class GameLogic:
     """Game logic and mechanics."""
+
     def __init__(self, load_highscore=True, profile_name=None):
         # profile_name: si None -> settings.DEFAULT_PROFILE
         self.profile_name = profile_name or settings.DEFAULT_PROFILE
@@ -42,10 +44,10 @@ class GameLogic:
         try:
             utils.log_game_event("Game restarting")
             mid = (settings.COLUMNS // 2, settings.ROWS // 2)
-            init = [mid, (mid[0]-1, mid[1]), (mid[0]-2, mid[1])]
-            utils.log_info(f'[DEBUG] Initial snake: {init}')
+            init = [mid, (mid[0] - 1, mid[1]), (mid[0] - 2, mid[1])]
+            utils.log_info(f"[DEBUG] Initial snake: {init}")
             self.snake = Snake(init)
-            if not self.snake or not hasattr(self.snake, 'body'):
+            if not self.snake or not hasattr(self.snake, "body"):
                 raise RuntimeError("Failed to initialize snake")
         except Exception as e:
             utils.log_error(f"Error in reset(): {str(e)}")
@@ -56,12 +58,12 @@ class GameLogic:
                 grid_size=settings.GRID_SIZE,
                 grid_width=settings.COLUMNS,
                 grid_height=settings.ROWS,
-                count=getattr(settings, 'OBSTACLE_COUNT', 8)
+                count=getattr(settings, "OBSTACLE_COUNT", 8),
             )
             # Generar obstáculos aleatorios evitando la serpiente y la comida inicial
             self.obstacle_manager.generate_obstacles(self.snake.body, None)
             self.obstacles = self.obstacle_manager.get_obstacles()
-            utils.log_info(f'[DEBUG] Obstacles generated: {self.obstacles}')
+            utils.log_info(f"[DEBUG] Obstacles generated: {self.obstacles}")
         else:
             self.obstacles = []
             self.obstacle_manager = None
@@ -110,9 +112,15 @@ class GameLogic:
         if self.powerup is not None:
             return
         if random.random() < getattr(settings, "POWERUP_CHANCE", 0.12):
-            snake_body = getattr(self.snake, 'body', [])
-            food_pos = [self.food.pos] if self.food and hasattr(self.food, 'pos') and self.food.pos else []
-            self.powerup = PowerUp(snake_body + food_pos + self.obstacles, self.obstacles)
+            snake_body = getattr(self.snake, "body", [])
+            food_pos = (
+                [self.food.pos]
+                if self.food and hasattr(self.food, "pos") and self.food.pos
+                else []
+            )
+            self.powerup = PowerUp(
+                snake_body + food_pos + self.obstacles, self.obstacles
+            )
 
     def apply_powerup(self, ptype):
         """Aplicar un power-up al jugador."""
@@ -121,17 +129,17 @@ class GameLogic:
             return
 
         self.active_power = ptype
-        self.power_end_time_ms = self.now_ms() + getattr(settings,
-                                                        "POWERUP_DURATION_MS",
-                                                        7000)
+        self.power_end_time_ms = self.now_ms() + getattr(
+            settings, "POWERUP_DURATION_MS", 7000
+        )
         if ptype == "slow":
             self.score += 1  # Slow Powerup: +1
             self.move_delay = min(999, self.move_delay + 80)
         elif ptype == "speed":
-            self.score += 1   # Speed Powerup: +1
+            self.score += 1  # Speed Powerup: +1
             self.move_delay = max(settings.MIN_MOVE_DELAY, self.move_delay - 60)
         elif ptype == "grow":
-            self.score += 5   # Grow Powerup: +5
+            self.score += 5  # Grow Powerup: +5
             self.snake.grow(3)
         elif ptype == "score":
             self.score += 20  # Score Powerup: +20
@@ -165,31 +173,46 @@ class GameLogic:
         events = {"status": status}
 
         if status in ("wall", "self"):
-            utils.log_info(f'[DEBUG] GameOver by status={status}, head={self.snake.head()}, snake={self.snake.body}')
+            utils.log_info(
+                f"[DEBUG] GameOver by status={status}, head={self.snake.head()}, snake={self.snake.body}"
+            )
             self.game_over = True
             self._on_game_over()
             return events
 
         if settings.USE_OBSTACLES and self.snake.head() in self.obstacles:
-            utils.log_info(f'[DEBUG] GameOver by obstacle: head={self.snake.head()}, obstacles={self.obstacles}')
+            utils.log_info(
+                f"[DEBUG] GameOver by obstacle: head={self.snake.head()}, obstacles={self.obstacles}"
+            )
             self.game_over = True
             self._on_game_over()
             events["status"] = "obstacle"
             return events
 
-        if self.food is not None and self.food.pos and self.snake.head() == self.food.pos:
+        if (
+            self.food is not None
+            and self.food.pos
+            and self.snake.head() == self.food.pos
+        ):
             self.score += 1  # Food: +1
             self.snake.grow(1)
             if self.move_delay > settings.MIN_MOVE_DELAY:
-                self.move_delay = max(settings.MIN_MOVE_DELAY,
-                                    self.move_delay - settings.SPEED_STEP)
-            utils.log_game_event("Comida consumida",
-                                f"Puntos: {self.score}, Nueva velocidad: {self.move_delay}ms")
+                self.move_delay = max(
+                    settings.MIN_MOVE_DELAY, self.move_delay - settings.SPEED_STEP
+                )
+            utils.log_game_event(
+                "Comida consumida",
+                f"Puntos: {self.score}, Nueva velocidad: {self.move_delay}ms",
+            )
             self.food.respawn(self.snake.body + self.obstacles)
             events["ate_food"] = "true"
             self.spawn_power_if_needed()
 
-        if self.powerup is not None and self.powerup.pos and self.snake.head() == self.powerup.pos:
+        if (
+            self.powerup is not None
+            and self.powerup.pos
+            and self.snake.head() == self.powerup.pos
+        ):
             utils.log_game_event("Powerup recogido", f"Tipo: {self.powerup.type}")
             self.apply_powerup(self.powerup.type)
             events["picked_powerup"] = self.powerup.type
@@ -200,17 +223,24 @@ class GameLogic:
     def _on_game_over(self):
         # actualizar perfil: highscore, last_score, play_count y salvar
         if not hasattr(self, "profile"):
-            self.profile = profiles.load_profile(self.profile_name) if profiles.profile_exists(self.profile_name) else {"name": self.profile_name}
+            self.profile = (
+                profiles.load_profile(self.profile_name)
+                if profiles.profile_exists(self.profile_name)
+                else {"name": self.profile_name}
+            )
         prev_high = int(self.profile.get("highscore", 0))
 
         is_new_record = self.score > prev_high
         if is_new_record:
             self.profile["highscore"] = self.score
             self.highscore = self.score
-            utils.log_game_event("NEW HIGHSCORE!",
-                                f"Final score: {self.score} (previous: {prev_high})")
+            utils.log_game_event(
+                "NEW HIGHSCORE!", f"Final score: {self.score} (previous: {prev_high})"
+            )
         else:
-            utils.log_game_event("Game over", f"Score: {self.score}, Record: {prev_high}")
+            utils.log_game_event(
+                "Game over", f"Score: {self.score}, Record: {prev_high}"
+            )
 
         self.profile["last_score"] = self.score
         self.profile["play_count"] = int(self.profile.get("play_count", 0)) + 1
@@ -238,10 +268,11 @@ class GameLogic:
         return {
             "snake": list(self.snake.body) if self.snake else [],
             "prev_snake": list(self.prev_snake),
-            "food": self.food.pos if hasattr(self, 'food') and self.food else None,
-            "powerup": (self.powerup.type,
-                        self.powerup.pos) if hasattr(self, 'powerup') and self.powerup and self.powerup.pos else None,
-            "obstacles": list(self.obstacles) if hasattr(self, 'obstacles') else [],
+            "food": self.food.pos if hasattr(self, "food") and self.food else None,
+            "powerup": (self.powerup.type, self.powerup.pos)
+            if hasattr(self, "powerup") and self.powerup and self.powerup.pos
+            else None,
+            "obstacles": list(self.obstacles) if hasattr(self, "obstacles") else [],
             "score": self.score,
             "highscore": self.highscore,
             "move_delay": self.move_delay,
